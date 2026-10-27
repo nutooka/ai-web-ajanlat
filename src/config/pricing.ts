@@ -106,12 +106,6 @@ export const pricingConfig: PricingConfig = {
       volume: { label: "Mennyiségi kedvezmény", hours: 4, category: "backend", essential: false },
       loyalty: { label: "Hűségpont-rendszer", hours: 12, category: "backend", essential: false },
     },
-    shop_channels: {
-      google_shopping: { label: "Google Shopping termékfeed", hours: 4, category: "integration", essential: false },
-      facebook_shop: { label: "Facebook / Instagram Shop szinkron", hours: 4, category: "integration", essential: false },
-      emag: { label: "eMAG Marketplace integráció", hours: 14, category: "integration", essential: false },
-      compari: { label: "Árösszehasonlító feed (Compari)", hours: 3, category: "integration", essential: false },
-    },
     shop_marketing: {
       reviews: { label: "Termékértékelések", hours: 4, category: "development", essential: false },
       newsletter: { label: "Hírlevél-integráció", hours: 4, category: "integration", essential: false },

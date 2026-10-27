@@ -250,20 +250,6 @@ const webshopQuestions: Question[] = [
     ],
   },
   {
-    id: "shop_channels",
-    kind: "multi",
-    required: false,
-    title: "Hol jelenjenek meg még a termékeid?",
-    hint: "A termékadatokat automatikusan szinkronizáljuk ezekre a csatornákra.",
-    options: [
-      { id: "google_shopping", label: "Google Shopping", icon: "search" },
-      { id: "facebook_shop", label: "Facebook / Instagram Shop", icon: "campaign" },
-      { id: "emag", label: "eMAG Marketplace", icon: "store" },
-      { id: "compari", label: "Compari / árösszehasonlítók", icon: "chart" },
-      { id: "none", label: "Csak a saját webshopban", icon: "close", exclusive: true },
-    ],
-  },
-  {
     id: "shop_marketing",
     kind: "multi",
     required: false,
