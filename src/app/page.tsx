@@ -19,12 +19,6 @@ const steps = [
   { title: "Egyeztessünk, ha tetszik", text: "Egy kattintással elküldöd, mi pedig 1 munkanapon belül jelentkezünk." },
 ];
 
-const stats = [
-  { value: "~4 perc", label: "a teljes kitöltés" },
-  { value: "3 csomag", label: "a te igényeidből" },
-  { value: "0", label: "regisztráció" },
-];
-
 const benefits = [
   { title: "Tételes, átlátható ár", text: "Minden sor mögött látszik a munkaóra – nincsenek rejtett tételek." },
   { title: "Valós fejlesztési idő", text: "Hetekben megadott átfutás, a határidődhöz igazítva." },
@@ -61,16 +55,6 @@ export default function HomePage() {
                 Válaszolj néhány egyszerű kérdésre, és pár perc alatt személyre szabott, tételes árajánlatot kapsz – regisztráció nélkül.
               </Typography>
               <HeroActions />
-              <Stack direction="row" sx={{ gap: { xs: 3, sm: 5 }, pt: 1, flexWrap: "wrap" }}>
-                {stats.map((stat) => (
-                  <Box key={stat.label}>
-                    <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 24, lineHeight: 1.1 }}>{stat.value}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {stat.label}
-                    </Typography>
-                  </Box>
-                ))}
-              </Stack>
             </Stack>
             <OfferPreview />
           </Box>

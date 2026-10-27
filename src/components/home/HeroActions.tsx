@@ -32,7 +32,7 @@ export function HeroActions() {
         )}
       </Stack>
       <Typography variant="body2" color="text.secondary">
-        Kb. 3 perc · ingyenes · nem kell regisztrálni
+        Kb. 4 perc · ingyenes · nem kell regisztrálni
       </Typography>
     </Stack>
   );
