@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import type { Metadata } from "next";
 import { HeroActions } from "@/components/home/HeroActions";
 import { HomePricing } from "@/components/home/HomePricing";
 import { HeroTitle } from "@/components/home/HeroTitle";
@@ -18,6 +19,9 @@ import { LinkButton } from "@/components/LinkButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { WaveDivider } from "@/components/WaveDivider";
+import { JsonLd } from "@/components/JsonLd";
+import { siteConfig, siteUrl } from "@/config/site";
+import { PROJECT_TYPE_LABELS } from "@/features/offer/buildOffer";
 import { pricingConfig } from "@/config/pricing";
 import { startingPrice } from "@/features/pricing/startingPrice";
 import { RESOLVED_PROJECT_TYPES } from "@/features/questionnaire/types";
@@ -47,6 +51,49 @@ const faqs = [
   { q: "Ki fogja kezelni az oldalt?", a: "Te is tudod szerkeszteni – megmutatjuk, hogyan. Ha nem akarsz vele foglalkozni, kérhetsz karbantartást." },
 ];
 
+const companyFrom = formatRon(startingPrice("company"));
+
+export const metadata: Metadata = {
+  title: { absolute: `Weboldal készítés árajánlattal – céges weboldal ${companyFrom}-tól | Nutooka` },
+  description: `Weboldal, webshop és landing page készítés Székelyudvarhelyről, Erdély-szerte. Töltsd ki a 3 perces kérdőívet, és azonnal tételes árajánlatot kapsz – céges weboldal ${companyFrom}-tól, akár −25% kedvezménnyel.`,
+  alternates: { canonical: "/" },
+};
+
+/** Company, services with real starting prices, and the FAQ – for rich search results. */
+function homeStructuredData(prices: Record<string, number>) {
+  const { company } = siteConfig;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ProfessionalService",
+        "@id": `${siteUrl}/#business`,
+        name: "Nutooka",
+        legalName: company.legalName,
+        url: siteUrl,
+        logo: `${siteUrl}/icon.svg`,
+        image: `${siteUrl}/opengraph-image`,
+        email: company.email || undefined,
+        taxID: company.taxId,
+        address: { "@type": "PostalAddress", ...company.postalAddress },
+        areaServed: company.areaServed.map((name) => ({ "@type": "Place", name })),
+        knowsLanguage: ["hu", "ro", "en"],
+        priceRange: `${formatRon(Math.min(...Object.values(prices)))}-tól`,
+        makesOffer: Object.entries(prices).map(([type, price]) => ({
+          "@type": "Offer",
+          itemOffered: { "@type": "Service", name: PROJECT_TYPE_LABELS[type as keyof typeof PROJECT_TYPE_LABELS] },
+          priceSpecification: { "@type": "PriceSpecification", minPrice: price, priceCurrency: "RON" },
+        })),
+      },
+      { "@type": "WebSite", "@id": `${siteUrl}/#website`, url: siteUrl, name: "Nutooka", inLanguage: "hu", publisher: { "@id": `${siteUrl}/#business` } },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq) => ({ "@type": "Question", name: faq.q, acceptedAnswer: { "@type": "Answer", text: faq.a } })),
+      },
+    ],
+  };
+}
+
 export default function HomePage() {
   const quick = pricingConfig.discounts.quickDecision;
   const bestPercent = quick.enabled ? (quick.tiers[0]?.percent ?? 0) : 0;
@@ -54,6 +101,7 @@ export default function HomePage() {
 
   return (
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
+      <JsonLd data={homeStructuredData(prices)} />
       {/* Hero */}
       <Box sx={{ background: palette.ink, color: "#fff", overflow: "hidden" }}>
         <SiteHeader />

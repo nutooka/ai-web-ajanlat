@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Wizard } from "@/features/questionnaire/components/Wizard";
 
 export const metadata: Metadata = {
-  title: "Projekttervező",
-  description: "Válaszolj néhány kérdésre, és azonnal kapsz egy személyre szabott, tételes árajánlatot.",
+  title: "Weboldal árkalkulátor – kérdőív 3 perc alatt",
+  description: "Válaszolj néhány kérdésre a weboldaladról, webshopodról vagy webalkalmazásodról, és azonnal tételes árajánlatot kapsz RON-ban, három csomagban.",
+  alternates: { canonical: "/tervezo" },
 };
 
 export default function PlannerPage() {

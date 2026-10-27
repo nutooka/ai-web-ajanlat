@@ -9,6 +9,10 @@ import { ease, palette } from "@/theme/tokens";
 export function HeroTitle() {
   return (
     <Typography variant="h1" sx={{ color: "#fff", maxWidth: 640 }}>
+      {/* The searchable part of the heading: what we do and where. */}
+      <Box component="span" sx={{ display: "block", mb: 1.5, fontFamily: "var(--font-body)", fontSize: { xs: 14, md: 16 }, fontWeight: 600, letterSpacing: "0.02em", lineHeight: 1.4, color: palette.inkMuted }}>
+        Weboldal és webshop készítés · Székelyudvarhely, Erdély
+      </Box>
       <motion.span initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: ease.out }} style={{ display: "block" }}>
         Tervezzük meg
       </motion.span>

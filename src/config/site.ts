@@ -1,3 +1,6 @@
+/** Az éles cím (sitemap, canonical, strukturált adatok). */
+export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://nutooka.tech").replace(/\/$/, "");
+
 /** Cégadatok és márka – egy helyen cserélhető. */
 export const siteConfig = {
   /** Munkanév – a végleges név itt cserélhető. */
@@ -11,6 +14,16 @@ export const siteConfig = {
     /** EUID (European Unique Identifier) – a cégjegyzékszámot is tartalmazza. */
     registrationNumber: "ROONRC.J2023000539198",
     taxId: "49185840",
+    /** Strukturált cím a keresőknek (schema.org PostalAddress). */
+    postalAddress: {
+      streetAddress: "Strada II Rákóczi Ferenc Nr. 84, Spațiul-birou Nr. 2S",
+      addressLocality: "Odorheiu Secuiesc",
+      addressRegion: "Harghita",
+      postalCode: "535600",
+      addressCountry: "RO",
+    },
+    /** Kiszolgált területek – a helyi kereséshez. */
+    areaServed: ["Székelyudvarhely", "Hargita megye", "Erdély", "Románia", "Magyarország"],
     // Opcionális: ha kitöltöd, megjelenik az adatkezelési tájékoztatóban.
     email: "info@nutooka.tech",
     phone: "",

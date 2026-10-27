@@ -10,9 +10,10 @@ const body = Instrument_Sans({ subsets: ["latin", "latin-ext"], variable: "--fon
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  title: { default: `${siteConfig.name} – azonnali weboldal-árajánlat`, template: `%s · ${siteConfig.name}` },
+  title: { default: "Weboldal készítés azonnali árajánlattal | Nutooka", template: "%s | Nutooka" },
   description: siteConfig.tagline,
-  openGraph: { title: siteConfig.name, description: siteConfig.tagline, locale: "hu_HU", type: "website" },
+  applicationName: "Nutooka",
+  openGraph: { siteName: "Nutooka", title: "Weboldal készítés azonnali árajánlattal", description: siteConfig.tagline, locale: "hu_HU", type: "website" },
   twitter: { card: "summary_large_image" },
 };
 

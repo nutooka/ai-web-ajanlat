@@ -11,6 +11,7 @@ import { siteConfig } from "@/config/site";
 export const metadata: Metadata = {
   title: "Adatkezelési tájékoztató",
   description: `${siteConfig.company.legalName} adatkezelési tájékoztatója az ajánlatkérésekhez.`,
+  alternates: { canonical: "/adatkezeles" },
 };
 
 const { company, privacy } = siteConfig;
