@@ -83,7 +83,7 @@ describe("calculateQuote", () => {
     const custom = calculateQuote({ ...fixtures.landing, design: "custom" }, noDiscounts)!.packages.standard;
     const designPrice = (pkg: typeof template) => pkg.items.find((item) => item.id === "base.design")!.price;
     const devPrice = (pkg: typeof template) => pkg.items.find((item) => item.id === "base.dev")!.price;
-    expect(designPrice(custom)).toBe(Math.round(designPrice(template) * 1.7));
+    expect(designPrice(custom)).toBe(Math.round((designPrice(template) * 1.7) / 50) * 50);
     expect(devPrice(custom)).toBe(devPrice(template));
   });
 
@@ -92,14 +92,14 @@ describe("calculateQuote", () => {
     const two = calculateQuote({ ...fixtures.landing, languages: "2" }, noDiscounts)!.packages.standard;
     expect(two.items.some((item) => item.id === "languages.setup")).toBe(true);
     const dev = (pkg: typeof one) => pkg.items.find((item) => item.id === "base.dev")!.price;
-    expect(dev(two)).toBe(Math.round(dev(one) * 1.2));
+    expect(dev(two)).toBe(Math.round((dev(one) * 1.2) / 50) * 50);
   });
 
   it("applies urgency to price and timeline", () => {
     const normal = calculateQuote(fixtures.webapp, noDiscounts)!.packages.standard;
     const urgent = calculateQuote({ ...fixtures.webapp, deadline: "urgent" }, noDiscounts)!.packages.standard;
     const flexible = calculateQuote({ ...fixtures.webapp, deadline: "flexible" }, noDiscounts)!.packages.standard;
-    expect(urgent.urgencyAdjustment).toBe(Math.round(normal.subtotal * 0.4));
+    expect(urgent.urgencyAdjustment).toBe(Math.round((normal.subtotal * 0.4) / 50) * 50);
     expect(flexible.urgencyAdjustment).toBeLessThan(0);
     expect(urgent.timeline.minWeeks).toBeLessThan(normal.timeline.minWeeks);
   });
@@ -121,6 +121,9 @@ describe("calculateQuote", () => {
   it("rounds every price to the configured step", () => {
     for (const answers of Object.values(fixtures)) {
       for (const pkg of Object.values(calculateQuote(answers)!.packages)) {
+        for (const item of pkg.items) expect(item.price % pricingConfig.roundTo).toBe(0);
+        expect(pkg.items.every((item) => item.price >= pricingConfig.roundTo)).toBe(true);
+        expect(pkg.listPrice).toBe(pkg.subtotal + pkg.urgencyAdjustment);
         expect(pkg.listPrice % pricingConfig.roundTo).toBe(0);
         expect(pkg.finalPrice % pricingConfig.roundTo).toBe(0);
       }

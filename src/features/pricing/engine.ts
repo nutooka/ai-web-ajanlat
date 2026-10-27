@@ -162,12 +162,13 @@ function buildPackage(
       category: item.category,
       source: item.source,
       hours: roundHalf(hours),
-      price: Math.round(hours * config.hourlyRate),
+      // Every visible amount is a round number; tiny items still cost at least one step.
+      price: Math.max(config.roundTo, roundTo(hours * config.hourlyRate, config.roundTo)),
     };
   });
 
   const subtotal = items.reduce((sum, item) => sum + item.price, 0);
-  const urgencyAdjustment = Math.round(subtotal * (urgency.priceMultiplier - 1));
+  const urgencyAdjustment = roundTo(subtotal * (urgency.priceMultiplier - 1), config.roundTo);
   const listPrice = roundTo(subtotal + urgencyAdjustment, config.roundTo);
   const discounts = applyDiscounts(listPrice, packageId, config);
   const savings = discounts.reduce((sum, discount) => sum + discount.amount, 0);

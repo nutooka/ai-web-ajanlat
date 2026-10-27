@@ -51,7 +51,7 @@ export function PriceBreakdown({ quote, pkg }: { quote: Quote; pkg: PackageQuote
                 accent={pkg.urgencyAdjustment < 0}
               />
             )}
-            <Row label="Listaár (kerekítve)" value={formatRon(pkg.listPrice)} />
+            <Row label="Listaár" value={formatRon(pkg.listPrice)} />
             {pkg.discounts.map((discount) => (
               <Row key={discount.id} label={discount.label} detail={`−${discount.percent}%`} value={`−${formatRon(discount.amount)}`} accent />
             ))}
