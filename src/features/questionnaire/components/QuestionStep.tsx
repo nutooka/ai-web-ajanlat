@@ -34,7 +34,7 @@ export const QuestionStep = forwardRef<HTMLHeadingElement, QuestionStepProps>(fu
         {question.subtitle && <Typography variant="subtitle1">{question.subtitle}</Typography>}
         {question.hint && (
           <Stack direction="row" spacing={1} sx={{ alignItems: "flex-start", color: "text.secondary" }}>
-            <TipsAndUpdatesOutlined sx={{ fontSize: 18, mt: "2px", color: "primary.main" }} />
+            <TipsAndUpdatesOutlined sx={{ fontSize: 18, mt: "2px", color: "text.primary" }} />
             <Typography variant="body2">{question.hint}</Typography>
           </Stack>
         )}

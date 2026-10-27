@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Inter } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 import { ThemeRegistry } from "@/components/ThemeRegistry";
 import { siteConfig } from "@/config/site";
 
 const display = Bricolage_Grotesque({ subsets: ["latin", "latin-ext"], variable: "--font-display", display: "swap" });
-const body = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-body", display: "swap" });
+const body = Instrument_Sans({ subsets: ["latin", "latin-ext"], variable: "--font-body", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: { title: siteConfig.name, description: siteConfig.tagline, locale: "hu_HU", type: "website" },
 };
 
-export const viewport: Viewport = { themeColor: "#F6F6F3" };
+export const viewport: Viewport = { themeColor: "#0E0F12" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

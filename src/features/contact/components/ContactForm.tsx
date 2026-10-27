@@ -120,10 +120,10 @@ export function ContactForm({ answers, packageId, packageName }: ContactFormProp
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "0.8fr 1.2fr" }, gap: { xs: 4, md: 6 } }}>
               <Box>
                 <Typography variant="h3" component="h2" sx={{ mb: 2 }}>
-                  Küldd el az ajánlatot, és egyeztessünk
+                  Kérj ingyenes, 30 perces egyeztetést
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
-                  A(z) <b>{packageName}</b> csomag ajánlatát küldöd el. Az ajánlat megtekintéséhez nem kell semmit megadnod – a küldés teljesen opcionális.
+                  Elküldjük a(z) <b>{packageName}</b> csomag ajánlatát, és 1 munkanapon belül jelentkezünk. Nincs kötelezettség, előre nem kell fizetni semmit.
                 </Typography>
               </Box>
 
@@ -189,7 +189,7 @@ export function ContactForm({ answers, packageId, packageName }: ContactFormProp
                     endIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : <SendOutlined />}
                     sx={{ alignSelf: { sm: "flex-start" } }}
                   >
-                    {isSubmitting ? "Küldés…" : "Ajánlat elküldése"}
+                    {isSubmitting ? "Küldés…" : "Egyeztetést kérek"}
                   </Button>
                 </Stack>
               </Box>

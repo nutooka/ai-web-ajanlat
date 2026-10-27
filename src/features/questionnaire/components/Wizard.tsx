@@ -169,23 +169,23 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
 
   return (
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
-      <Box component="header" sx={{ position: "sticky", top: 0, zIndex: 10, background: "rgba(242,240,234,.72)", backdropFilter: "blur(14px)" }}>
+      <Box component="header" sx={{ position: "sticky", top: 0, zIndex: 10, background: palette.ink, color: "#fff" }}>
         <Container maxWidth="lg" sx={{ py: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
-          <Logo />
+          <Logo tone="light" />
           <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
             {estimate !== undefined && (
-              <Box sx={{ display: { xs: "none", sm: "flex", lg: "none" }, alignItems: "baseline", gap: 1, px: 1.75, py: 0.75, borderRadius: 999, background: palette.surface, border: 1, borderColor: "divider" }}>
-                <Typography variant="body2" color="text.secondary">
+              <Box sx={{ display: { xs: "none", sm: "flex", lg: "none" }, alignItems: "baseline", gap: 1, px: 1.75, py: 0.75, borderRadius: 999, background: palette.inkSoft }}>
+                <Typography variant="body2" sx={{ color: palette.inkMuted }}>
                   Becslés:
                 </Typography>
                 <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.span key={estimate} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} style={{ fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
+                  <motion.span key={estimate} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} style={{ fontWeight: 700, fontVariantNumeric: "tabular-nums", color: palette.lime }}>
                     {formatRon(estimate)}
                   </motion.span>
                 </AnimatePresence>
               </Box>
             )}
-            <Stack direction="row" spacing={0.75} sx={{ alignItems: "center", color: "text.secondary" }} aria-live="polite">
+            <Stack direction="row" spacing={0.75} sx={{ alignItems: "center", color: palette.inkMuted }} aria-live="polite">
               <CloudDoneOutlined sx={{ fontSize: 18 }} />
               <Typography variant="body2" sx={{ display: { xs: "none", md: "block" } }}>
                 Automatikusan mentve
@@ -193,7 +193,7 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
             </Stack>
           </Stack>
         </Container>
-        <LinearProgress variant="determinate" value={progress} aria-label="Haladás" sx={{ borderRadius: 0, height: 4 }} />
+        <LinearProgress variant="determinate" value={progress} aria-label="Haladás" sx={{ borderRadius: 0, height: 4, background: palette.inkSoft }} />
       </Box>
 
       <Container

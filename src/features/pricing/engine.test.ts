@@ -26,6 +26,7 @@ const fixtures: Record<string, Answers> = {
 /** Config without discounts and productivity factor, to test raw arithmetic. */
 const noDiscounts: PricingConfig = {
   ...pricingConfig,
+  hourlyRate: 200,
   productivityFactor: 1,
   discounts: { launch: { ...pricingConfig.discounts.launch, enabled: false }, perPackage: {}, maxTotalPercent: 25 },
 };

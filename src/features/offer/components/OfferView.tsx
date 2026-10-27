@@ -27,6 +27,7 @@ import type { PackageId } from "@/features/pricing/types";
 import { buildOffer } from "../buildOffer";
 import { PackageSelector } from "./PackageSelector";
 import { PriceBreakdown } from "./PriceBreakdown";
+import { StickyCta } from "./StickyCta";
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -145,7 +146,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
                 {formatRon(pkg.finalPrice)}
               </Typography>
               {pkg.savings > 0 && (
-                <Chip label={`Megtakarítás: ${formatRon(pkg.savings)}`} sx={{ alignSelf: "flex-start", mt: 1.5, background: "rgba(255,255,255,.12)", color: "#fff" }} />
+                <Chip label={`Megtakarítás: ${formatRon(pkg.savings)}`} sx={{ alignSelf: "flex-start", mt: 1.5, background: palette.lime, color: palette.ink }} />
               )}
               <Stack direction="row" spacing={4} sx={{ mt: 3 }}>
                 <Box>
@@ -161,8 +162,8 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
           </Box>
         </motion.div>
 
-        <Stack direction="row" spacing={1.25} sx={{ alignItems: "flex-start", mt: 3, p: 2, borderRadius: 2, background: palette.primaryTint }}>
-          <InfoOutlined sx={{ fontSize: 20, color: "primary.main", mt: "1px" }} />
+        <Stack direction="row" spacing={1.25} sx={{ alignItems: "flex-start", mt: 3, p: 2, borderRadius: 2, background: palette.limeTint }}>
+          <InfoOutlined sx={{ fontSize: 20, color: "text.primary", mt: "1px" }} />
           <Typography variant="body2">{offer.disclaimer}</Typography>
         </Stack>
 
@@ -174,7 +175,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
             Mindhárom a te válaszaidból épül fel – a különbség a terjedelemben és a szolgáltatásokban van.
           </Typography>
           {offer.quote.budget && (
-            <Typography variant="body2" sx={{ mb: 2, px: 2, py: 1.25, borderRadius: 2, display: "inline-block", background: palette.primaryTint }}>
+            <Typography variant="body2" sx={{ mb: 2, px: 2, py: 1.25, borderRadius: 2, display: "inline-block", background: palette.limeTint }}>
               {offer.quote.budget.withinBasic
                 ? `A megadott kereted alapján a(z) ${offer.quote.packages[offer.quote.recommended].name} csomagot ajánljuk.`
                 : "Már a Basic csomag is meghaladja a megadott keretet. Egyeztetéskor megnézzük, hogyan lehet szakaszolni vagy egyszerűsíteni a projektet."}
@@ -240,7 +241,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
                       label={feature}
                       icon={included ? <Check /> : undefined}
                       variant={included ? "filled" : "outlined"}
-                      sx={included ? { background: palette.primaryTint } : { opacity: 0.6 }}
+                      sx={included ? { background: palette.limeTint } : { opacity: 0.6 }}
                     />
                   );
                 })}
@@ -263,7 +264,12 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
             <Box component="ol" sx={{ listStyle: "none", p: 0, m: 0, display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }, gap: 3 }}>
               {offer.nextSteps.map((step, index) => (
                 <Box component="li" key={step}>
-                  <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 28, color: palette.primary }}>0{index + 1}</Typography>
+                  <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 28 }}>
+                    {index + 1}
+                    <Box component="span" sx={{ color: palette.lime, WebkitTextStroke: `1px ${palette.ink}` }}>
+                      .
+                    </Box>
+                  </Typography>
                   <Typography variant="body2" sx={{ mt: 0.5 }}>
                     {step}
                   </Typography>
@@ -278,7 +284,9 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
         </Box>
       </Container>
 
+      <Box sx={{ height: 88 }} className="no-print" />
       <SiteFooter />
+      <StickyCta targetId="kapcsolat" price={pkg.finalPrice} packageName={pkg.name} />
     </Box>
   );
 }

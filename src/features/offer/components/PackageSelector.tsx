@@ -41,11 +41,11 @@ export function PackageSelector({ quote, selected, onSelect }: PackageSelectorPr
               color: active ? "#fff" : palette.ink,
               transition: "all .2s ease",
               "&:hover": { borderColor: palette.ink, transform: "translateY(-2px)" },
-              "&.Mui-focusVisible": { outline: `3px solid ${palette.primary}`, outlineOffset: 2 },
+              "&.Mui-focusVisible": { outline: `2px solid ${palette.ink}`, outlineOffset: 3 },
             }}
           >
             {recommended && (
-              <Box sx={{ position: "absolute", top: 16, right: 16, px: 1.25, py: 0.25, borderRadius: 999, background: palette.primary, color: "#fff", fontSize: 12, fontWeight: 700 }}>
+              <Box sx={{ position: "absolute", top: 16, right: 16, px: 1.25, py: 0.25, borderRadius: 999, background: palette.lime, color: palette.ink, fontSize: 12, fontWeight: 700 }}>
                 Ajánlott
               </Box>
             )}

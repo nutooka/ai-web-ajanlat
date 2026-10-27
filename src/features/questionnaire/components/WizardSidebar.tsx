@@ -40,7 +40,7 @@ export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; a
               </motion.div>
             </AnimatePresence>
             {quote && quote.packages.standard.discounts.length > 0 && (
-              <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1.25, py: 0.25, borderRadius: 999, background: "rgba(255,255,255,.12)", color: "#fff", fontSize: 12, fontWeight: 700 }}>
+              <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1.25, py: 0.25, borderRadius: 999, background: palette.lime, color: palette.ink, fontSize: 12, fontWeight: 700 }}>
                 Indulási kedvezménnyel
               </Box>
             )}
@@ -50,7 +50,7 @@ export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; a
             <Stack component="ul" spacing={1} sx={{ listStyle: "none", p: 0, m: 0, mt: 3, pt: 2.5, borderTop: "1px solid rgba(255,255,255,.12)" }}>
               {features.slice(0, MAX_FEATURES).map((feature) => (
                 <Stack component="li" key={feature} direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
-                  <CheckCircleOutlineOutlined sx={{ fontSize: 16, mt: "3px", color: "rgba(255,255,255,.6)" }} />
+                  <CheckCircleOutlineOutlined sx={{ fontSize: 16, mt: "3px", color: palette.lime }} />
                   <Typography variant="body2" sx={{ opacity: 0.85 }}>
                     {feature}
                   </Typography>

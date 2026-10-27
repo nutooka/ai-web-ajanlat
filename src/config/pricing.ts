@@ -7,12 +7,12 @@ import type { PricingConfig } from "@/features/pricing/types";
  */
 export const pricingConfig: PricingConfig = {
   currency: "RON",
-  hourlyRate: 200,
+  hourlyRate: 160,
   roundTo: 50,
   weeklyCapacityHours: 25,
   // BELSŐ: AI-asszisztált fejlesztési szorzó. Az alábbi órák "hagyományos" becslések,
   // ezzel a szorzóval lesznek a ténylegesen számlázott órák. Az ügyfél nem látja.
-  productivityFactor: 0.4,
+  productivityFactor: 0.3,
   feedbackWeeks: 1,
 
   packages: {
@@ -335,9 +335,9 @@ export const pricingConfig: PricingConfig = {
     hostingMonthly: { company: 40, webshop: 120, webapp: 200, landing: 25, redesign: 40 },
     domainYearly: 80,
     support: {
-      basic: { label: "Alap karbantartás (frissítések, mentések)", monthly: 150 },
-      standard: { label: "Standard karbantartás (+ havi 1 óra módosítás)", monthly: 300 },
-      premium: { label: "Premium karbantartás (+ havi 3 óra módosítás, prioritás)", monthly: 600 },
+      basic: { label: "Alap karbantartás (frissítések, mentések)", monthly: 90 },
+      standard: { label: "Standard karbantartás (+ havi 1 óra módosítás)", monthly: 190 },
+      premium: { label: "Premium karbantartás (+ havi 3 óra módosítás, prioritás)", monthly: 390 },
     },
   },
 };

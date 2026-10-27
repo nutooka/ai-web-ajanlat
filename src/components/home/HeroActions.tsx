@@ -10,12 +10,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { pricingConfig } from "@/config/pricing";
 import { useWizardSnapshot, wizardStore } from "@/lib/storage";
+import { palette } from "@/theme/tokens";
 
+/** Hero call to action, on the dark hero background. */
 export function HeroActions() {
-  const launch = pricingConfig.discounts.launch;
   const router = useRouter();
   const snapshot = useWizardSnapshot();
   const hasProgress = Boolean(snapshot?.answers.projectType);
+  const launch = pricingConfig.discounts.launch;
 
   const restart = () => {
     wizardStore.reset();
@@ -23,24 +25,30 @@ export function HeroActions() {
   };
 
   return (
-    <Stack spacing={1.5}>
+    <Stack spacing={2}>
       <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-        <Button component={Link} href="/tervezo" variant="contained" color="secondary" size="large" endIcon={<ArrowForward />}>
-          {hasProgress ? "Folytatom, ahol abbahagytam" : "Kezdjük el"}
+        <Button component={Link} href="/tervezo" variant="contained" color="primary" size="large" endIcon={<ArrowForward />}>
+          {hasProgress ? "Folytatom, ahol abbahagytam" : "Megnézem, mennyibe kerül"}
         </Button>
         {hasProgress && (
-          <Button variant="outlined" color="inherit" size="large" startIcon={<RestartAlt />} onClick={restart}>
+          <Button
+            variant="outlined"
+            size="large"
+            startIcon={<RestartAlt />}
+            onClick={restart}
+            sx={{ color: "#fff", borderColor: palette.inkLine, "&:hover": { borderColor: "#fff", background: "transparent" } }}
+          >
             Újrakezdem
           </Button>
         )}
       </Stack>
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="body2" sx={{ color: palette.inkMuted }}>
         Kb. 4 perc · ingyenes · nem kell regisztrálni
         {launch.enabled && (
           <>
-            <br />
-            <Box component="span" sx={{ color: "text.primary", fontWeight: 600 }}>
-              Most −{launch.percent}% indulási kedvezménnyel
+            {" · "}
+            <Box component="span" sx={{ color: palette.lime, fontWeight: 600 }}>
+              most −{launch.percent}% indulási kedvezmény
             </Box>
           </>
         )}

@@ -33,22 +33,22 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
         pr: 5,
         borderRadius: 3,
         border: "1.5px solid",
-        borderColor: selected ? palette.primary : palette.line,
-        background: selected ? palette.primaryTint : palette.surface,
+        borderColor: selected ? palette.ink : palette.line,
+        background: selected ? palette.limeTint : palette.surface,
         display: "flex",
         alignItems: "flex-start",
         justifyContent: "flex-start",
         textAlign: "left",
         gap: 1.75,
         transition: "border-color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease",
-        boxShadow: selected ? `0 0 0 3px ${palette.primaryTint}` : "none",
+        boxShadow: selected ? `inset 0 0 0 1px ${palette.ink}` : "none",
         "&:hover": {
-          borderColor: selected ? palette.primary : palette.ink,
+          borderColor: palette.ink,
           transform: "translateY(-1px)",
-          boxShadow: selected ? `0 0 0 3px ${palette.primaryTint}` : "0 10px 24px -16px rgba(20,22,26,.35)",
+          boxShadow: selected ? `inset 0 0 0 1px ${palette.ink}` : "0 12px 28px -18px rgba(14,15,18,.4)",
         },
         "&:active": { transform: "scale(0.99)" },
-        "&.Mui-focusVisible": { outline: `3px solid ${palette.primary}`, outlineOffset: 2 },
+        "&.Mui-focusVisible": { outline: `2px solid ${palette.ink}`, outlineOffset: 3 },
       }}
     >
       {Icon && (
@@ -60,8 +60,8 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
             borderRadius: 2,
             display: "grid",
             placeItems: "center",
-            background: selected ? palette.primary : palette.paper,
-            color: selected ? "#fff" : palette.ink,
+            background: selected ? palette.lime : palette.paper,
+            color: palette.ink,
             transition: "all .18s ease",
           }}
         >
@@ -78,7 +78,7 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
           </Typography>
         )}
         {recommended && (
-          <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 999, background: palette.primary, color: "#fff", fontSize: 12, fontWeight: 700 }}>
+          <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 999, background: palette.lime, color: palette.ink, fontSize: 12, fontWeight: 700 }}>
             Ajánlott
           </Box>
         )}
@@ -86,7 +86,7 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
 
       <Box sx={{ position: "absolute", top: 14, right: 14 }}>
         {selected ? (
-          <Box sx={{ width: 22, height: 22, borderRadius: multiple ? "7px" : "50%", background: palette.primary, color: "#fff", display: "grid", placeItems: "center" }}>
+          <Box sx={{ width: 22, height: 22, borderRadius: multiple ? "7px" : "50%", background: palette.ink, color: palette.lime, display: "grid", placeItems: "center" }}>
             <Check sx={{ fontSize: 15 }} />
           </Box>
         ) : (
