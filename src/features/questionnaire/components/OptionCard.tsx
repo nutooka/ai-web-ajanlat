@@ -79,7 +79,7 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
         )}
         {recommended && (
           <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 999, background: palette.lime, color: palette.ink, fontSize: 12, fontWeight: 700 }}>
-            Ajánlott
+            Neked ajánljuk
           </Box>
         )}
       </Box>

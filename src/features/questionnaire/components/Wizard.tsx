@@ -30,6 +30,8 @@ import { WaveProgress } from "./WaveProgress";
 import { WizardSidebar } from "./WizardSidebar";
 
 const AUTO_ADVANCE_MS = 260;
+/** Typical length before the project type is known (keeps the first step from showing 0%). */
+const ESTIMATED_TOTAL = 15;
 
 const slide = {
   enter: (direction: number) => ({ opacity: 0, x: direction * 40 }),
@@ -69,7 +71,8 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
   const index = foundIndex >= 0 ? foundIndex : Math.max(0, visible.findIndex((question) => !isQuestionAnswered(question, answers[question.id])));
   const question = visible[index];
   const recommended = getRecommendedOption(question.id, answers);
-  const value = answers[question.id] ?? recommended;
+  // The recommendation is shown as a label, never pre-selected: the visitor decides.
+  const value = answers[question.id];
   const isLast = index === visible.length - 1 && question.id === "notes";
   const typeKnown = getEffectiveProjectType(answers) !== undefined;
 
@@ -161,9 +164,12 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
     return () => window.removeEventListener("keydown", listener);
   }, []);
 
-  const progress = typeKnown ? Math.round((index / visible.length) * 100) : 0;
+  const total = typeKnown ? visible.length : ESTIMATED_TOTAL;
+  const progress = isLast ? 100 : Math.min(99, Math.round(((index + 1) / total) * 100));
   const answered = isQuestionAnswered(question, value);
-  const nextLabel = isLast ? "Megnézem az ajánlatom" : !answered && !question.required ? "Kihagyom" : "Tovább";
+  const needsChoice = question.required && !answered;
+  const nextLabel = isLast ? "Megnézem az ajánlatom" : needsChoice ? "Válassz egyet" : !answered ? "Kihagyom" : "Tovább";
+  const stepLabel = isLast ? "Utolsó kérdés" : typeKnown ? `${index + 1}. kérdés / ${visible.length}` : `${index + 1}. kérdés / kb. ${ESTIMATED_TOTAL}`;
 
   return (
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -189,7 +195,7 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
       >
         <Box sx={{ maxWidth: 780, width: "100%" }}>
         <Typography variant="overline" color="text.secondary" sx={{ display: "block", mb: 2 }}>
-          {typeKnown ? `${index + 1}. kérdés / ${visible.length}` : `${index + 1}. kérdés`}
+          {stepLabel}
         </Typography>
         <AnimatePresence mode="wait" custom={direction} initial={false}>
           <motion.div
@@ -230,7 +236,15 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
             <Typography variant="body2" color="text.secondary" sx={{ display: { xs: "none", md: "block" } }}>
               vagy nyomj <b>Enter</b>-t
             </Typography>
-            <Button onClick={() => goNext()} variant="contained" color={isLast ? "primary" : "secondary"} size="large" endIcon={<ArrowForward />}>
+            <Button
+              onClick={() => goNext()}
+              variant="contained"
+              color="primary"
+              size="large"
+              endIcon={<ArrowForward />}
+              aria-disabled={needsChoice}
+              sx={needsChoice ? { opacity: 0.55 } : undefined}
+            >
               {nextLabel}
             </Button>
           </Stack>

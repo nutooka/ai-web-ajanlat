@@ -44,7 +44,7 @@ export const unsureQuestions: Question[] = [
     kind: "single",
     required: true,
     title: "Ezt a megoldást javasoljuk neked",
-    subtitle: "A válaszaid alapján kiemeltük a legjobban illő típust. Ha mást választanál, nyugodtan módosítsd.",
+    subtitle: "A válaszaid alapján megjelöltük a legjobban illő típust. Válaszd ki ezt, vagy bármelyik másikat.",
     options: projectTypeQuestion.options.filter((option) => option.id !== "unsure"),
   },
 ];
