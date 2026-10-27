@@ -43,12 +43,12 @@ function scrollToId(id: string) {
 }
 
 /** Page frame shared by every state of the offer page. */
-function Frame({ children, header }: { children: React.ReactNode; header?: React.ReactNode }) {
+function Frame({ children, header, stickyBar = false }: { children: React.ReactNode; header?: React.ReactNode; stickyBar?: boolean }) {
   return (
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
       {header ?? <SiteHeader />}
       {children}
-      <SiteFooter />
+      <SiteFooter reserveStickyBar={stickyBar} />
     </Box>
   );
 }
@@ -138,7 +138,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
   );
 
   return (
-    <Frame header={header}>
+    <Frame header={header} stickyBar={!submission}>
       {/* 1 – Hero: what it is, what it costs, the one action. */}
       <Box component="section" aria-labelledby="offer-title" sx={{ background: palette.ink, color: "#fff", position: "relative", overflow: "hidden", "@media print": { background: "#fff", color: palette.ink } }}>
         <Box sx={{ display: { xs: "none", lg: "block" } }} className="no-print">
@@ -292,8 +292,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
 
       {!submission && (
         <>
-          <Box sx={{ height: 88 }} className="no-print" />
-          <StickyCta targetId={CONTACT_ID} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} hideWhileVisible={["hero-cta", "site-footer"]} />
+          <StickyCta targetId={CONTACT_ID} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} hideWhileVisible={["hero-cta"]} />
         </>
       )}
     </Frame>
