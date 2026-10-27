@@ -2,14 +2,17 @@
 
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import RestartAlt from "@mui/icons-material/RestartAlt";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { pricingConfig } from "@/config/pricing";
 import { useWizardSnapshot, wizardStore } from "@/lib/storage";
 
 export function HeroActions() {
+  const launch = pricingConfig.discounts.launch;
   const router = useRouter();
   const snapshot = useWizardSnapshot();
   const hasProgress = Boolean(snapshot?.answers.projectType);
@@ -33,6 +36,14 @@ export function HeroActions() {
       </Stack>
       <Typography variant="body2" color="text.secondary">
         Kb. 4 perc · ingyenes · nem kell regisztrálni
+        {launch.enabled && (
+          <>
+            <br />
+            <Box component="span" sx={{ color: "text.primary", fontWeight: 600 }}>
+              Most −{launch.percent}% indulási kedvezménnyel
+            </Box>
+          </>
+        )}
       </Typography>
     </Stack>
   );

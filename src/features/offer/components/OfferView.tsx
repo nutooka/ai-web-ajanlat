@@ -132,10 +132,8 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
             }}
           >
             <Box>
-              <Typography variant="overline" sx={{ color: palette.accent }}>
-                Személyre szabott ajánlat
-              </Typography>
-              <Typography variant="h2" component="h1" sx={{ mt: 1, mb: 2 }}>
+              <Typography sx={{ opacity: 0.65, fontSize: 14 }}>Személyre szabott ajánlat</Typography>
+              <Typography variant="h2" component="h1" sx={{ mt: 0.5, mb: 2 }}>
                 {offer.projectTypeLabel}
               </Typography>
               <Typography sx={{ opacity: 0.8, fontSize: "1.0625rem", lineHeight: 1.65, maxWidth: 620 }}>{offer.summary}</Typography>

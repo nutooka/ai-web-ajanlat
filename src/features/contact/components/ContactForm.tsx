@@ -119,10 +119,7 @@ export function ContactForm({ answers, packageId, packageName }: ContactFormProp
           <motion.div key="form" exit={{ opacity: 0 }}>
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "0.8fr 1.2fr" }, gap: { xs: 4, md: 6 } }}>
               <Box>
-                <Typography variant="overline" color="primary">
-                  Utolsó lépés
-                </Typography>
-                <Typography variant="h3" component="h2" sx={{ mt: 1, mb: 2 }}>
+                <Typography variant="h3" component="h2" sx={{ mb: 2 }}>
                   Küldd el az ajánlatot, és egyeztessünk
                 </Typography>
                 <Typography variant="body1" color="text.secondary">

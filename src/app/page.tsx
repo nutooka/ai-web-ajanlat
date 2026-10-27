@@ -1,6 +1,5 @@
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -42,12 +41,6 @@ export default function HomePage() {
         <Container maxWidth="lg" sx={{ pt: { xs: 4, md: 8 }, pb: { xs: 8, md: 12 } }}>
           <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1.15fr 0.85fr" }, gap: { xs: 6, md: 8 }, alignItems: "center" }}>
             <Stack spacing={3.5} sx={{ alignItems: "flex-start" }}>
-              {launch.enabled && (
-                <Chip
-                  label={`${launch.label}: −${launch.percent}% minden projektre`}
-                  sx={{ background: palette.accent, color: palette.ink, boxShadow: "0 6px 20px -8px rgba(90,115,0,.5)" }}
-                />
-              )}
               <Typography variant="h1">
                 Tervezzük meg együtt a&nbsp;weboldalad.
               </Typography>
@@ -62,10 +55,7 @@ export default function HomePage() {
 
         <Box sx={{ background: palette.ink, color: "#fff", position: "relative", overflow: "hidden" }}>
           <Container maxWidth="lg" sx={{ py: { xs: 8, md: 11 }, position: "relative" }}>
-            <Typography variant="overline" sx={{ color: palette.accent }}>
-              Hogyan működik?
-            </Typography>
-            <Typography variant="h2" sx={{ mt: 1, mb: 5, maxWidth: 620 }}>
+            <Typography variant="h2" sx={{ mb: 5, maxWidth: 620 }}>
               Mintha egy tanácsadóval ülnél le – csak gyorsabb.
             </Typography>
             <Box component="ol" sx={{ listStyle: "none", p: 0, m: 0, display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, gap: 2.5 }}>
@@ -91,10 +81,7 @@ export default function HomePage() {
         </Box>
 
         <Container maxWidth="lg" sx={{ py: { xs: 8, md: 11 } }}>
-          <Typography variant="overline" color="primary">
-            Kezdd itt
-          </Typography>
-          <Typography variant="h2" sx={{ mt: 1, mb: 5 }}>
+          <Typography variant="h2" sx={{ mb: 5 }}>
             Milyen projektben gondolkodsz?
           </Typography>
           <ProjectTypeGrid />
@@ -103,10 +90,7 @@ export default function HomePage() {
         <Container maxWidth="lg" sx={{ pb: { xs: 8, md: 11 } }}>
           <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "0.9fr 1.1fr" }, gap: { xs: 4, md: 8 }, alignItems: "start" }}>
             <Box>
-              <Typography variant="overline" color="primary">
-                Mit kapsz?
-              </Typography>
-              <Typography variant="h2" sx={{ mt: 1 }}>
+              <Typography variant="h2">
                 Nem csak egy szám – egy valódi ajánlat.
               </Typography>
             </Box>
