@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Answers } from "@/features/questionnaire/types";
 import { escapeHtml } from "./email/templates";
+import { memoryStore } from "./__fixtures__/memoryStore";
 import { submitOffer, type OutgoingEmail } from "./submitOffer";
 
 const answers: Answers = {
@@ -39,6 +40,33 @@ function setup() {
 }
 
 describe("submitOffer", () => {
+  it("does not give the discount again to the same contact from a fresh browser", async () => {
+    const store = memoryStore();
+    const firstOpen = Date.UTC(2026, 9, 27, 9, 0);
+    const lockDeps = { firstSeen: store, lockSecret: "test-secret-0123456789" };
+    const contact = { phone: "+40 712 345 678", wantsCopy: false, consent: true };
+
+    // Day 1: real first request, 10 minutes after opening → −25%.
+    const first = setup();
+    await submitOffer(submission({ contact }), { ...first.deps, ...lockDeps, offerOpenedAt: firstOpen, now: () => firstOpen + 10 * 60_000 });
+    expect(first.sent[0].text).toContain("Gyors döntés kedvezmény: −25% (rögzítve)");
+    expect(first.sent[0].text).toContain("Ismételt kérés?: Nem");
+
+    // 3 hours later: new browser (fresh cookie), same number written differently → no discount, flagged.
+    const later = firstOpen + 3 * 60 * 60_000;
+    const second = setup();
+    await submitOffer(submission({ contact: { ...contact, phone: "0712 345 678" } }), { ...second.deps, ...lockDeps, offerOpenedAt: later, now: () => later + 60_000 });
+    expect(second.sent[0].text).toContain("Gyors döntés kedvezmény: nem járt");
+    expect(second.sent[0].text).toContain("Ismételt kérés?: IGEN");
+  });
+
+  it("keeps working when the store fails", async () => {
+    const { sent, deps } = setup();
+    const result = await submitOffer(submission(), { ...deps, firstSeen: async () => Promise.reject(new Error("down")), lockSecret: "test-secret-0123456789" });
+    expect(result.status).toBe(200);
+    expect(sent[0].text).toContain("Nem sikerült ellenőrizni");
+  });
+
   it("puts everything into the owner e-mail", async () => {
     const { sent, deps } = setup();
     const opened = Date.UTC(2026, 9, 27, 10, 0);

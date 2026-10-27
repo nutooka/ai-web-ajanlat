@@ -85,6 +85,8 @@ export interface SubmissionMeta {
   /** First time this browser opened an offer (signed cookie); null if no valid cookie arrived. */
   offerOpenedAt: number | null;
   offerAgeMinutes: number;
+  /** Repeat-request check against the per-contact store. */
+  lock?: { status: "off" | "error" } | { status: "first" | "repeat"; firstSeenAt: number };
 }
 
 const dateTime = new Intl.DateTimeFormat("hu-HU", { timeZone: "Europe/Bucharest", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
@@ -117,6 +119,20 @@ Csomag: <b>${escapeHtml(pkg.name)}</b> · <b>${escapeHtml(formatRon(pkg.finalPri
 </td></tr></table>`;
 }
 
+function lockLabel(meta: SubmissionMeta): string {
+  const lock = meta.lock ?? { status: "off" };
+  switch (lock.status) {
+    case "repeat":
+      return `IGEN – erről az elérhetőségről már kért ajánlatot (első: ${dateTime.format(lock.firstSeenAt)}); a kedvezményt az első időponttól számoltuk`;
+    case "first":
+      return "Nem, ez az első kérés erről az elérhetőségről";
+    case "error":
+      return "Nem sikerült ellenőrizni (a tároló nem válaszolt) – csak a süti alapján számoltunk";
+    default:
+      return "Nincs ellenőrizve (a tároló nincs beállítva)";
+  }
+}
+
 function timingRows(offer: Offer, meta: SubmissionMeta): [string, string][] {
   const quick = offer.quote.quickDecision;
   return [
@@ -124,6 +140,7 @@ function timingRows(offer: Offer, meta: SubmissionMeta): [string, string][] {
     ["Ajánlat első megnyitása", meta.offerOpenedAt === null ? "ismeretlen (nem érkezett érvényes süti)" : dateTime.format(meta.offerOpenedAt)],
     ["Ennyi idő után kért egyeztetést", meta.offerOpenedAt === null ? "–" : formatDuration(meta.offerAgeMinutes)],
     ["Gyors döntés kedvezmény", quick.percent > 0 ? `−${quick.percent}% (rögzítve)` : "nem járt (lejárt az idő)"],
+    ["Ismételt kérés?", lockLabel(meta)],
   ];
 }
 

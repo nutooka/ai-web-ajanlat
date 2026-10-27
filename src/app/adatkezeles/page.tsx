@@ -28,6 +28,7 @@ const sections: { title: string; body: string[] }[] = [
     body: [
       "A kérdőívre adott válaszaidat a saját böngésződben (localStorage) tároljuk, hogy később folytathasd a kitöltést. Ezek a szervereinkre csak akkor jutnak el, ha az ajánlatot elküldöd.",
       "Az ajánlat elküldésekor: a kérdőívre adott válaszokat, a választott csomagot, valamint az általad önkéntesen megadott nevet, e-mail-címet, telefonszámot, cégnevet és megjegyzést. Visszaélések megelőzése érdekében a kérés IP-címét rövid ideig, csak a memóriában kezeljük.",
+      "A gyors döntés kedvezmény ismételt igénylésének kiszűrésére a megadott telefonszámból, illetve e-mail-címből titkos kulccsal képzett, visszafejthetetlen lenyomatot és az ajánlat első megnyitásának időpontját tároljuk. Magát a telefonszámot vagy e-mail-címet ebben a tárolóban nem őrizzük.",
     ],
   },
   {
@@ -42,6 +43,7 @@ const sections: { title: string; body: string[] }[] = [
     body: [
       `Az ajánlatkéréseket legfeljebb ${privacy.retentionMonths} hónapig őrizzük, vagy addig, amíg vissza nem vonod a hozzájárulásodat. Ha szerződés jön létre, a jogszabályban előírt ideig őrizzük.`,
       "A böngésződben tárolt válaszokat bármikor törölheted az „Újrakezdem” gombbal vagy a böngésző adatainak törlésével.",
+      "A kedvezmény-ellenőrzéshez tárolt lenyomat és időpont 30 nap után automatikusan törlődik.",
     ],
   },
   {
@@ -49,6 +51,7 @@ const sections: { title: string; body: string[] }[] = [
     body: [
       "E-mail-küldés: Resend (Resend, Inc.) – az ajánlatkérést e-mailben továbbítja.",
       "Tárhely: Vercel (Vercel Inc.) – a weboldal üzemeltetése.",
+      "Kulcs-érték tároló: Upstash (Upstash, Inc.) – a kedvezmény-ellenőrzéshez használt lenyomatok 30 napos tárolása.",
       "Az adatfeldolgozók az EU-n kívül is kezelhetnek adatot; ilyenkor az Európai Bizottság általános szerződési feltételei biztosítják a megfelelő védelmet.",
     ],
   },

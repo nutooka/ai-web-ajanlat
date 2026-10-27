@@ -1,6 +1,7 @@
 import { buildOffer } from "@/features/offer/buildOffer";
 import { isComplete, pruneAnswers } from "@/features/questionnaire/engine";
-import { customerEmail, ownerEmail, type EmailContent } from "./email/templates";
+import { contactKeys, type FirstSeenStore } from "./contactLock";
+import { customerEmail, ownerEmail, type EmailContent, type SubmissionMeta } from "./email/templates";
 import { submissionSchema } from "./schema";
 import { checkSpamSignals } from "./spam";
 
@@ -24,6 +25,10 @@ export interface SubmitDeps {
   offerOpenedAt?: number | null;
   /** Injectable clock for tests. */
   now?: () => number;
+  /** Per-contact "first seen" store (see contactLock); null when not configured. */
+  firstSeen?: FirstSeenStore | null;
+  /** Secret used to hash contacts for the store. */
+  lockSecret?: string;
 }
 
 /**
@@ -47,7 +52,27 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
   if (!checkSpamSignals({ website, elapsedMs }).ok) return { status: 200, body: { ok: true, copySent: false } };
 
   const answers = pruneAnswers(rawAnswers);
-  const offer = isComplete(answers) ? buildOffer(answers, { offerAgeMinutes: deps.offerAgeMinutes ?? 0 }) : null;
+  if (!isComplete(answers)) return { status: 400, body: { ok: false, error: "A kérdőív hiányos. Kérjük, töltsd ki újra." } };
+
+  // Timing: the signed cookie, unless this contact already started a clock earlier (another browser, cleared cookies…).
+  const now = (deps.now ?? Date.now)();
+  const cookieOpenedAt = deps.offerOpenedAt ?? null;
+  let effectiveOpenedAt = cookieOpenedAt;
+  let lock: SubmissionMeta["lock"] = { status: "off" };
+  if (deps.firstSeen && deps.lockSecret) {
+    try {
+      const result = await deps.firstSeen(contactKeys(contact, deps.lockSecret), cookieOpenedAt ?? now);
+      if (result.firstSeenAt < (cookieOpenedAt ?? now)) effectiveOpenedAt = result.firstSeenAt;
+      lock = { status: result.repeat ? "repeat" : "first", firstSeenAt: result.firstSeenAt };
+    } catch (error) {
+      console.error("[offer] first-seen store failed", error);
+      lock = { status: "error" };
+    }
+  }
+  const offerAgeMinutes =
+    effectiveOpenedAt === null ? (deps.offerAgeMinutes ?? 0) : Math.max(0, (now - effectiveOpenedAt) / 60_000);
+
+  const offer = buildOffer(answers, { offerAgeMinutes });
   if (!offer) return { status: 400, body: { ok: false, error: "A kérdőív hiányos. Kérjük, töltsd ki újra." } };
 
   if (!deps.send || !deps.ownerEmail) {
@@ -55,7 +80,7 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
   }
 
   try {
-    const meta = { submittedAt: (deps.now ?? Date.now)(), offerOpenedAt: deps.offerOpenedAt ?? null, offerAgeMinutes: deps.offerAgeMinutes ?? 0 };
+    const meta: SubmissionMeta = { submittedAt: now, offerOpenedAt: effectiveOpenedAt, offerAgeMinutes, lock };
     await deps.send({ ...ownerEmail(offer, packageId, contact, meta), to: deps.ownerEmail, replyTo: contact.email });
   } catch (error) {
     console.error("[offer] owner e-mail failed", error);

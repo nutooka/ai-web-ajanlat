@@ -1,5 +1,6 @@
 import { createResendSender } from "@/features/contact/resendSender";
 import { createRateLimiter } from "@/features/contact/spam";
+import { createUpstashFirstSeenStore } from "@/features/contact/contactLock";
 import { submitOffer } from "@/features/contact/submitOffer";
 import { OFFER_CLOCK_COOKIE, offerAgeMinutes, offerClockSecret, readCookie, verifyOfferClock } from "@/features/offer/offerClock";
 
@@ -34,6 +35,8 @@ export async function POST(request: Request) {
     ownerEmail: process.env.OFFER_OWNER_EMAIL,
     offerAgeMinutes: offerAgeMinutes(issuedAt, now),
     offerOpenedAt: issuedAt,
+    firstSeen: createUpstashFirstSeenStore(),
+    lockSecret: offerClockSecret(),
   });
   return Response.json(result.body, { status: result.status });
 }
