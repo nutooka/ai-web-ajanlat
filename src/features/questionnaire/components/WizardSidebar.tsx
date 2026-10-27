@@ -4,15 +4,13 @@ import CheckCircleOutlineOutlined from "@mui/icons-material/CheckCircleOutlineOu
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { AnimatePresence, motion } from "motion/react";
 import { PROJECT_TYPE_LABELS } from "@/features/offer/buildOffer";
 import type { Quote } from "@/features/pricing/types";
-import { formatRon } from "@/lib/format";
 import { palette } from "@/theme/tokens";
 
 const MAX_FEATURES = 6;
 
-/** Desktop-only "consultant" panel: what we know so far and the live price range. */
+/** Desktop-only "consultant" panel: what we know so far. Prices are shown only at the end. */
 export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; answeredCount: number }) {
   const features = quote?.packages.standard.items.filter((item) => item.source === "answer").map((item) => item.label) ?? [];
 
@@ -25,26 +23,9 @@ export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; a
             {quote ? PROJECT_TYPE_LABELS[quote.projectType] : "Még formálódik…"}
           </Typography>
 
-          <Box sx={{ mt: 3 }}>
-            <Typography sx={{ fontSize: 13, opacity: 0.65 }}>Becsült keret (Basic – Premium)</Typography>
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.div
-                key={quote ? `${quote.packages.basic.finalPrice}-${quote.packages.premium.finalPrice}` : "none"}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-              >
-                <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 24, letterSpacing: "-0.02em" }}>
-                  {quote ? `${formatRon(quote.packages.basic.finalPrice)} – ${formatRon(quote.packages.premium.finalPrice)}` : "–"}
-                </Typography>
-              </motion.div>
-            </AnimatePresence>
-            {quote && quote.packages.standard.discounts.length > 0 && (
-              <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1.25, py: 0.25, borderRadius: 999, background: palette.lime, color: palette.ink, fontSize: 12, fontWeight: 700 }}>
-                Indulási kedvezménnyel
-              </Box>
-            )}
-          </Box>
+          <Typography variant="body2" sx={{ mt: 2, color: palette.inkMuted }}>
+            A pontos árat és a három csomagot a kérdések végén mutatjuk meg.
+          </Typography>
 
           {features.length > 0 && (
             <Stack component="ul" spacing={1} sx={{ listStyle: "none", p: 0, m: 0, mt: 3, pt: 2.5, borderTop: "1px solid rgba(255,255,255,.12)" }}>

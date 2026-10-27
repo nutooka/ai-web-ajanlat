@@ -15,7 +15,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { calculateQuote } from "@/features/pricing/engine";
-import { formatRon } from "@/lib/format";
 import { useWizardSnapshot, wizardStore } from "@/lib/storage";
 import { palette } from "@/theme/tokens";
 import {
@@ -75,7 +74,6 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
   const typeKnown = getEffectiveProjectType(answers) !== undefined;
 
   const quote = useMemo(() => calculateQuote(answers), [answers]);
-  const estimate = quote?.packages.standard.finalPrice;
   const answeredCount = visible.filter((item) => isQuestionAnswered(item, answers[item.id])).length;
 
   useEffect(() => {
@@ -173,18 +171,6 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
         <Container maxWidth="lg" sx={{ py: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
           <Logo tone="light" />
           <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-            {estimate !== undefined && (
-              <Box sx={{ display: { xs: "none", sm: "flex", lg: "none" }, alignItems: "baseline", gap: 1, px: 1.75, py: 0.75, borderRadius: 999, background: palette.inkSoft }}>
-                <Typography variant="body2" sx={{ color: palette.inkMuted }}>
-                  Becslés:
-                </Typography>
-                <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.span key={estimate} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} style={{ fontWeight: 700, fontVariantNumeric: "tabular-nums", color: palette.lime }}>
-                    {formatRon(estimate)}
-                  </motion.span>
-                </AnimatePresence>
-              </Box>
-            )}
             <Stack direction="row" spacing={0.75} sx={{ alignItems: "center", color: palette.inkMuted }} aria-live="polite">
               <CloudDoneOutlined sx={{ fontSize: 18 }} />
               <Typography variant="body2" sx={{ display: { xs: "none", md: "block" } }}>
