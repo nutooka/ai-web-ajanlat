@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { AnimatePresence, animate, motion, useMotionValue, useTransform } from "motion/react";
+import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import { calculateQuote } from "@/features/pricing/engine";
 import { SAMPLE_COMPANY_ANSWERS } from "@/features/pricing/startingPrice";
@@ -13,6 +13,7 @@ import { formatRon, formatWeeks } from "@/lib/format";
 import { ease, palette, shadow } from "@/theme/tokens";
 
 const VISIBLE_ITEMS = 5;
+const TOUR: PackageId[] = ["premium", "basic", "standard"];
 const CYCLE_MS = 3200;
 const groupFormatter = new Intl.NumberFormat("hu-HU", { maximumFractionDigits: 0, useGrouping: "always" });
 
@@ -31,13 +32,19 @@ export function OfferPreview() {
     return () => controls.stop();
   }, [pkg.finalPrice, price]);
 
+  // One tour (Premium → Basic → back to Standard), then it rests. Any interaction stops it for good.
+  const reduceMotion = useReducedMotion();
   useEffect(() => {
-    if (paused) return;
+    if (paused || reduceMotion) return;
+    let step = 0;
     const timer = window.setInterval(() => {
-      setActive((current) => PACKAGE_IDS[(PACKAGE_IDS.indexOf(current) + 1) % PACKAGE_IDS.length]);
+      const next = TOUR[step];
+      step += 1;
+      if (next) setActive(next);
+      if (step >= TOUR.length) window.clearInterval(timer);
     }, CYCLE_MS);
     return () => window.clearInterval(timer);
-  }, [paused]);
+  }, [paused, reduceMotion]);
 
   const items = pkg.items.slice(0, VISIBLE_ITEMS);
   const hidden = pkg.items.length - items.length;
@@ -47,8 +54,8 @@ export function OfferPreview() {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.25, ease: ease.out }}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      onPointerDown={() => setPaused(true)}
+      onFocusCapture={() => setPaused(true)}
     >
       <Box
         role="region"
@@ -64,12 +71,14 @@ export function OfferPreview() {
               <ButtonBase
                 key={id}
                 role="tab"
+                id={`preview-tab-${id}`}
+                aria-controls="preview-panel"
                 aria-selected={id === active}
                 onClick={() => {
                   setActive(id);
                   setPaused(true);
                 }}
-                sx={{ position: "relative", px: 1.5, py: 0.75, borderRadius: 1.5, fontSize: 13, fontWeight: 600, color: id === active ? palette.ink : palette.muted }}
+                sx={{ position: "relative", minHeight: 44, px: 1.5, borderRadius: 1.5, fontSize: 13, fontWeight: 600, color: id === active ? palette.ink : palette.muted }}
               >
                 {id === active && (
                   <motion.span
@@ -84,7 +93,7 @@ export function OfferPreview() {
           </Box>
         </Stack>
 
-        <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0, minHeight: 5 * 41 + 24 }}>
+        <Box id="preview-panel" role="tabpanel" aria-labelledby={`preview-tab-${active}`} component="ul" sx={{ listStyle: "none", p: 0, m: 0, minHeight: 5 * 41 + 24 }}>
           <AnimatePresence initial={false} mode="popLayout">
             {items.map((item) => (
               <motion.li
