@@ -8,7 +8,9 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { FluidBlobs } from "@/components/home/FluidBlobs";
 import { HeroActions } from "@/components/home/HeroActions";
+import { HomePricing } from "@/components/home/HomePricing";
 import { HeroTitle } from "@/components/home/HeroTitle";
 import { OfferPreview } from "@/components/home/OfferPreview";
 import { ProjectTypeGrid } from "@/components/home/ProjectTypeGrid";
@@ -51,7 +53,7 @@ export default function HomePage() {
   return (
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
       {/* Hero */}
-      <Box sx={{ background: palette.ink, color: "#fff" }}>
+      <Box sx={{ background: palette.ink, color: "#fff", overflow: "hidden" }}>
         <Container maxWidth="lg" component="header" sx={{ py: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Logo tone="light" />
           <LinkButton href="/tervezo" endIcon={<ArrowForward />} sx={{ color: "#fff", display: { xs: "none", sm: "inline-flex" } }}>
@@ -71,7 +73,12 @@ export default function HomePage() {
               </Typography>
               <HeroActions />
             </Stack>
-            <OfferPreview />
+            <Box sx={{ position: "relative", py: { xs: 2, md: 4 } }}>
+              <FluidBlobs />
+              <Box sx={{ position: "relative", zIndex: 1 }}>
+                <OfferPreview />
+              </Box>
+            </Box>
           </Box>
         </Container>
       </Box>
@@ -100,6 +107,24 @@ export default function HomePage() {
             ))}
           </Box>
         </Container>
+
+        {/* Packages */}
+        <Box component="section" sx={{ background: palette.cardBodyDeep, color: "#fff", overflow: "hidden" }}>
+          <Container maxWidth="lg" sx={{ py: { xs: 9, md: 13 } }}>
+            <Box className="reveal" sx={{ textAlign: "center", maxWidth: 680, mx: "auto", mb: { xs: 5, md: 8 } }}>
+              <Typography variant="h2">
+                Három csomag,{" "}
+                <Box component="span" sx={{ background: "linear-gradient(90deg, #FFB547, #FF5E7E)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>
+                  egy átlátható ár.
+                </Box>
+              </Typography>
+              <Typography sx={{ mt: 2, color: palette.inkMuted, fontSize: "1.125rem" }}>
+                Így néz ki egy 6–10 oldalas céges weboldal ajánlata. A te csomagjaid a válaszaidból épülnek fel.
+              </Typography>
+            </Box>
+            <HomePricing />
+          </Container>
+        </Box>
 
         {/* Project types with real starting prices */}
         <Box component="section" sx={{ background: palette.surface, borderBlock: 1, borderColor: "divider" }}>

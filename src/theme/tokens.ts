@@ -15,6 +15,17 @@ export const palette = {
   limeHover: "#C6F22B",
   limeTint: "#F3FBD6",
   success: "#127A4B",
+  cardBody: "#1C1B2E",
+  cardBodyDeep: "#121124",
+  check: "#7BE495",
+  cross: "#FF6B81",
+} as const;
+
+/** Each package owns a gradient – used for pricing card headers, bubbles and buttons. */
+export const packageThemes = {
+  basic: { gradient: "linear-gradient(135deg, #2BD2C9 0%, #3A7BFF 100%)", bubble: "#2F9BFF", headerText: "#FFFFFF" },
+  standard: { gradient: "linear-gradient(135deg, #FFB547 0%, #FF5E7E 100%)", bubble: "#FF7A6B", headerText: "#FFFFFF" },
+  premium: { gradient: "linear-gradient(135deg, #D4FF3A 0%, #2BD98A 100%)", bubble: "#5BE07A", headerText: "#0E0F12" },
 } as const;
 
 export const ease = {

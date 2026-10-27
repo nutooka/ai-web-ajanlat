@@ -25,7 +25,7 @@ import { useWizardSnapshot, wizardStore } from "@/lib/storage";
 import { palette } from "@/theme/tokens";
 import type { PackageId } from "@/features/pricing/types";
 import { buildOffer } from "../buildOffer";
-import { PackageSelector } from "./PackageSelector";
+import { PricingCards } from "./PricingCards";
 import { PriceBreakdown } from "./PriceBreakdown";
 import { StickyCta } from "./StickyCta";
 
@@ -181,7 +181,9 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
                 : "Már a Basic csomag is meghaladja a megadott keretet. Egyeztetéskor megnézzük, hogyan lehet szakaszolni vagy egyszerűsíteni a projektet."}
             </Typography>
           )}
-          <PackageSelector quote={offer.quote} selected={packageId} onSelect={selectPackage} />
+          <Box sx={{ pt: { md: 2 } }}>
+            <PricingCards quote={offer.quote} selected={packageId} onSelect={selectPackage} />
+          </Box>
         </Box>
 
         <Box sx={{ mt: 4, display: "grid", gridTemplateColumns: { xs: "1fr", md: "1.35fr 0.65fr" }, gap: 3, alignItems: "start" }}>
