@@ -110,7 +110,7 @@ export default function HomePage() {
         </Container>
 
         {/* Packages */}
-        <Box component="section" sx={{ background: palette.cardBodyDeep, color: "#fff", overflow: "hidden" }}>
+        <Box component="section" sx={{ background: palette.ink, color: "#fff", overflow: "hidden" }}>
           <Container maxWidth="lg" sx={{ py: { xs: 9, md: 13 } }}>
             <Box className="reveal" sx={{ textAlign: "center", maxWidth: 680, mx: "auto", mb: { xs: 5, md: 8 } }}>
               <Typography variant="h2">

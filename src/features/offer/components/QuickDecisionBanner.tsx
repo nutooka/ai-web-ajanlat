@@ -36,7 +36,7 @@ export function QuickDecisionBanner({ clock, onCta }: { clock: OfferClock | null
           background: state.expired ? palette.line : "linear-gradient(120deg, #FFB547, #FF5E7E 45%, #D4FF3A)",
         }}
       >
-        <Box sx={{ borderRadius: "14px", background: palette.cardBodyDeep, color: "#fff", p: { xs: 2.5, md: 3 }, display: "grid", gridTemplateColumns: { xs: "1fr", md: "1.1fr 1fr" }, gap: { xs: 2.5, md: 4 }, alignItems: "center" }}>
+        <Box sx={{ borderRadius: "14px", background: palette.ink, color: "#fff", p: { xs: 2.5, md: 3 }, display: "grid", gridTemplateColumns: { xs: "1fr", md: "1.1fr 1fr" }, gap: { xs: 2.5, md: 4 }, alignItems: "center" }}>
           <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
             <Box sx={{ flexShrink: 0, width: 52, height: 52, borderRadius: 3, display: "grid", placeItems: "center", background: state.expired ? palette.inkSoft : palette.lime, color: palette.ink }}>
               <TimerOutlined />

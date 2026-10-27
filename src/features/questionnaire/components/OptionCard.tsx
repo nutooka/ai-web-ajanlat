@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import { OPTION_ICONS } from "@/components/icons";
-import { palette } from "@/theme/tokens";
+import { palette, shadow } from "@/theme/tokens";
 import type { QuestionOption } from "../types";
 
 interface OptionCardProps {
@@ -45,7 +45,7 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
         "&:hover": {
           borderColor: palette.ink,
           transform: "translateY(-1px)",
-          boxShadow: selected ? `inset 0 0 0 1px ${palette.ink}` : "0 12px 28px -18px rgba(14,15,18,.4)",
+          boxShadow: selected ? `inset 0 0 0 1px ${palette.ink}` : shadow.raised,
         },
         "&:active": { transform: "scale(0.99)" },
         "&.Mui-focusVisible": { outline: `2px solid ${palette.ink}`, outlineOffset: 3 },

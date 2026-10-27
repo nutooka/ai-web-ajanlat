@@ -10,7 +10,7 @@ import { calculateQuote } from "@/features/pricing/engine";
 import { SAMPLE_COMPANY_ANSWERS } from "@/features/pricing/startingPrice";
 import { PACKAGE_IDS, type PackageId } from "@/features/pricing/types";
 import { formatRon, formatWeeks } from "@/lib/format";
-import { ease, palette } from "@/theme/tokens";
+import { ease, palette, shadow } from "@/theme/tokens";
 
 const VISIBLE_ITEMS = 5;
 const CYCLE_MS = 3200;
@@ -53,7 +53,7 @@ export function OfferPreview() {
       <Box
         role="region"
         aria-label="Példa ajánlat egy céges weboldalra"
-        sx={{ background: palette.surface, color: palette.ink, borderRadius: 4, p: { xs: 2.5, sm: 3.5 }, boxShadow: "0 40px 80px -40px rgba(0,0,0,.65)" }}
+        sx={{ background: palette.surface, color: palette.ink, borderRadius: 4, p: { xs: 2.5, sm: 3.5 }, boxShadow: shadow.raisedOnDark }}
       >
         <Stack direction={{ xs: "column", sm: "row" }} sx={{ justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" }, mb: 2.5, gap: 1.5 }}>
           <Typography variant="body2" sx={{ fontWeight: 600, whiteSpace: "nowrap" }}>

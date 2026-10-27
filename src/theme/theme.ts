@@ -1,7 +1,7 @@
 "use client";
 
 import { alpha, createTheme } from "@mui/material/styles";
-import { palette } from "./tokens";
+import { palette, shadow } from "./tokens";
 
 const display = "var(--font-display), 'Bricolage Grotesque', system-ui, sans-serif";
 const body = "var(--font-body), 'Instrument Sans', system-ui, sans-serif";
@@ -66,7 +66,7 @@ export const theme = createTheme({
       variants: [
         {
           props: { variant: "contained", color: "primary" },
-          style: { "&:hover": { backgroundColor: palette.limeHover, boxShadow: `0 10px 30px -12px ${alpha(palette.lime, 0.9)}` } },
+          style: { "&:hover": { backgroundColor: palette.limeHover, boxShadow: shadow.raised } },
         },
       ],
       styleOverrides: {

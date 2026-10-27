@@ -43,7 +43,7 @@ function HeaderDecor({ bubble }: { bubble: string }) {
         preserveAspectRatio="none"
         sx={{ position: "absolute", left: 0, right: 0, bottom: -1, width: "100%", height: 54, display: "block" }}
       >
-        <path d="M0,38 C70,74 140,6 220,30 C290,52 340,58 400,24 L400,70 L0,70 Z" fill={palette.cardBody} />
+        <path d="M0,38 C70,74 140,6 220,30 C290,52 340,58 400,24 L400,70 L0,70 Z" fill={palette.inkSoft} />
       </Box>
       <Box sx={{ position: "absolute", width: 46, height: 46, borderRadius: "50%", left: 18, bottom: 6, background: bubble, opacity: 0.9 }} />
       <Box sx={{ position: "absolute", width: 16, height: 16, borderRadius: "50%", left: 72, bottom: 4, background: bubble, opacity: 0.75 }} />
@@ -88,7 +88,7 @@ export function PricingCards({ quote, selected, onSelect, ctaHref, onCta }: Pric
                 height: "100%",
                 borderRadius: 5,
                 overflow: "hidden",
-                background: palette.cardBody,
+                background: palette.inkSoft,
                 color: "#fff",
                 display: "flex",
                 flexDirection: "column",

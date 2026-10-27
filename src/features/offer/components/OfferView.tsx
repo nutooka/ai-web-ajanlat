@@ -183,7 +183,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
           <QuickDecisionBanner clock={clock} onCta={scrollToContact} />
         </Box>
 
-        <Stack direction="row" spacing={1.25} sx={{ alignItems: "flex-start", mt: 3, p: 2, borderRadius: 2, background: palette.limeTint }}>
+        <Stack direction="row" spacing={1.25} sx={{ alignItems: "flex-start", mt: 3, p: 2, borderRadius: 2, background: palette.surface, border: 1, borderColor: "divider" }}>
           <InfoOutlined sx={{ fontSize: 20, color: "text.primary", mt: "1px" }} />
           <Typography variant="body2">{offer.disclaimer}</Typography>
         </Stack>
@@ -196,7 +196,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
             Mindhárom a te válaszaidból épül fel – a különbség a terjedelemben és a szolgáltatásokban van.
           </Typography>
           {offer.quote.budget && (
-            <Typography variant="body2" sx={{ mb: 2, px: 2, py: 1.25, borderRadius: 2, display: "inline-block", background: palette.limeTint }}>
+            <Typography variant="body2" sx={{ mb: 2, px: 2, py: 1.25, borderRadius: 2, display: "inline-block", background: palette.surface, border: 1, borderColor: "divider" }}>
               {offer.quote.budget.withinBasic
                 ? `A megadott kereted alapján a(z) ${offer.quote.packages[offer.quote.recommended].name} csomagot ajánljuk.`
                 : "Már a Basic csomag is meghaladja a megadott keretet. Egyeztetéskor megnézzük, hogyan lehet szakaszolni vagy egyszerűsíteni a projektet."}
