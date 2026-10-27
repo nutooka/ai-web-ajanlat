@@ -6,7 +6,6 @@ import CloudDoneOutlined from "@mui/icons-material/CloudDoneOutlined";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
-import LinearProgress from "@mui/material/LinearProgress";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -27,6 +26,7 @@ import {
 } from "../engine";
 import type { AnswerValue, Answers } from "../types";
 import { QuestionStep } from "./QuestionStep";
+import { WaveProgress } from "./WaveProgress";
 import { WizardSidebar } from "./WizardSidebar";
 
 const AUTO_ADVANCE_MS = 260;
@@ -179,7 +179,7 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
             </Stack>
           </Stack>
         </Container>
-        <LinearProgress variant="determinate" value={progress} aria-label="Haladás" sx={{ borderRadius: 0, height: 4, background: palette.inkSoft }} />
+        <WaveProgress value={progress} label="Haladás a kérdőívben" />
       </Box>
 
       <Container

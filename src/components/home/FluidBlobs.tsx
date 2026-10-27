@@ -9,20 +9,26 @@ const SHAPES = [
   "35% 65% 55% 45% / 50% 60% 40% 50%",
 ];
 
-const BLOBS = [
-  { size: 260, top: "-8%", right: "-6%", gradient: "linear-gradient(135deg, #FFB547 0%, #FF5E7E 100%)", duration: 14 },
-  { size: 190, bottom: "-10%", left: "-8%", gradient: "linear-gradient(135deg, #2BD2C9 0%, #3A7BFF 100%)", duration: 17 },
-  { size: 110, top: "38%", right: "-12%", gradient: "linear-gradient(135deg, #D4FF3A 0%, #2BD98A 100%)", duration: 12 },
-  { size: 46, bottom: "6%", right: "8%", gradient: "linear-gradient(135deg, #FFB547 0%, #FF5E7E 100%)", duration: 10 },
-] as const;
+type Blob = { size: number; gradient: string; duration: number; top?: string; right?: string; bottom?: string; left?: string };
+
+const VARIANTS: Record<"hero" | "corner", Blob[]> = {
+  // Behind the hero preview card's outer edge only – never under its text.
+  hero: [
+    { size: 260, top: "-8%", right: "-6%", gradient: "linear-gradient(135deg, #FFB547 0%, #FF5E7E 100%)", duration: 14 },
+    { size: 190, bottom: "-10%", left: "-8%", gradient: "linear-gradient(135deg, #2BD2C9 0%, #3A7BFF 100%)", duration: 17 },
+    { size: 110, top: "38%", right: "-12%", gradient: "linear-gradient(135deg, #D4FF3A 0%, #2BD98A 100%)", duration: 12 },
+  ],
+  // A single shape peeking into the corner of a dark panel.
+  corner: [{ size: 150, top: "-60px", right: "-60px", gradient: "linear-gradient(135deg, #FFB547 0%, #FF5E7E 100%)", duration: 16 }],
+};
 
 /** Slowly morphing organic shapes behind the hero preview. Purely decorative. */
-export function FluidBlobs() {
+export function FluidBlobs({ variant = "hero" }: { variant?: "hero" | "corner" }) {
   const reduce = useReducedMotion();
 
   return (
     <Box aria-hidden sx={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }}>
-      {BLOBS.map((blob, index) => {
+      {VARIANTS[variant].map((blob, index) => {
         const { size, gradient, duration, ...position } = blob;
         return (
           <motion.div

@@ -6,6 +6,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { PROJECT_TYPE_LABELS } from "@/features/offer/buildOffer";
 import type { Quote } from "@/features/pricing/types";
+import { FluidBlobs } from "@/components/home/FluidBlobs";
 import { palette } from "@/theme/tokens";
 
 const MAX_FEATURES = 6;
@@ -17,7 +18,8 @@ export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; a
   return (
     <Stack spacing={2} component="aside" aria-label="A projekted összefoglalója" sx={{ position: "sticky", top: 112 }}>
       <Box sx={{ borderRadius: 4, p: 3, background: palette.ink, color: "#fff", position: "relative", overflow: "hidden" }}>
-        <Box sx={{ position: "relative" }}>
+        <FluidBlobs variant="corner" />
+        <Box sx={{ position: "relative", zIndex: 1, pr: 6 }}>
           <Typography sx={{ fontSize: 13, opacity: 0.65 }}>A projekted</Typography>
           <Typography variant="h5" component="p" sx={{ mt: 0.5 }}>
             {quote ? PROJECT_TYPE_LABELS[quote.projectType] : "Még formálódik…"}

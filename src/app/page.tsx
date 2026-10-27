@@ -15,8 +15,9 @@ import { HeroTitle } from "@/components/home/HeroTitle";
 import { OfferPreview } from "@/components/home/OfferPreview";
 import { ProjectTypeGrid } from "@/components/home/ProjectTypeGrid";
 import { LinkButton } from "@/components/LinkButton";
-import { Logo } from "@/components/Logo";
+import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { WaveDivider } from "@/components/WaveDivider";
 import { pricingConfig } from "@/config/pricing";
 import { startingPrice } from "@/features/pricing/startingPrice";
 import { RESOLVED_PROJECT_TYPES } from "@/features/questionnaire/types";
@@ -55,12 +56,7 @@ export default function HomePage() {
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
       {/* Hero */}
       <Box sx={{ background: palette.ink, color: "#fff", overflow: "hidden" }}>
-        <Container maxWidth="lg" component="header" sx={{ py: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Logo tone="light" />
-          <LinkButton href="/tervezo" endIcon={<ArrowForward />} sx={{ color: "#fff", display: { xs: "none", sm: "inline-flex" } }}>
-            Ajánlatkérés
-          </LinkButton>
-        </Container>
+        <SiteHeader />
         <Container maxWidth="lg" component="section" sx={{ pt: { xs: 5, md: 9 }, pb: { xs: 8, md: 13 } }}>
           <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1.1fr 0.9fr" }, gap: { xs: 6, md: 8 }, alignItems: "center" }}>
             <Stack spacing={4} sx={{ alignItems: "flex-start" }}>
@@ -83,6 +79,7 @@ export default function HomePage() {
           </Box>
         </Container>
       </Box>
+      <WaveDivider from={palette.ink} to={palette.paper} />
 
       <Box component="main" sx={{ flex: 1 }}>
         {/* How it works */}
@@ -109,15 +106,13 @@ export default function HomePage() {
           </Box>
         </Container>
 
+        <WaveDivider from={palette.paper} to={palette.ink} flip line={false} />
         {/* Packages */}
         <Box component="section" sx={{ background: palette.ink, color: "#fff", overflow: "hidden" }}>
           <Container maxWidth="lg" sx={{ py: { xs: 9, md: 13 } }}>
             <Box className="reveal" sx={{ textAlign: "center", maxWidth: 680, mx: "auto", mb: { xs: 5, md: 8 } }}>
               <Typography variant="h2">
-                Három csomag,{" "}
-                <Box component="span" sx={{ background: "linear-gradient(90deg, #FFB547, #FF5E7E)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>
-                  egy átlátható ár.
-                </Box>
+                Három csomag, egy átlátható ár.
               </Typography>
               <Typography sx={{ mt: 2, color: palette.inkMuted, fontSize: "1.125rem" }}>
                 Így néz ki egy 6–10 oldalas céges weboldal ajánlata. A te csomagjaid a válaszaidból épülnek fel.
@@ -127,8 +122,9 @@ export default function HomePage() {
           </Container>
         </Box>
 
+        <WaveDivider from={palette.ink} to={palette.surface} />
         {/* Project types with real starting prices */}
-        <Box component="section" sx={{ background: palette.surface, borderBlock: 1, borderColor: "divider" }}>
+        <Box component="section" sx={{ background: palette.surface }}>
           <Container maxWidth="lg" sx={{ py: { xs: 9, md: 13 } }}>
             <Stack direction={{ xs: "column", md: "row" }} className="reveal" sx={{ justifyContent: "space-between", alignItems: { md: "flex-end" }, gap: 2, mb: { xs: 4, md: 6 } }}>
               <Typography variant="h2" sx={{ maxWidth: 560 }}>
@@ -142,14 +138,12 @@ export default function HomePage() {
           </Container>
         </Box>
 
+        <WaveDivider from={palette.surface} to={palette.ink} flip line={false} />
         {/* Promises */}
         <Box component="section" sx={{ background: palette.ink, color: "#fff" }}>
           <Container maxWidth="lg" sx={{ py: { xs: 9, md: 13 }, display: "grid", gridTemplateColumns: { xs: "1fr", md: "0.9fr 1.1fr" }, gap: { xs: 5, md: 10 } }}>
             <Typography variant="h2" className="reveal">
-              Prémium minőség,{" "}
-              <Box component="span" sx={{ color: palette.lime }}>
-                kisvállalkozói áron.
-              </Box>
+              Prémium minőség, kisvállalkozói áron.
             </Typography>
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, columnGap: 5, rowGap: 4 }}>
               {promises.map((promise) => (
@@ -169,6 +163,7 @@ export default function HomePage() {
           </Container>
         </Box>
 
+        <WaveDivider from={palette.ink} to={palette.paper} />
         {/* FAQ */}
         <Container maxWidth="md" component="section" sx={{ py: { xs: 9, md: 13 } }}>
           <Typography variant="h2" className="reveal" sx={{ mb: 4 }}>
@@ -190,8 +185,9 @@ export default function HomePage() {
           </Box>
         </Container>
 
+        <WaveDivider from={palette.paper} to={palette.ink} flip line={false} />
         {/* Closing CTA */}
-        <Box component="section" sx={{ background: palette.lime, color: palette.ink }}>
+        <Box component="section" sx={{ background: palette.ink, color: "#fff" }}>
           <Container
             maxWidth="lg"
             sx={{ py: { xs: 8, md: 11 }, display: "flex", flexDirection: { xs: "column", md: "row" }, alignItems: { md: "center" }, justifyContent: "space-between", gap: 4 }}
@@ -200,17 +196,26 @@ export default function HomePage() {
               <Typography variant="h2" sx={{ maxWidth: 640 }}>
                 Négy perc, és tudod, mennyibe kerül.
               </Typography>
-              <Typography sx={{ mt: 1.5, fontSize: "1.125rem" }}>
-                Ingyenes, kötelezettség nélkül{bestPercent > 0 ? ` – és ha 1 órán belül kérsz egyeztetést, −${bestPercent}% kedvezmény.` : "."}
+              <Typography sx={{ mt: 1.5, fontSize: "1.125rem", color: palette.inkMuted }}>
+                Ingyenes, kötelezettség nélkül.
+                {bestPercent > 0 && (
+                  <>
+                    {" "}
+                    <Box component="span" sx={{ color: palette.amber, fontWeight: 600 }}>
+                      −{bestPercent}% kedvezmény, ha az ajánlatod elkészülte után 1 órán belül egyeztetést kérsz.
+                    </Box>
+                  </>
+                )}
               </Typography>
             </Box>
-            <LinkButton href="/tervezo" variant="contained" color="secondary" size="large" endIcon={<ArrowForward />} sx={{ alignSelf: { xs: "flex-start", md: "center" }, flexShrink: 0 }}>
+            <LinkButton href="/tervezo" variant="contained" color="primary" size="large" endIcon={<ArrowForward />} sx={{ alignSelf: { xs: "flex-start", md: "center" }, flexShrink: 0 }}>
               Megtervezem a projektem
             </LinkButton>
           </Container>
         </Box>
       </Box>
 
+      <WaveDivider from={palette.ink} to={palette.paper} />
       <SiteFooter />
     </Box>
   );

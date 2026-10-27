@@ -2,7 +2,9 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import type { Metadata } from "next";
-import { Logo } from "@/components/Logo";
+import { SiteHeader } from "@/components/SiteHeader";
+import { WaveDivider } from "@/components/WaveDivider";
+import { palette } from "@/theme/tokens";
 import { SiteFooter } from "@/components/SiteFooter";
 import { siteConfig } from "@/config/site";
 
@@ -69,9 +71,8 @@ const sections: { title: string; body: string[] }[] = [
 export default function PrivacyPage() {
   return (
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
-      <Container maxWidth="lg" component="header" sx={{ py: 3 }}>
-        <Logo />
-      </Container>
+      <SiteHeader />
+      <WaveDivider from={palette.ink} to={palette.paper} height={48} />
       <Container component="main" maxWidth="md" sx={{ flex: 1, py: { xs: 4, md: 8 } }}>
         <Typography variant="h2" component="h1" sx={{ mb: 1 }}>
           Adatkezelési tájékoztató
