@@ -20,7 +20,7 @@ const sections: { title: string; body: string[] }[] = [
     title: "1. Az adatkezelő",
     body: [
       `${company.legalName}, székhely: ${company.address}, EUID / cégjegyzékszám: ${company.registrationNumber}, adószám (CUI): ${company.taxId}.`,
-      `Kapcsolat: ${company.email}, ${company.phone}.`,
+      ...(company.email || company.phone ? [`Kapcsolat: ${[company.email, company.phone].filter(Boolean).join(", ")}.`] : []),
     ],
   },
   {
@@ -56,7 +56,7 @@ const sections: { title: string; body: string[] }[] = [
     title: "6. A jogaid",
     body: [
       "Kérheted az adataidhoz való hozzáférést, azok helyesbítését, törlését, az adatkezelés korlátozását, tiltakozhatsz az adatkezelés ellen, kérheted az adathordozhatóságot, és bármikor visszavonhatod a hozzájárulásodat (ez nem érinti a korábbi adatkezelés jogszerűségét).",
-      `Kérésedet a(z) ${company.email} címen jelezheted. Panasszal a romániai adatvédelmi hatósághoz (ANSPDCP, www.dataprotection.ro) fordulhatsz.`,
+      `${company.email ? `Kérésedet a(z) ${company.email} címen vagy` : "Kérésedet"} a székhelyünkre küldött levélben jelezheted. Panasszal a romániai adatvédelmi hatósághoz (ANSPDCP, www.dataprotection.ro) fordulhatsz.`,
     ],
   },
   {

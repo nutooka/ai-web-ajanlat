@@ -2,7 +2,7 @@ import { siteConfig } from "@/config/site";
 import type { Offer } from "@/features/offer/buildOffer";
 import type { PackageId } from "@/features/pricing/types";
 import { formatHours, formatRon, formatWeeks } from "@/lib/format";
-import type { ContactData } from "../schema";
+import { CALLBACK_LABELS, type ContactData } from "../schema";
 
 export interface EmailContent {
   subject: string;
@@ -74,6 +74,7 @@ function contactRows(contact: ContactData): [string, string][] {
     ["Telefon", contact.phone ?? "–"],
     ["Cég", contact.company ?? "–"],
     ["Megjegyzés", contact.message ?? "–"],
+    ["Mikor keressük", contact.callbackTime ? CALLBACK_LABELS[contact.callbackTime] : "–"],
     ["Másolatot kért", contact.wantsCopy ? "Igen" : "Nem"],
   ];
 }
@@ -82,7 +83,8 @@ export function ownerEmail(offer: Offer, packageId: PackageId, contact: ContactD
   const quote = quoteSection(offer, packageId, true);
   const answers: [string, string][] = offer.answerRows.map((row) => [row.question, row.answer]);
   const who = contact.company ?? contact.name ?? contact.email ?? "Új érdeklődő";
-  const subject = `Új ajánlatkérés: ${offer.projectTypeLabel} – ${who} (${formatRon(offer.quote.packages[packageId].finalPrice)})`;
+  const when = contact.callbackTime ? ` · ${CALLBACK_LABELS[contact.callbackTime].toLowerCase()}` : "";
+  const subject = `Új ajánlatkérés: ${offer.projectTypeLabel} – ${who} (${formatRon(offer.quote.packages[packageId].finalPrice)})${when}`;
 
   const html = layout(
     "Új ajánlatkérés érkezett",

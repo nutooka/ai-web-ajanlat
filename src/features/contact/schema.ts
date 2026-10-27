@@ -9,6 +9,18 @@ const optionalText = (max: number) =>
     .optional()
     .transform((value) => (value ? value : undefined));
 
+export const CALLBACK_TIMES = ["asap", "morning", "afternoon", "evening"] as const;
+export type CallbackTime = (typeof CALLBACK_TIMES)[number];
+export const CALLBACK_LABELS: Record<CallbackTime, string> = {
+  asap: "Minél előbb",
+  morning: "Délelőtt",
+  afternoon: "Délután",
+  evening: "Este",
+};
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_PATTERN = /^[+\d][\d\s()./-]{5,}$/;
+
 /** Shared by the form (client) and the API route (server). */
 export const contactSchema = z
   .object({
@@ -28,6 +40,7 @@ export const contactSchema = z
     ),
     company: optionalText(150),
     message: optionalText(2000),
+    callbackTime: z.enum(CALLBACK_TIMES).optional(),
     wantsCopy: z.boolean(),
     consent: z.boolean(),
   })
@@ -44,6 +57,52 @@ export const contactSchema = z
   });
 
 export type ContactInput = z.input<typeof contactSchema>;
+
+/**
+ * The quick form: one "phone or e-mail" field instead of two.
+ * `toContact` maps it onto the shared contact schema the server validates.
+ */
+export const quickContactSchema = z
+  .object({
+    reach: z.string().trim().min(1, "Add meg a telefonszámod vagy az e-mail-címed.").max(200),
+    callbackTime: z.enum(CALLBACK_TIMES),
+    name: z.string().max(100),
+    company: z.string().max(150),
+    message: z.string().max(2000),
+    wantsCopy: z.boolean(),
+    consent: z.boolean(),
+  })
+  .superRefine((data, ctx) => {
+    const value = data.reach.trim();
+    if (value && !EMAIL_PATTERN.test(value) && !PHONE_PATTERN.test(value)) {
+      ctx.addIssue({ code: "custom", path: ["reach"], message: "Ez nem tűnik telefonszámnak vagy e-mail-címnek." });
+    }
+    if (!data.consent) {
+      ctx.addIssue({ code: "custom", path: ["consent"], message: "Az elküldéshez el kell fogadnod az adatkezelési tájékoztatót." });
+    }
+  });
+
+export type QuickContactValues = z.infer<typeof quickContactSchema>;
+
+export function isEmailLike(value: string): boolean {
+  return value.includes("@");
+}
+
+export function toContact(values: QuickContactValues): ContactInput {
+  const reach = values.reach.trim();
+  const email = isEmailLike(reach);
+  return {
+    email: email ? reach : undefined,
+    phone: email ? undefined : reach,
+    name: values.name,
+    company: values.company,
+    message: values.message,
+    callbackTime: values.callbackTime,
+    wantsCopy: email && values.wantsCopy,
+    consent: values.consent,
+  };
+}
+
 export type ContactData = z.output<typeof contactSchema>;
 
 const answerValue = z.union([z.string().max(2000), z.array(z.string().max(64)).max(20)]);

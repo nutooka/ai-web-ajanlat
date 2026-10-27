@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { contactSchema, submissionSchema } from "./schema";
+import { contactSchema, quickContactSchema, submissionSchema, toContact } from "./schema";
 import { checkSpamSignals, createRateLimiter } from "./spam";
 
 const valid = { name: "Teszt Elek", email: "teszt@example.com", wantsCopy: true, consent: true };
@@ -56,5 +56,34 @@ describe("spam protection", () => {
     expect(isAllowed("ip", 20)).toBe(false);
     expect(isAllowed("other", 20)).toBe(true);
     expect(isAllowed("ip", 1500)).toBe(true);
+  });
+});
+
+describe("quick contact form", () => {
+  const base = { callbackTime: "asap" as const, name: "", company: "", message: "", wantsCopy: true, consent: true };
+
+  it("accepts a phone number or an e-mail address in one field", () => {
+    expect(quickContactSchema.safeParse({ ...base, reach: "+40 712 345 678" }).success).toBe(true);
+    expect(quickContactSchema.safeParse({ ...base, reach: "anna@example.com" }).success).toBe(true);
+    expect(quickContactSchema.safeParse({ ...base, reach: "holnap" }).success).toBe(false);
+    expect(quickContactSchema.safeParse({ ...base, reach: "" }).success).toBe(false);
+  });
+
+  it("still requires consent", () => {
+    expect(quickContactSchema.safeParse({ ...base, reach: "anna@example.com", consent: false }).success).toBe(false);
+  });
+
+  it("maps onto the shared schema the server validates", () => {
+    const phone = toContact({ ...base, reach: " 0712 345 678 " });
+    expect(phone).toMatchObject({ phone: "0712 345 678", email: undefined, wantsCopy: false, callbackTime: "asap" });
+    expect(contactSchema.safeParse(phone).success).toBe(true);
+
+    const email = toContact({ ...base, reach: "anna@example.com", callbackTime: "evening" });
+    expect(email).toMatchObject({ email: "anna@example.com", phone: undefined, wantsCopy: true, callbackTime: "evening" });
+    expect(contactSchema.safeParse(email).success).toBe(true);
+  });
+
+  it("rejects an unknown callback time on the server", () => {
+    expect(contactSchema.safeParse({ ...valid, callbackTime: "midnight" }).success).toBe(false);
   });
 });

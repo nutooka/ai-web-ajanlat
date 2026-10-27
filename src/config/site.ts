@@ -11,9 +11,9 @@ export const siteConfig = {
     /** EUID (European Unique Identifier) – a cégjegyzékszámot is tartalmazza. */
     registrationNumber: "ROONRC.J2023000539198",
     taxId: "49185840",
-    // TODO: kitöltendő
-    email: "[kapcsolat@nutooka.ro]",
-    phone: "[Telefonszám]",
+    // Opcionális: ha kitöltöd, megjelenik az adatkezelési tájékoztatóban.
+    email: "",
+    phone: "",
   },
   privacy: {
     lastUpdated: "2026. október 27.",
