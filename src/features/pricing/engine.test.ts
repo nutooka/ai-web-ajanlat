@@ -1,0 +1,211 @@
+import { describe, expect, it } from "vitest";
+import { pricingConfig } from "@/config/pricing";
+import type { Answers } from "@/features/questionnaire/types";
+import { calculateQuote } from "./engine";
+import { PACKAGE_IDS, type PricingConfig } from "./types";
+
+const common: Answers = { languages: "1", branding: "full", design: "template", contentUpload: "self", deadline: "normal" };
+
+const fixtures: Record<string, Answers> = {
+  company: { projectType: "company", company_pages: "6-10", company_features: ["contact_form", "blog"], company_content: "ready", company_seo: "basic", ...common },
+  webshop: {
+    projectType: "webshop", shop_count: "51-200", shop_variants: "yes", shop_onlinePayment: "yes", shop_cod: "yes",
+    shop_shipping: ["courier", "international"], shop_inventory: "yes", shop_invoicing: "yes", shop_productUpload: "us", ...common,
+  },
+  webapp: {
+    projectType: "webapp", app_users: "customers", app_auth: "yes", app_roles: "2-3", app_admin: "yes", app_database: "yes",
+    app_payment: "none", app_integrations: ["email_sms"], app_features: ["dashboard", "reports"], ...common,
+  },
+  landing: { projectType: "landing", landing_goal: "leads", landing_sections: "3-5", landing_forms: ["form"], landing_analytics: "no", landing_ads: "yes", ...common },
+  redesign: {
+    projectType: "redesign", redesign_problems: ["slow", "outdated"], redesign_platform: "wordpress", redesign_migration: "partial",
+    redesign_pages: "1-5", redesign_newFeatures: ["blog"], ...common,
+  },
+};
+
+/** Config without discounts and productivity factor, to test raw arithmetic. */
+const noDiscounts: PricingConfig = {
+  ...pricingConfig,
+  productivityFactor: 1,
+  discounts: { launch: { ...pricingConfig.discounts.launch, enabled: false }, perPackage: {}, maxTotalPercent: 25 },
+};
+
+describe("calculateQuote", () => {
+  it("returns null until the project type is known", () => {
+    expect(calculateQuote({})).toBeNull();
+    expect(calculateQuote({ projectType: "unsure", unsure_goal: "sell" })).toBeNull();
+  });
+
+  it.each(Object.entries(fixtures))("is deterministic for %s", (_type, answers) => {
+    expect(calculateQuote(answers)).toEqual(calculateQuote(structuredClone(answers)));
+  });
+
+  it.each(Object.entries(fixtures))("orders tiers Basic ≤ Standard ≤ Premium for %s", (_type, answers) => {
+    const quote = calculateQuote(answers)!;
+    const [basic, standard, premium] = PACKAGE_IDS.map((id) => quote.packages[id]);
+    expect(basic.listPrice).toBeLessThanOrEqual(standard.listPrice);
+    expect(standard.listPrice).toBeLessThanOrEqual(premium.listPrice);
+    expect(basic.finalPrice).toBeLessThanOrEqual(standard.finalPrice);
+    expect(standard.finalPrice).toBeLessThanOrEqual(premium.finalPrice);
+  });
+
+  it("prices a minimal landing page from the config", () => {
+    const quote = calculateQuote(
+      { projectType: "landing", landing_goal: "leads", landing_sections: "3-5", landing_analytics: "no", landing_ads: "no", ...common },
+      noDiscounts,
+    )!;
+    const standard = quote.packages.standard;
+    // 3 + 8 + 8 + 3 base hours × 200 RON
+    expect(standard.hours).toBe(22);
+    expect(standard.subtotal).toBe(4400);
+    expect(standard.finalPrice).toBe(4400);
+  });
+
+  it("puts only essential selections into Basic", () => {
+    const quote = calculateQuote(fixtures.company)!;
+    const basicIds = quote.packages.basic.items.map((item) => item.id);
+    const standardIds = quote.packages.standard.items.map((item) => item.id);
+    expect(basicIds).toContain("company_features.contact_form");
+    expect(basicIds).not.toContain("company_features.blog");
+    expect(standardIds).toContain("company_features.blog");
+  });
+
+  it("adds premium extras but skips ones the visitor already chose", () => {
+    const quote = calculateQuote({ ...fixtures.company, company_seo: "advanced" })!;
+    const premiumIds = quote.packages.premium.items.map((item) => item.id);
+    expect(premiumIds).toContain("premium.support");
+    expect(premiumIds).toContain("company_seo.advanced");
+    expect(premiumIds).not.toContain("premium.seo");
+  });
+
+  it("applies the design multiplier to design items only", () => {
+    const template = calculateQuote({ ...fixtures.landing, design: "template" }, noDiscounts)!.packages.standard;
+    const custom = calculateQuote({ ...fixtures.landing, design: "custom" }, noDiscounts)!.packages.standard;
+    const designPrice = (pkg: typeof template) => pkg.items.find((item) => item.id === "base.design")!.price;
+    const devPrice = (pkg: typeof template) => pkg.items.find((item) => item.id === "base.dev")!.price;
+    expect(designPrice(custom)).toBe(Math.round(designPrice(template) * 1.7));
+    expect(devPrice(custom)).toBe(devPrice(template));
+  });
+
+  it("adds language setup and scales development for extra languages", () => {
+    const one = calculateQuote(fixtures.landing, noDiscounts)!.packages.standard;
+    const two = calculateQuote({ ...fixtures.landing, languages: "2" }, noDiscounts)!.packages.standard;
+    expect(two.items.some((item) => item.id === "languages.setup")).toBe(true);
+    const dev = (pkg: typeof one) => pkg.items.find((item) => item.id === "base.dev")!.price;
+    expect(dev(two)).toBe(Math.round(dev(one) * 1.2));
+  });
+
+  it("applies urgency to price and timeline", () => {
+    const normal = calculateQuote(fixtures.webapp, noDiscounts)!.packages.standard;
+    const urgent = calculateQuote({ ...fixtures.webapp, deadline: "urgent" }, noDiscounts)!.packages.standard;
+    const flexible = calculateQuote({ ...fixtures.webapp, deadline: "flexible" }, noDiscounts)!.packages.standard;
+    expect(urgent.urgencyAdjustment).toBe(Math.round(normal.subtotal * 0.4));
+    expect(flexible.urgencyAdjustment).toBeLessThan(0);
+    expect(urgent.timeline.minWeeks).toBeLessThan(normal.timeline.minWeeks);
+  });
+
+  it("prices product upload by product count", () => {
+    const small = calculateQuote({ ...fixtures.webshop, shop_count: "upto50" }, noDiscounts)!.packages.standard;
+    const large = calculateQuote({ ...fixtures.webshop, shop_count: "1000+" }, noDiscounts)!.packages.standard;
+    const upload = (pkg: typeof small) => pkg.items.find((item) => item.id === "shop_productUpload.us")!.hours;
+    expect(upload(small)).toBe(6);
+    expect(upload(large)).toBe(80);
+  });
+
+  it("ignores answers left on an abandoned branch", () => {
+    const clean = calculateQuote(fixtures.landing)!;
+    const withLeftovers = calculateQuote({ ...fixtures.landing, shop_count: "1000+", app_admin: "yes" })!;
+    expect(withLeftovers).toEqual(clean);
+  });
+
+  it("rounds every price to the configured step", () => {
+    for (const answers of Object.values(fixtures)) {
+      for (const pkg of Object.values(calculateQuote(answers)!.packages)) {
+        expect(pkg.listPrice % pricingConfig.roundTo).toBe(0);
+        expect(pkg.finalPrice % pricingConfig.roundTo).toBe(0);
+      }
+    }
+  });
+});
+
+describe("productivity factor", () => {
+  it("scales hours and prices by the hidden factor", () => {
+    const raw = calculateQuote(fixtures.company, noDiscounts)!.packages.standard;
+    const effective = calculateQuote(fixtures.company, { ...noDiscounts, productivityFactor: 0.4 })!.packages.standard;
+    expect(effective.subtotal).toBeLessThan(raw.subtotal * 0.41);
+    expect(effective.subtotal).toBeGreaterThan(raw.subtotal * 0.39);
+  });
+
+  it("adds the feedback buffer to the timeline", () => {
+    const pkg = calculateQuote(fixtures.landing)!.packages.standard;
+    expect(pkg.timeline.minWeeks).toBeGreaterThanOrEqual(1 + pricingConfig.feedbackWeeks);
+  });
+});
+
+describe("budget-based recommendation", () => {
+  it("recommends Standard without a budget answer", () => {
+    expect(calculateQuote(fixtures.company)!.recommended).toBe("standard");
+    expect(calculateQuote({ ...fixtures.company, budget: "unsure" })!.recommended).toBe("standard");
+    expect(calculateQuote({ ...fixtures.company, budget: "unsure" })!.budget).toBeNull();
+  });
+
+  it("recommends the richest package that fits the budget", () => {
+    const unlimited = calculateQuote({ ...fixtures.company, budget: "40k+" })!;
+    expect(unlimited.recommended).toBe("premium");
+    expect(unlimited.budget).toEqual({ max: null, withinBasic: true });
+
+    const tight = calculateQuote({ ...fixtures.webapp, budget: "under5k" })!;
+    expect(tight.recommended).toBe("basic");
+    expect(tight.budget?.withinBasic).toBe(false);
+  });
+});
+
+describe("premium extras", () => {
+  it("scale with the project size", () => {
+    const hours = (answers: Answers) =>
+      calculateQuote(answers)!.packages.premium.items.find((item) => item.id === "premium.support")!.hours;
+    expect(hours(fixtures.landing)).toBeLessThan(hours(fixtures.webshop));
+  });
+});
+
+describe("discounts", () => {
+  it("shows the launch discount and the recommended-package discount on Standard", () => {
+    const standard = calculateQuote(fixtures.company)!.packages.standard;
+    expect(standard.discounts.map((discount) => discount.id)).toEqual(["launch", "package.standard"]);
+    expect(standard.savings).toBe(standard.discounts.reduce((sum, discount) => sum + discount.amount, 0));
+    expect(standard.finalPrice).toBe(standard.listPrice - standard.savings);
+  });
+
+  it("can be switched off from the config", () => {
+    const pkg = calculateQuote(fixtures.company, noDiscounts)!.packages.standard;
+    expect(pkg.discounts).toEqual([]);
+    expect(pkg.finalPrice).toBe(pkg.listPrice);
+  });
+
+  it("caps the combined discount", () => {
+    const greedy: PricingConfig = {
+      ...pricingConfig,
+      discounts: {
+        launch: { enabled: true, percent: 20, label: "A" },
+        perPackage: { standard: { enabled: true, percent: 20, label: "B" } },
+        maxTotalPercent: 25,
+      },
+    };
+    const standard = calculateQuote(fixtures.company, greedy)!.packages.standard;
+    expect(standard.discounts.map((discount) => discount.percent)).toEqual([20, 5]);
+  });
+
+  it("never lets Standard drop below Basic because of a tier discount", () => {
+    // Nothing optional selected → Basic and Standard have the same items.
+    const answers: Answers = { projectType: "landing", landing_goal: "leads", landing_sections: "3-5", landing_analytics: "no", landing_ads: "no", ...common };
+    const quote = calculateQuote(answers)!;
+    expect(quote.packages.standard.finalPrice).toBeGreaterThanOrEqual(quote.packages.basic.finalPrice);
+  });
+
+  it("does not discount maintenance", () => {
+    const standard = calculateQuote(fixtures.webshop)!.packages.standard;
+    expect(standard.maintenance.monthlyTotal).toBe(
+      pricingConfig.maintenance.hostingMonthly.webshop + pricingConfig.maintenance.support.standard.monthly,
+    );
+  });
+});

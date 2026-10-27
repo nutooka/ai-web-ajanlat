@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nutooka Projekttervező
 
-## Getting Started
+Interaktív ajánlatkészítő: a látogató egy lépésenként haladó kérdőíven leírja a projektjét, és azonnal tételes, becsült árajánlatot kap három csomagban (Basic / Standard / Premium). A specifikáció: [SPEC.md](SPEC.md).
 
-First, run the development server:
+## Indítás
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # Resend kulcs és címek
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Parancsok
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Parancs | Mit csinál |
+|---|---|
+| `npm run dev` | Fejlesztői szerver |
+| `npm run build` / `npm start` | Production build és futtatás |
+| `npm test` | Unit tesztek (Vitest) |
+| `npm run lint` / `npm run typecheck` | ESLint / TypeScript |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Hol mit módosíts
 
-## Learn More
+| Mit | Fájl |
+|---|---|
+| Árak, óradíj, szorzók, **kedvezmények**, fenntartás, rejtett `productivityFactor` | `src/config/pricing.ts` |
+| Cégadatok, oldalnév | `src/config/site.ts` |
+| Kérdések és opciók | `src/features/questionnaire/config/` |
+| Színek, betűk | `src/theme/theme.ts` |
 
-To learn more about Next.js, take a look at the following resources:
+Az árazó motor (`src/features/pricing/engine.ts`) tiszta, determinisztikus függvény; a szerver beküldéskor mindig újraszámolja az árat a válaszokból.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## E-mail (Resend)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Regisztrálj a resend.com-on, hozz létre API kulcsot → `RESEND_API_KEY`.
+2. `OFFER_OWNER_EMAIL` = ide jönnek az ajánlatkérések.
+3. Saját domain nélkül az `onboarding@resend.dev` feladó **csak a Resend-fiókod saját címére** tud küldeni, így az ügyfélmásolat csak a domain hitelesítése után működik.
 
-## Deploy on Vercel
+Kulcs nélkül az app működik, a küldés gomb érthető hibaüzenetet ad.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Későbbi AI-bővítés
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`src/lib/ai/` – `InsightProvider` interfész, jelenleg szabályalapú implementációval. Egy Claude-alapú provider ide köthető be, az árazás érintése nélkül.
