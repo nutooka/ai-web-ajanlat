@@ -118,6 +118,8 @@ export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#
           const recommended = mode === "offer" && quote.recommended === id;
           const isSelected = selectable && selected === id;
           const badge = featured ? "Legnépszerűbb" : recommended ? "Neked ajánlott" : null;
+          // In the offer one card is "yours": it is lifted and outlined, the others step back.
+          const dimmed = selectable && !isSelected;
 
           return (
             <Box key={id} sx={{ display: { xs: id === mobileActive ? "block" : "none", md: "block" } }}>
@@ -141,8 +143,12 @@ export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#
                     color: "#fff",
                     display: "flex",
                     flexDirection: "column",
-                    boxShadow: isSelected ? `0 0 0 3px ${palette.lime}, ${shadow.raisedOnDark}` : shadow.raisedOnDark,
-                    transition: "box-shadow .25s ease",
+                    boxShadow: isSelected ? `0 0 0 4px ${palette.lime}, 0 0 48px -8px rgba(212,255,58,.55), ${shadow.raisedOnDark}` : shadow.raisedOnDark,
+                    opacity: dimmed ? 0.72 : 1,
+                    filter: dimmed ? "saturate(.75)" : "none",
+                    transform: isSelected ? { md: "translateY(-8px)" } : "none",
+                    transition: "box-shadow .25s ease, opacity .25s ease, filter .25s ease, transform .25s ease",
+                    "&:hover": dimmed ? { opacity: 0.9, filter: "none" } : undefined,
                   }}
                 >
                   {/* Gradient header – package identity, always ink text. */}
@@ -150,7 +156,11 @@ export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#
                     <HeaderDecor bubble={theme.bubble} />
                     <Box sx={{ position: "relative" }}>
                       <Box sx={{ minHeight: 26, mb: 0.5 }}>
-                        {badge && (
+                        {selectable && isSelected ? (
+                          <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, px: 1.25, py: 0.25, borderRadius: 999, background: palette.lime, color: palette.ink, border: `1.5px solid ${palette.ink}`, fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                            <Check sx={{ fontSize: 14 }} /> A te választásod
+                          </Box>
+                        ) : badge && (
                           <Box component="span" sx={{ display: "inline-block", px: 1.25, py: 0.25, borderRadius: 999, background: palette.ink, color: "#fff", fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
                             {badge}
                           </Box>
@@ -214,8 +224,9 @@ export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#
                             fontWeight: 700,
                             fontSize: 15,
                             gap: 1,
-                            color: palette.ink,
-                            background: isSelected ? palette.lime : theme.gradient,
+                            color: isSelected ? palette.ink : "#fff",
+                            background: isSelected ? palette.lime : "transparent",
+                            border: isSelected ? `1.5px solid ${palette.lime}` : "1.5px solid rgba(255,255,255,.45)",
                             transition: "transform .2s ease, background .2s ease",
                             "&:hover": { transform: "translateY(-2px)" },
                             "&.Mui-focusVisible": { outline: "2px solid #fff", outlineOffset: 3 },
