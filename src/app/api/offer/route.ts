@@ -1,6 +1,7 @@
 import { createResendSender } from "@/features/contact/resendSender";
 import { createRateLimiter } from "@/features/contact/spam";
 import { submitOffer } from "@/features/contact/submitOffer";
+import { OFFER_CLOCK_COOKIE, offerAgeMinutes, offerClockSecret, readCookie, verifyOfferClock } from "@/features/offer/offerClock";
 
 const MAX_BODY_BYTES = 64 * 1024;
 const isAllowed = createRateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 });
@@ -26,6 +27,12 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, error: "Érvénytelen kérés." }, { status: 400 });
   }
 
-  const result = await submitOffer(input, { send: createResendSender(), ownerEmail: process.env.OFFER_OWNER_EMAIL });
+  const now = Date.now();
+  const issuedAt = verifyOfferClock(readCookie(request.headers.get("cookie"), OFFER_CLOCK_COOKIE), offerClockSecret(), now);
+  const result = await submitOffer(input, {
+    send: createResendSender(),
+    ownerEmail: process.env.OFFER_OWNER_EMAIL,
+    offerAgeMinutes: offerAgeMinutes(issuedAt, now),
+  });
   return Response.json(result.body, { status: result.status });
 }

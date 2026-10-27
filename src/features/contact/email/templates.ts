@@ -54,6 +54,9 @@ function quoteSection(offer: Offer, packageId: PackageId, internal: boolean): { 
   const meta: [string, string][] = [
     ["Csomag", pkg.name],
     ...(internal ? ([["Számlázott munkaórák (belső)", formatHours(pkg.hours)]] as [string, string][]) : []),
+    ...(offer.quote.quickDecision.percent > 0
+      ? ([[`${offer.quote.packages[packageId].discounts.find((d) => d.id === "quick")?.label ?? "Gyors döntés kedvezmény"} (rögzítve)`, `−${offer.quote.quickDecision.percent}%`]] as [string, string][])
+      : []),
     ["Becsült átfutás", formatWeeks(pkg.timeline.minWeeks, pkg.timeline.maxWeeks)],
     ["Fenntartás (havonta)", formatRon(pkg.maintenance.monthlyTotal)],
     ["Fenntartás (évente, domainnel)", formatRon(pkg.maintenance.yearlyTotal)],

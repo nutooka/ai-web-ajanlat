@@ -25,7 +25,11 @@ import { useWizardSnapshot, wizardStore } from "@/lib/storage";
 import { palette } from "@/theme/tokens";
 import type { PackageId } from "@/features/pricing/types";
 import { buildOffer } from "../buildOffer";
+import { pricingConfig } from "@/config/pricing";
+import { resolveQuickDecision } from "@/features/pricing/quickDecision";
+import { offerAgeMinutesFrom, useNow, useOfferClock } from "../useOfferClock";
 import { PricingCards } from "./PricingCards";
+import { QuickDecisionBanner } from "./QuickDecisionBanner";
 import { PriceBreakdown } from "./PriceBreakdown";
 import { StickyCta } from "./StickyCta";
 
@@ -94,8 +98,21 @@ export function OfferView() {
   return <OfferContent answers={snapshot.answers} packageId={snapshot.packageId} />;
 }
 
+/** A representative age inside a tier, so prices only recompute when the tier changes. */
+function tierAge(tierIndex: number): number | undefined {
+  const tiers = pricingConfig.discounts.quickDecision.tiers;
+  if (tierIndex === -1) return Number.MAX_SAFE_INTEGER;
+  return tierIndex === 0 ? undefined : tiers[tierIndex - 1].withinMinutes;
+}
+
 function OfferContent({ answers, packageId }: { answers: Answers; packageId: PackageId }) {
-  const offer = useMemo(() => buildOffer(answers), [answers]);
+  const clock = useOfferClock();
+  // Coarse tick for prices (tier changes); the banner has its own per-second countdown.
+  const now = useNow(15_000);
+  const ageMinutes = offerAgeMinutesFrom(clock, now);
+  const tierIndex = resolveQuickDecision(pricingConfig.discounts.quickDecision, ageMinutes).tierIndex;
+  const offer = useMemo(() => buildOffer(answers, { offerAgeMinutes: tierAge(tierIndex) }), [answers, tierIndex]);
+  const scrollToContact = () => document.getElementById("kapcsolat")?.scrollIntoView({ behavior: "smooth", block: "start" });
   if (!offer) return null;
 
   const pkg = offer.quote.packages[packageId];
@@ -161,6 +178,10 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
             </Box>
           </Box>
         </motion.div>
+
+        <Box className="no-print">
+          <QuickDecisionBanner clock={clock} onCta={scrollToContact} />
+        </Box>
 
         <Stack direction="row" spacing={1.25} sx={{ alignItems: "flex-start", mt: 3, p: 2, borderRadius: 2, background: palette.limeTint }}>
           <InfoOutlined sx={{ fontSize: 20, color: "text.primary", mt: "1px" }} />
@@ -288,7 +309,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
 
       <Box sx={{ height: 88 }} className="no-print" />
       <SiteFooter />
-      <StickyCta targetId="kapcsolat" price={pkg.finalPrice} packageName={pkg.name} />
+      <StickyCta targetId="kapcsolat" price={pkg.finalPrice} packageName={pkg.name} clock={clock} />
     </Box>
   );
 }

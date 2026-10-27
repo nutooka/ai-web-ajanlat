@@ -47,7 +47,8 @@ const faqs = [
 ];
 
 export default function HomePage() {
-  const launch = pricingConfig.discounts.launch;
+  const quick = pricingConfig.discounts.quickDecision;
+  const bestPercent = quick.enabled ? (quick.tiers[0]?.percent ?? 0) : 0;
   const prices = Object.fromEntries(RESOLVED_PROJECT_TYPES.map((type) => [type, startingPrice(type)]));
 
   return (
@@ -200,7 +201,7 @@ export default function HomePage() {
                 Négy perc, és tudod, mennyibe kerül.
               </Typography>
               <Typography sx={{ mt: 1.5, fontSize: "1.125rem" }}>
-                Ingyenes, kötelezettség nélkül{launch.enabled ? ` – most ${launch.percent}% indulási kedvezménnyel.` : "."}
+                Ingyenes, kötelezettség nélkül{bestPercent > 0 ? ` – és ha 1 órán belül kérsz egyeztetést, −${bestPercent}% kedvezmény.` : "."}
               </Typography>
             </Box>
             <LinkButton href="/tervezo" variant="contained" color="secondary" size="large" endIcon={<ArrowForward />} sx={{ alignSelf: { xs: "flex-start", md: "center" }, flexShrink: 0 }}>

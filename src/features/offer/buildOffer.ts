@@ -1,4 +1,5 @@
-import { calculateQuote } from "@/features/pricing/engine";
+import { calculateQuote, type QuoteOptions } from "@/features/pricing/engine";
+import { pricingConfig } from "@/config/pricing";
 import { PACKAGE_IDS, type PackageId, type Quote } from "@/features/pricing/types";
 import { getAnswerLabel, getVisibleQuestions, pruneAnswers } from "@/features/questionnaire/engine";
 import type { Answers, ResolvedProjectType } from "@/features/questionnaire/types";
@@ -80,9 +81,9 @@ const NEXT_STEPS = [
 ];
 
 /** Everything the offer page and the e-mails need. Returns null for incomplete answers. */
-export function buildOffer(rawAnswers: Answers): Offer | null {
+export function buildOffer(rawAnswers: Answers, options: QuoteOptions = {}): Offer | null {
   const answers = pruneAnswers(rawAnswers);
-  const quote = calculateQuote(answers);
+  const quote = calculateQuote(answers, pricingConfig, options);
   if (!quote) return null;
 
   const answerRows: AnswerRow[] = getVisibleQuestions(answers)

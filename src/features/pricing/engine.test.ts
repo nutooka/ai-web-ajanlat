@@ -28,7 +28,7 @@ const noDiscounts: PricingConfig = {
   ...pricingConfig,
   hourlyRate: 200,
   productivityFactor: 1,
-  discounts: { launch: { ...pricingConfig.discounts.launch, enabled: false }, perPackage: {}, maxTotalPercent: 25 },
+  discounts: { quickDecision: { ...pricingConfig.discounts.quickDecision, enabled: false }, perPackage: {}, maxTotalPercent: 25 },
 };
 
 describe("calculateQuote", () => {
@@ -172,10 +172,40 @@ describe("premium extras", () => {
   });
 });
 
+describe("quick-decision discount", () => {
+  const percentAt = (age?: number) => calculateQuote(fixtures.company, pricingConfig, { offerAgeMinutes: age })!.quickDecision.percent;
+
+  it("shrinks over time and ends at full price", () => {
+    expect(percentAt(undefined)).toBe(25);
+    expect(percentAt(0)).toBe(25);
+    expect(percentAt(59.9)).toBe(25);
+    expect(percentAt(60)).toBe(15);
+    expect(percentAt(119)).toBe(15);
+    expect(percentAt(120)).toBe(0);
+    expect(percentAt(600)).toBe(0);
+  });
+
+  it("makes later prices higher, never lower", () => {
+    const price = (age: number) => calculateQuote(fixtures.company, pricingConfig, { offerAgeMinutes: age })!.packages.standard.finalPrice;
+    expect(price(10)).toBeLessThan(price(70));
+    expect(price(70)).toBeLessThan(price(130));
+  });
+
+  it("drops the discount row once expired", () => {
+    const standard = calculateQuote(fixtures.company, pricingConfig, { offerAgeMinutes: 500 })!.packages.standard;
+    expect(standard.discounts.map((discount) => discount.id)).toEqual(["package.standard"]);
+  });
+
+  it("reports minutes left in the current tier", () => {
+    const state = calculateQuote(fixtures.company, pricingConfig, { offerAgeMinutes: 45 })!.quickDecision;
+    expect(state).toMatchObject({ percent: 25, minutesLeft: 15, nextPercent: 15, expired: false });
+  });
+});
+
 describe("discounts", () => {
-  it("shows the launch discount and the recommended-package discount on Standard", () => {
+  it("shows the quick-decision discount and the Standard package discount", () => {
     const standard = calculateQuote(fixtures.company)!.packages.standard;
-    expect(standard.discounts.map((discount) => discount.id)).toEqual(["launch", "package.standard"]);
+    expect(standard.discounts.map((discount) => discount.id)).toEqual(["quick", "package.standard"]);
     expect(standard.savings).toBe(standard.discounts.reduce((sum, discount) => sum + discount.amount, 0));
     expect(standard.finalPrice).toBe(standard.listPrice - standard.savings);
   });
@@ -190,7 +220,7 @@ describe("discounts", () => {
     const greedy: PricingConfig = {
       ...pricingConfig,
       discounts: {
-        launch: { enabled: true, percent: 20, label: "A" },
+        quickDecision: { enabled: true, label: "A", tiers: [{ withinMinutes: 60, percent: 20 }] },
         perPackage: { standard: { enabled: true, percent: 20, label: "B" } },
         maxTotalPercent: 25,
       },

@@ -1,4 +1,5 @@
 import type { ResolvedProjectType } from "@/features/questionnaire/types";
+import type { QuickDecisionConfig, QuickDecisionState } from "./quickDecision";
 
 export const PACKAGE_IDS = ["basic", "standard", "premium"] as const;
 export type PackageId = (typeof PACKAGE_IDS)[number];
@@ -61,7 +62,8 @@ export interface PricingConfig {
   /** Budget answer → upper limit in RON (null = no limit). Only used to recommend a package. */
   budgetCeilings: Record<string, number | null>;
   discounts: {
-    launch: Discount;
+    /** Time-limited discount: the sooner the visitor requests a call, the bigger it is. */
+    quickDecision: QuickDecisionConfig;
     perPackage: Partial<Record<PackageId, Discount>>;
     maxTotalPercent: number;
   };
@@ -125,6 +127,7 @@ export interface Quote {
   urgency: { level: UrgencyLevel; label: string; priceMultiplier: number };
   languageMultiplier: number;
   recommended: PackageId;
+  quickDecision: QuickDecisionState;
   /** null when the visitor gave no budget or answered "not sure". */
   budget: { max: number | null; withinBasic: boolean } | null;
   packages: Record<PackageId, PackageQuote>;

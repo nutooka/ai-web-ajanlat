@@ -17,7 +17,8 @@ export function HeroActions() {
   const router = useRouter();
   const snapshot = useWizardSnapshot();
   const hasProgress = Boolean(snapshot?.answers.projectType);
-  const launch = pricingConfig.discounts.launch;
+  const quick = pricingConfig.discounts.quickDecision;
+  const bestPercent = quick.enabled ? (quick.tiers[0]?.percent ?? 0) : 0;
 
   const restart = () => {
     wizardStore.reset();
@@ -44,11 +45,11 @@ export function HeroActions() {
       </Stack>
       <Typography variant="body2" sx={{ color: palette.inkMuted }}>
         Kb. 4 perc · ingyenes · nem kell regisztrálni
-        {launch.enabled && (
+        {bestPercent > 0 && (
           <>
             {" · "}
             <Box component="span" sx={{ color: palette.lime, fontWeight: 600 }}>
-              most −{launch.percent}% indulási kedvezmény
+              akár −{bestPercent}%, ha 1 órán belül döntesz
             </Box>
           </>
         )}

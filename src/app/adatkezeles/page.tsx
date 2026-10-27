@@ -59,7 +59,10 @@ const sections: { title: string; body: string[] }[] = [
   },
   {
     title: "7. Sütik",
-    body: ["Ez az oldal nem használ követő vagy marketing sütiket. A kitöltés mentéséhez kizárólag a böngésző helyi tárolóját (localStorage) használjuk."],
+    body: [
+      "Ez az oldal nem használ követő vagy marketing sütiket. A kitöltés mentéséhez a böngésző helyi tárolóját (localStorage) használjuk.",
+      "Egyetlen, a szolgáltatáshoz szükséges sütit állítunk be (nutooka_offer_clock): ez rögzíti, mikor nyitottad meg először az ajánlatodat, hogy a gyors döntés kedvezményt helyesen számoljuk. Személyes adatot nem tartalmaz, 7 nap után lejár, és bármikor törölheted.",
+    ],
   },
 ];
 

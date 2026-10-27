@@ -30,6 +30,12 @@ npm run dev                  # http://localhost:3000
 
 Az árazó motor (`src/features/pricing/engine.ts`) tiszta, determinisztikus függvény; a szerver beküldéskor mindig újraszámolja az árat a válaszokból.
 
+## Gyors döntés kedvezmény
+
+Az ajánlat első megnyitásától számítva: 1 órán belül −25%, 1–2 óra között −15%, utána teljes ár (`src/config/pricing.ts` → `discounts.quickDecision`).
+Az időt a szerver egy aláírt, httpOnly sütiben tárolja (`/api/offer-clock`), és beküldéskor a szerver rögzíti a kedvezményt – a kliens órája nem számít.
+Élesben állítsd be az `OFFER_CLOCK_SECRET`-et.
+
 ## E-mail (Resend)
 
 1. Regisztrálj a resend.com-on, hozz létre API kulcsot → `RESEND_API_KEY`.

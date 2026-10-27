@@ -1,6 +1,7 @@
 import { pricingConfig } from "@/config/pricing";
 import { getEffectiveProjectType, pruneAnswers } from "@/features/questionnaire/engine";
 import type { Answers, ResolvedProjectType } from "@/features/questionnaire/types";
+import { resolveQuickDecision } from "./quickDecision";
 import {
   PACKAGE_IDS,
   type AppliedDiscount,
@@ -110,9 +111,9 @@ function categoryMultiplier(category: CostCategory, designMultiplier: number, la
   return 1;
 }
 
-function applyDiscounts(listPrice: number, packageId: PackageId, config: PricingConfig): AppliedDiscount[] {
+function applyDiscounts(listPrice: number, packageId: PackageId, config: PricingConfig, quickPercent: number): AppliedDiscount[] {
   const candidates = [
-    { id: "launch", ...config.discounts.launch },
+    { id: "quick", enabled: true, percent: quickPercent, label: config.discounts.quickDecision.label },
     ...(config.discounts.perPackage[packageId] ? [{ id: `package.${packageId}`, ...config.discounts.perPackage[packageId] }] : []),
   ].filter((discount) => discount.enabled && discount.percent > 0);
 
@@ -148,6 +149,7 @@ function buildPackage(
   answerItems: CandidateItem[],
   languageMultiplier: number,
   config: PricingConfig,
+  quickPercent: number,
 ): PackageQuote {
   const designLevel = resolveDesign(answers, packageId, config);
   const designMultiplier = config.design.multipliers[designLevel];
@@ -170,7 +172,7 @@ function buildPackage(
   const subtotal = items.reduce((sum, item) => sum + item.price, 0);
   const urgencyAdjustment = roundTo(subtotal * (urgency.priceMultiplier - 1), config.roundTo);
   const listPrice = roundTo(subtotal + urgencyAdjustment, config.roundTo);
-  const discounts = applyDiscounts(listPrice, packageId, config);
+  const discounts = applyDiscounts(listPrice, packageId, config, quickPercent);
   const savings = discounts.reduce((sum, discount) => sum + discount.amount, 0);
   const hours = roundHalf(items.reduce((sum, item) => sum + item.hours, 0));
   const buildWeeks = Math.max(1, Math.ceil((hours / config.weeklyCapacityHours) * urgency.timeMultiplier));
@@ -227,7 +229,12 @@ function recommendPackage(packages: PackageQuote[], budgetMax: number | undefine
  * Pure and deterministic: the same answers + config always give the same quote.
  * Returns null until the project type is known.
  */
-export function calculateQuote(rawAnswers: Answers, config: PricingConfig = pricingConfig): Quote | null {
+export interface QuoteOptions {
+  /** Minutes since the visitor first opened the offer (server-verified). Unknown = first tier. */
+  offerAgeMinutes?: number;
+}
+
+export function calculateQuote(rawAnswers: Answers, config: PricingConfig = pricingConfig, options: QuoteOptions = {}): Quote | null {
   const answers = pruneAnswers(rawAnswers);
   const projectType = getEffectiveProjectType(answers);
   if (!projectType) return null;
@@ -236,9 +243,10 @@ export function calculateQuote(rawAnswers: Answers, config: PricingConfig = pric
   const extraLanguages = config.languages.extraByAnswer[String(answers.languages ?? "1")] ?? 0;
   const languageMultiplier = 1 + extraLanguages * config.languages.multiplierPerExtra;
   const urgencyLevel = resolveUrgency(answers);
+  const quickDecision = resolveQuickDecision(config.discounts.quickDecision, options.offerAgeMinutes);
 
   const ordered = enforceTierOrder(
-    PACKAGE_IDS.map((id) => buildPackage(id, projectType, answers, answerItems, languageMultiplier, config)),
+    PACKAGE_IDS.map((id) => buildPackage(id, projectType, answers, answerItems, languageMultiplier, config, quickDecision.percent)),
   );
 
   const budgetAnswer = typeof answers.budget === "string" ? answers.budget : undefined;
@@ -252,6 +260,7 @@ export function calculateQuote(rawAnswers: Answers, config: PricingConfig = pric
     urgency: { level: urgencyLevel, label: config.urgency[urgencyLevel].label, priceMultiplier: config.urgency[urgencyLevel].priceMultiplier },
     languageMultiplier,
     recommended: recommendPackage(ordered, budgetMax),
+    quickDecision,
     budget:
       budgetMax === undefined
         ? null

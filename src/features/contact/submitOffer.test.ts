@@ -39,6 +39,15 @@ function setup() {
 }
 
 describe("submitOffer", () => {
+  it("locks in the quick-decision discount from the server clock", async () => {
+    const early = setup();
+    await submitOffer(submission(), { ...early.deps, offerAgeMinutes: 10 });
+    const late = setup();
+    await submitOffer(submission(), { ...late.deps, offerAgeMinutes: 200 });
+    expect(early.sent[0].text).toMatch(/Gyors döntés kedvezmény \(rögzítve\): −25%/);
+    expect(late.sent[0].text).not.toMatch(/Gyors döntés/);
+  });
+
   it("sends the owner e-mail and the customer copy", async () => {
     const { sent, deps } = setup();
     const result = await submitOffer(submission(), deps);

@@ -15,11 +15,18 @@ export type SubmitResult =
   | { status: 200; body: { ok: true; copySent: boolean } }
   | { status: 400 | 422 | 500 | 503; body: { ok: false; error: string; fieldErrors?: Record<string, string> } };
 
+export interface SubmitDeps {
+  send: EmailSender | null;
+  ownerEmail: string | undefined;
+  /** Server-verified minutes since the offer was first opened (see offerClock). */
+  offerAgeMinutes?: number;
+}
+
 /**
  * Framework-independent submission handler: validate → spam check → re-price on the server → send.
  * The client-side price is never trusted; the quote is rebuilt from the raw answers.
  */
-export async function submitOffer(input: unknown, deps: { send: EmailSender | null; ownerEmail: string | undefined }): Promise<SubmitResult> {
+export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<SubmitResult> {
   const parsed = submissionSchema.safeParse(input);
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
@@ -36,7 +43,7 @@ export async function submitOffer(input: unknown, deps: { send: EmailSender | nu
   if (!checkSpamSignals({ website, elapsedMs }).ok) return { status: 200, body: { ok: true, copySent: false } };
 
   const answers = pruneAnswers(rawAnswers);
-  const offer = isComplete(answers) ? buildOffer(answers) : null;
+  const offer = isComplete(answers) ? buildOffer(answers, { offerAgeMinutes: deps.offerAgeMinutes ?? 0 }) : null;
   if (!offer) return { status: 400, body: { ok: false, error: "A kérdőív hiányos. Kérjük, töltsd ki újra." } };
 
   if (!deps.send || !deps.ownerEmail) {
