@@ -46,12 +46,9 @@ export function HeroActions() {
       <Typography variant="body2" sx={{ color: palette.inkMuted }}>
         Kb. 4 perc · ingyenes · nem kell regisztrálni
         {bestPercent > 0 && (
-          <>
-            {" · "}
-            <Box component="span" sx={{ color: palette.lime, fontWeight: 600 }}>
-              akár −{bestPercent}%, ha 1 órán belül döntesz
-            </Box>
-          </>
+          <Box component="span" sx={{ display: "block", mt: 0.75, color: palette.amber, fontWeight: 600 }}>
+            −{bestPercent}% kedvezmény, ha az ajánlatod elkészülte után 1 órán belül egyeztetést kérsz.
+          </Box>
         )}
       </Typography>
     </Stack>
