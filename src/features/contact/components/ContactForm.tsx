@@ -1,6 +1,5 @@
 "use client";
 
-import CheckCircleOutlineOutlined from "@mui/icons-material/CheckCircleOutlineOutlined";
 import SendOutlined from "@mui/icons-material/SendOutlined";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
@@ -14,7 +13,6 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm, type UseFormRegisterReturn } from "react-hook-form";
@@ -27,16 +25,18 @@ interface ContactFormProps {
   answers: Answers;
   packageId: PackageId;
   packageName: string;
+  /** Called after the request went out; the page then shows a persistent confirmation. */
+  onSubmitted: (copySent: boolean) => void;
 }
 
-type Status = { kind: "idle" } | { kind: "success"; copySent: boolean } | { kind: "error"; message: string };
+type Status = { kind: "idle" } | { kind: "error"; message: string };
 
 /** Adapts react-hook-form's register() to MUI TextField (ref goes to the input). */
 function field({ ref, ...rest }: UseFormRegisterReturn) {
   return { ...rest, inputRef: ref };
 }
 
-export function ContactForm({ answers, packageId, packageName }: ContactFormProps) {
+export function ContactForm({ answers, packageId, packageName, onSubmitted }: ContactFormProps) {
   const shownAt = useRef(0);
   const honeypot = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -76,7 +76,7 @@ export function ContactForm({ answers, packageId, packageName }: ContactFormProp
         | null;
 
       if (response.ok && body?.ok) {
-        setStatus({ kind: "success", copySent: body.copySent });
+        onSubmitted(body.copySent);
         return;
       }
       if (body && !body.ok && body.fieldErrors) {
@@ -101,22 +101,7 @@ export function ContactForm({ answers, packageId, packageName }: ContactFormProp
         p: { xs: 3, sm: 4, md: 6 },
       }}
     >
-      <AnimatePresence mode="wait" initial={false}>
-        {status.kind === "success" ? (
-          <motion.div key="success" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }}>
-            <Stack spacing={2} sx={{ alignItems: "center", textAlign: "center", py: 4 }} role="status">
-              <CheckCircleOutlineOutlined sx={{ fontSize: 56, color: palette.success }} />
-              <Typography variant="h3" component="h2">
-                Köszönjük, megkaptuk!
-              </Typography>
-              <Typography variant="subtitle1" sx={{ maxWidth: 480 }}>
-                1 munkanapon belül jelentkezünk.
-                {status.copySent ? " Az ajánlat másolatát elküldtük az e-mail-címedre." : ""}
-              </Typography>
-            </Stack>
-          </motion.div>
-        ) : (
-          <motion.div key="form" exit={{ opacity: 0 }}>
+      <Box>
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "0.8fr 1.2fr" }, gap: { xs: 4, md: 6 } }}>
               <Box>
                 <Typography variant="h3" component="h2" sx={{ mb: 2 }}>
@@ -194,9 +179,7 @@ export function ContactForm({ answers, packageId, packageName }: ContactFormProp
                 </Stack>
               </Box>
             </Box>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </Box>
     </Box>
   );
 }

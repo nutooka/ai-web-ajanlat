@@ -11,11 +11,24 @@ import { useEffect, useState } from "react";
 import { pricingConfig } from "@/config/pricing";
 import { resolveQuickDecision } from "@/features/pricing/quickDecision";
 import { formatRon } from "@/lib/format";
-import { formatCountdown, offerAgeMinutesFrom, useNow, type OfferClock } from "../useOfferClock";
+import { formatCountdown, offerAgeMinutesFrom, useNow, type OfferClockState } from "../useOfferClock";
 import { ease, palette } from "@/theme/tokens";
 
 /** Always-reachable "request a call" bar; hides itself once the contact form is on screen. */
-export function StickyCta({ targetId, price, packageName, clock }: { targetId: string; price: number; packageName: string; clock: OfferClock | null }) {
+export function StickyCta({
+  targetId,
+  price,
+  packageName,
+  clockState,
+  pricesReady,
+}: {
+  targetId: string;
+  price: number;
+  packageName: string;
+  clockState: OfferClockState;
+  pricesReady: boolean;
+}) {
+  const clock = clockState.clock;
   const [formVisible, setFormVisible] = useState(false);
   const now = useNow(1000);
   const quick = resolveQuickDecision(pricingConfig.discounts.quickDecision, offerAgeMinutesFrom(clock, now));
@@ -30,7 +43,7 @@ export function StickyCta({ targetId, price, packageName, clock }: { targetId: s
 
   return (
     <AnimatePresence>
-      {!formVisible && (
+      {!formVisible && pricesReady && (
         <motion.div
           className="no-print"
           initial={{ y: 80, opacity: 0 }}
@@ -48,7 +61,7 @@ export function StickyCta({ targetId, price, packageName, clock }: { targetId: s
                 <Stack direction={{ xs: "column", sm: "row" }} sx={{ alignItems: { xs: "flex-start", sm: "center" }, gap: { xs: 0.25, sm: 1.25 } }}>
                   <Typography sx={{ fontWeight: 700, fontSize: { xs: 17, sm: 20 }, whiteSpace: "nowrap" }}>{formatRon(price)}</Typography>
                   {!quick.expired && quick.minutesLeft !== null && (
-                    <Box sx={{ px: 1, py: 0.25, borderRadius: 1.5, background: palette.lime, color: palette.ink, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
+                    <Box sx={{ px: 1, py: 0.25, borderRadius: 1.5, background: palette.amber, color: palette.ink, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                       −{quick.percent}% · {formatCountdown(quick.minutesLeft)}
                     </Box>
                   )}

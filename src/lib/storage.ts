@@ -6,14 +6,21 @@ import type { Answers } from "@/features/questionnaire/types";
 
 const STORAGE_KEY = "nutooka-offer:v1";
 
+export interface Submission {
+  at: number;
+  copySent: boolean;
+}
+
 export interface WizardSnapshot {
   answers: Answers;
   currentId: string | null;
   packageId: PackageId;
+  /** Set after a successful consultation request; cleared when the answers change. */
+  submission: Submission | null;
   updatedAt: number;
 }
 
-const EMPTY: WizardSnapshot = { answers: {}, currentId: null, packageId: "standard", updatedAt: 0 };
+const EMPTY: WizardSnapshot = { answers: {}, currentId: null, packageId: "standard", submission: null, updatedAt: 0 };
 
 const listeners = new Set<() => void>();
 let cachedRaw: string | null | undefined;
@@ -73,7 +80,10 @@ function write(next: WizardSnapshot | null) {
 
 export const wizardStore = {
   update(patch: Partial<Omit<WizardSnapshot, "updatedAt">>) {
-    write({ ...getSnapshot(), ...patch, updatedAt: Date.now() });
+    const current = getSnapshot();
+    // A changed questionnaire is a new offer: allow a new request.
+    const answersChanged = patch.answers !== undefined && JSON.stringify(patch.answers) !== JSON.stringify(current.answers);
+    write({ ...current, ...(answersChanged ? { submission: null } : {}), ...patch, updatedAt: Date.now() });
   },
   reset() {
     write(null);

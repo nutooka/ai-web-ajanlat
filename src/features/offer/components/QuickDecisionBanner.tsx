@@ -8,10 +8,11 @@ import { motion } from "motion/react";
 import { pricingConfig } from "@/config/pricing";
 import { resolveQuickDecision } from "@/features/pricing/quickDecision";
 import { ease, palette } from "@/theme/tokens";
-import { formatCountdown, offerAgeMinutesFrom, useNow, type OfferClock } from "../useOfferClock";
+import { formatCountdown, offerAgeMinutesFrom, useNow, type OfferClockState } from "../useOfferClock";
 
 /** Countdown for the time-limited discount, with the three price steps laid out. */
-export function QuickDecisionBanner({ clock, onCta }: { clock: OfferClock | null; onCta: () => void }) {
+export function QuickDecisionBanner({ clockState, onCta }: { clockState: OfferClockState; onCta: () => void }) {
+  const clock = clockState.clock;
   const config = pricingConfig.discounts.quickDecision;
   const now = useNow(1000);
   const state = resolveQuickDecision(config, offerAgeMinutesFrom(clock, now));
@@ -33,12 +34,12 @@ export function QuickDecisionBanner({ clock, onCta }: { clock: OfferClock | null
           mt: 3,
           p: "2px",
           borderRadius: 4,
-          background: state.expired ? palette.line : "linear-gradient(120deg, #FFB547, #FF5E7E 45%, #D4FF3A)",
+          background: state.expired ? palette.line : palette.amber,
         }}
       >
         <Box sx={{ borderRadius: "14px", background: palette.ink, color: "#fff", p: { xs: 2.5, md: 3 }, display: "grid", gridTemplateColumns: { xs: "1fr", md: "1.1fr 1fr" }, gap: { xs: 2.5, md: 4 }, alignItems: "center" }}>
           <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-            <Box sx={{ flexShrink: 0, width: 52, height: 52, borderRadius: 3, display: "grid", placeItems: "center", background: state.expired ? palette.inkSoft : palette.lime, color: palette.ink }}>
+            <Box sx={{ flexShrink: 0, width: 52, height: 52, borderRadius: 3, display: "grid", placeItems: "center", background: state.expired ? palette.inkSoft : palette.amber, color: palette.ink }}>
               <TimerOutlined />
             </Box>
             <Box>
@@ -52,14 +53,14 @@ export function QuickDecisionBanner({ clock, onCta }: { clock: OfferClock | null
               ) : (
                 <>
                   <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
-                    <Box component="span" sx={{ color: palette.lime }}>
+                    <Box component="span" sx={{ color: palette.amber }}>
                       −{state.percent}% kedvezmény
                     </Box>
                     , ha{" "}
                     {state.minutesLeft !== null ? (
                       <>
                         még{" "}
-                        <Box component="span" sx={{ color: palette.lime, fontVariantNumeric: "tabular-nums" }}>
+                        <Box component="span" sx={{ color: palette.amber, fontVariantNumeric: "tabular-nums" }}>
                           {formatCountdown(state.minutesLeft)}
                         </Box>{" "}
                         alatt
@@ -76,7 +77,7 @@ export function QuickDecisionBanner({ clock, onCta }: { clock: OfferClock | null
                     component="button"
                     type="button"
                     onClick={onCta}
-                    sx={{ mt: 1, p: 0, border: 0, background: "none", color: "#fff", font: "inherit", fontWeight: 600, textDecoration: "underline", textUnderlineOffset: 3, cursor: "pointer" }}
+                    sx={{ mt: 1, minHeight: 44, px: 0, border: 0, background: "none", color: "#fff", font: "inherit", fontWeight: 600, textDecoration: "underline", textUnderlineOffset: 3, cursor: "pointer" }}
                   >
                     Egyeztetést kérek most
                   </Box>
@@ -98,8 +99,8 @@ export function QuickDecisionBanner({ clock, onCta }: { clock: OfferClock | null
                     p: 1.5,
                     borderRadius: 2,
                     textAlign: "center",
-                    background: active ? palette.lime : palette.inkSoft,
-                    color: active ? palette.ink : past ? "rgba(255,255,255,.35)" : "#fff",
+                    background: active ? palette.amber : palette.inkSoft,
+                    color: active ? palette.ink : past ? palette.inkMuted : "#fff",
                     textDecoration: past ? "line-through" : "none",
                     transition: "background .3s ease",
                   }}

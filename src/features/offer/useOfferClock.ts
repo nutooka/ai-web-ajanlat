@@ -6,28 +6,40 @@ export interface OfferClock {
   issuedAt: number;
   /** serverNow - clientNow, so countdowns follow the server's clock. */
   offset: number;
+  /** Offer age (minutes) when this page loaded – lets us tell the visitor if a tier expires while they read. */
+  ageAtLoad: number;
 }
 
+export type OfferClockState =
+  | { status: "loading"; clock: null }
+  | { status: "ready"; clock: OfferClock }
+  | { status: "error"; clock: null };
+
 /** Starts or loads the server-signed offer clock (see /api/offer-clock). */
-export function useOfferClock(): OfferClock | null {
-  const [clock, setClock] = useState<OfferClock | null>(null);
+export function useOfferClock(): OfferClockState {
+  const [state, setState] = useState<OfferClockState>({ status: "loading", clock: null });
 
   useEffect(() => {
     let cancelled = false;
     fetch("/api/offer-clock", { method: "POST" })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data: { issuedAt: number; now: number } | null) => {
-        if (!cancelled && data) setClock({ issuedAt: data.issuedAt, offset: data.now - Date.now() });
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
+      .then((data: { issuedAt: number; now: number }) => {
+        if (cancelled) return;
+        setState({
+          status: "ready",
+          clock: { issuedAt: data.issuedAt, offset: data.now - Date.now(), ageAtLoad: Math.max(0, (data.now - data.issuedAt) / 60_000) },
+        });
       })
       .catch(() => {
-        // Without a clock we keep showing the first tier; the server never charges more than shown.
+        // The server falls back to the first tier, so we never show more than we charge.
+        if (!cancelled) setState({ status: "error", clock: null });
       });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  return clock;
+  return state;
 }
 
 /** Current time, refreshed every `intervalMs`; null until mounted. */
