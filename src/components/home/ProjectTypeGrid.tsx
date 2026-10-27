@@ -33,7 +33,7 @@ export function ProjectTypeGrid() {
                 width: "100%",
                 height: "100%",
                 p: 3,
-                borderRadius: 4,
+                borderRadius: 3,
                 border: 1,
                 borderColor: "divider",
                 background: palette.surface,
@@ -52,7 +52,7 @@ export function ProjectTypeGrid() {
               }}
             >
               {Icon && (
-                <Box sx={{ width: 48, height: 48, borderRadius: 3.5, display: "grid", placeItems: "center", background: palette.paper, color: palette.ink }}>
+                <Box sx={{ width: 48, height: 48, borderRadius: 2, display: "grid", placeItems: "center", background: palette.paper, color: palette.ink }}>
                   <Icon sx={{ fontSize: 26 }} />
                 </Box>
               )}

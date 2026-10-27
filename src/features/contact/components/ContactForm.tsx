@@ -94,7 +94,7 @@ export function ContactForm({ answers, packageId, packageName }: ContactFormProp
   return (
     <Box
       sx={{
-        borderRadius: { xs: 5, md: 7 },
+        borderRadius: { xs: 3, md: 4 },
         border: 1,
         borderColor: "divider",
         background: palette.surface,

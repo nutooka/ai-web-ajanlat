@@ -34,7 +34,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
       component="section"
       sx={{
         p: { xs: 3, md: 4 },
-        borderRadius: 5,
+        borderRadius: 3,
         border: 1,
         borderColor: "divider",
         background: palette.surface,
@@ -69,7 +69,7 @@ export function OfferView() {
   if (!snapshot) {
     return (
       <Container maxWidth="lg" sx={{ pt: 12 }} aria-busy="true">
-        <Skeleton variant="rounded" height={280} sx={{ borderRadius: 6 }} />
+        <Skeleton variant="rounded" height={280} sx={{ borderRadius: 4 }} />
       </Container>
     );
   }
@@ -121,7 +121,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
             sx={{
               background: palette.ink,
               color: "#fff",
-              borderRadius: { xs: 5, md: 7 },
+              borderRadius: { xs: 3, md: 4 },
               p: { xs: 3, sm: 4, md: 6 },
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1.3fr 0.7fr" },
@@ -161,7 +161,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
           </Box>
         </motion.div>
 
-        <Stack direction="row" spacing={1.25} sx={{ alignItems: "flex-start", mt: 3, p: 2, borderRadius: 3, background: palette.primaryTint }}>
+        <Stack direction="row" spacing={1.25} sx={{ alignItems: "flex-start", mt: 3, p: 2, borderRadius: 2, background: palette.primaryTint }}>
           <InfoOutlined sx={{ fontSize: 20, color: "primary.main", mt: "1px" }} />
           <Typography variant="body2">{offer.disclaimer}</Typography>
         </Stack>
@@ -174,7 +174,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
             Mindhárom a te válaszaidból épül fel – a különbség a terjedelemben és a szolgáltatásokban van.
           </Typography>
           {offer.quote.budget && (
-            <Typography variant="body2" sx={{ mb: 2, px: 2, py: 1.25, borderRadius: 3, display: "inline-block", background: palette.primaryTint }}>
+            <Typography variant="body2" sx={{ mb: 2, px: 2, py: 1.25, borderRadius: 2, display: "inline-block", background: palette.primaryTint }}>
               {offer.quote.budget.withinBasic
                 ? `A megadott kereted alapján a(z) ${offer.quote.packages[offer.quote.recommended].name} csomagot ajánljuk.`
                 : "Már a Basic csomag is meghaladja a megadott keretet. Egyeztetéskor megnézzük, hogyan lehet szakaszolni vagy egyszerűsíteni a projektet."}

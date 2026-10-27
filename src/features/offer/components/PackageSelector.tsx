@@ -29,7 +29,7 @@ export function PackageSelector({ quote, selected, onSelect }: PackageSelectorPr
             sx={{
               position: "relative",
               p: 3,
-              borderRadius: 5,
+              borderRadius: 3,
               display: "flex",
               flexDirection: "column",
               alignItems: "flex-start",

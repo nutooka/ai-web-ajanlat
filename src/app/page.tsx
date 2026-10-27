@@ -108,7 +108,7 @@ export default function HomePage() {
         <Container maxWidth="lg">
           <Box
             sx={{
-              borderRadius: { xs: 5, md: 7 },
+              borderRadius: { xs: 3, md: 4 },
               p: { xs: 4, md: 7 },
               background: palette.ink,
               color: "#fff",

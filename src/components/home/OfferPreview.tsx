@@ -19,7 +19,7 @@ export function OfferPreview() {
   return (
     <Box aria-hidden sx={{ position: "relative", display: { xs: "none", sm: "block" } }}>
       <motion.div initial={{ opacity: 0, y: 24, rotate: -1 }} animate={{ opacity: 1, y: 0, rotate: -2 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
-        <Box sx={{ background: palette.ink, color: "#fff", borderRadius: 6, p: 3.5, boxShadow: "0 40px 80px -40px rgba(20,22,26,.6)" }}>
+        <Box sx={{ background: palette.ink, color: "#fff", borderRadius: 4, p: 3.5, boxShadow: "0 40px 80px -40px rgba(20,22,26,.6)" }}>
           <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center", mb: 3 }}>
             <Typography sx={{ opacity: 0.7, fontSize: 13 }}>Személyre szabott ajánlat</Typography>
             <Box sx={{ background: palette.accent, color: palette.ink, px: 1.25, py: 0.25, borderRadius: 999, fontSize: 12, fontWeight: 700 }}>

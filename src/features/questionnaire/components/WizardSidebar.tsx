@@ -18,7 +18,7 @@ export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; a
 
   return (
     <Stack spacing={2} component="aside" aria-label="A projekted összefoglalója" sx={{ position: "sticky", top: 112 }}>
-      <Box sx={{ borderRadius: 6, p: 3, background: palette.ink, color: "#fff", position: "relative", overflow: "hidden" }}>
+      <Box sx={{ borderRadius: 4, p: 3, background: palette.ink, color: "#fff", position: "relative", overflow: "hidden" }}>
         <Box sx={{ position: "relative" }}>
           <Typography sx={{ fontSize: 13, opacity: 0.65 }}>A projekted</Typography>
           <Typography variant="h5" component="p" sx={{ mt: 0.5 }}>
@@ -66,7 +66,7 @@ export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; a
         </Box>
       </Box>
 
-      <Box sx={{ borderRadius: 5, p: 2.5, background: "rgba(255,255,255,.7)", backdropFilter: "blur(8px)", border: 1, borderColor: "divider" }}>
+      <Box sx={{ borderRadius: 3, p: 2.5, background: palette.surface, border: 1, borderColor: "divider" }}>
         <Typography variant="body2" sx={{ fontWeight: 600 }}>
           {answeredCount} válasz elmentve
         </Typography>

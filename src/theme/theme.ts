@@ -48,7 +48,7 @@ export const theme = createTheme({
     MuiButton: {
       defaultProps: { disableElevation: true },
       styleOverrides: {
-        root: { borderRadius: 999, paddingInline: 22, minHeight: 44 },
+        root: { borderRadius: 10, paddingInline: 22, minHeight: 44 },
         sizeLarge: { paddingInline: 28, minHeight: 52, fontSize: "1rem" },
         outlined: { borderColor: palette.line, "&:hover": { borderColor: palette.ink, background: "transparent" } },
       },
@@ -57,12 +57,12 @@ export const theme = createTheme({
       defaultProps: { elevation: 0 },
       styleOverrides: { outlined: { borderColor: palette.line } },
     },
-    MuiChip: { styleOverrides: { root: { fontWeight: 600, borderRadius: 999 } } },
+    MuiChip: { styleOverrides: { root: { fontWeight: 600, borderRadius: 6 } } },
     MuiTextField: { defaultProps: { fullWidth: true } },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
+          borderRadius: 10,
           background: palette.surface,
           "& .MuiOutlinedInput-notchedOutline": { borderColor: palette.line },
           "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: alpha(palette.ink, 0.4) },
