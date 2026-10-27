@@ -145,7 +145,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
                 {formatRon(pkg.finalPrice)}
               </Typography>
               {pkg.savings > 0 && (
-                <Chip label={`Megtakarítás: ${formatRon(pkg.savings)}`} sx={{ alignSelf: "flex-start", mt: 1.5, background: palette.accent, color: palette.ink }} />
+                <Chip label={`Megtakarítás: ${formatRon(pkg.savings)}`} sx={{ alignSelf: "flex-start", mt: 1.5, background: "rgba(255,255,255,.12)", color: "#fff" }} />
               )}
               <Stack direction="row" spacing={4} sx={{ mt: 3 }}>
                 <Box>

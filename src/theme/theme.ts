@@ -3,7 +3,7 @@
 import { alpha, createTheme } from "@mui/material/styles";
 import { palette } from "./tokens";
 
-export { palette, tint, tints } from "./tokens";
+export { palette } from "./tokens";
 
 const display = "var(--font-display), 'Bricolage Grotesque', system-ui, sans-serif";
 const body = "var(--font-body), Inter, system-ui, sans-serif";
@@ -38,7 +38,7 @@ export const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: { WebkitFontSmoothing: "antialiased", textRendering: "optimizeLegibility" },
-        "::selection": { background: palette.accent, color: palette.ink },
+        "::selection": { background: palette.primaryTint, color: palette.ink },
         "@media print": {
           body: { background: "#FFFFFF" },
           ".no-print": { display: "none !important" },

@@ -45,7 +45,7 @@ export function PackageSelector({ quote, selected, onSelect }: PackageSelectorPr
             }}
           >
             {recommended && (
-              <Box sx={{ position: "absolute", top: 16, right: 16, px: 1.25, py: 0.25, borderRadius: 999, background: palette.accent, color: palette.ink, fontSize: 12, fontWeight: 700 }}>
+              <Box sx={{ position: "absolute", top: 16, right: 16, px: 1.25, py: 0.25, borderRadius: 999, background: palette.primary, color: "#fff", fontSize: 12, fontWeight: 700 }}>
                 Ajánlott
               </Box>
             )}

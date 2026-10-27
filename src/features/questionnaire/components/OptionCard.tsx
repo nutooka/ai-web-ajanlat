@@ -78,7 +78,7 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
           </Typography>
         )}
         {recommended && (
-          <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 999, background: palette.accent, fontSize: 12, fontWeight: 700 }}>
+          <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 999, background: palette.primary, color: "#fff", fontSize: 12, fontWeight: 700 }}>
             Ajánlott
           </Box>
         )}

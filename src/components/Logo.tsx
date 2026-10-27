@@ -22,7 +22,7 @@ export function Logo() {
           background: palette.ink,
           display: "grid",
           placeItems: "center",
-          color: palette.accent,
+          color: "#fff",
           fontFamily: "var(--font-display)",
           fontWeight: 800,
           fontSize: 18,

@@ -127,7 +127,7 @@ export default function HomePage() {
                 {launch.enabled ? `Most ${launch.percent}% indulási kedvezménnyel.` : "Pár perc, és megtudod."}
               </Typography>
             </Box>
-            <LinkButton href="/tervezo" size="large" endIcon={<ArrowForward />} sx={{ background: "#fff", color: palette.ink, alignSelf: { xs: "flex-start", md: "center" }, "&:hover": { background: palette.accent } }}>
+            <LinkButton href="/tervezo" size="large" endIcon={<ArrowForward />} sx={{ background: "#fff", color: palette.ink, alignSelf: { xs: "flex-start", md: "center" }, "&:hover": { background: palette.primaryTint } }}>
               Megtervezem a projektem
             </LinkButton>
           </Box>
