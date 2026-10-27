@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import { OPTION_ICONS } from "@/components/icons";
-import { palette, tint } from "@/theme/tokens";
+import { palette } from "@/theme/tokens";
 import type { QuestionOption } from "../types";
 
 interface OptionCardProps {
@@ -13,13 +13,11 @@ interface OptionCardProps {
   selected: boolean;
   multiple: boolean;
   shortcut?: number;
-  /** Position in the list – picks the icon tile colour. */
-  index: number;
   recommended?: boolean;
   onSelect: () => void;
 }
 
-export function OptionCard({ option, selected, multiple, shortcut, index, recommended, onSelect }: OptionCardProps) {
+export function OptionCard({ option, selected, multiple, shortcut, recommended, onSelect }: OptionCardProps) {
   const Icon = option.icon ? OPTION_ICONS[option.icon] : null;
 
   return (
@@ -36,8 +34,7 @@ export function OptionCard({ option, selected, multiple, shortcut, index, recomm
         borderRadius: 4,
         border: "1.5px solid",
         borderColor: selected ? palette.primary : palette.line,
-        background: selected ? palette.primaryTint : "rgba(255,255,255,.82)",
-        backdropFilter: "blur(8px)",
+        background: selected ? palette.primaryTint : palette.surface,
         display: "flex",
         alignItems: "flex-start",
         justifyContent: "flex-start",
@@ -63,8 +60,8 @@ export function OptionCard({ option, selected, multiple, shortcut, index, recomm
             borderRadius: 3,
             display: "grid",
             placeItems: "center",
-            background: selected ? palette.primary : tint(index).bg,
-            color: selected ? "#fff" : tint(index).fg,
+            background: selected ? palette.primary : palette.paper,
+            color: selected ? "#fff" : palette.ink,
             transition: "all .18s ease",
           }}
         >

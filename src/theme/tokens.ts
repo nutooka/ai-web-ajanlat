@@ -1,7 +1,7 @@
 /** Design tokens – plain module so both Server and Client Components can import it. */
 export const palette = {
   ink: "#14161A",
-  paper: "#F2F0EA",
+  paper: "#F6F6F3",
   surface: "#FFFFFF",
   line: "#E6E3DB",
   muted: "#5C616B",

@@ -22,22 +22,13 @@ import { isComplete } from "@/features/questionnaire/engine";
 import type { Answers } from "@/features/questionnaire/types";
 import { formatRon, formatWeeks } from "@/lib/format";
 import { useWizardSnapshot, wizardStore } from "@/lib/storage";
-import { palette, tints } from "@/theme/tokens";
+import { palette } from "@/theme/tokens";
 import type { PackageId } from "@/features/pricing/types";
 import { buildOffer } from "../buildOffer";
 import { PackageSelector } from "./PackageSelector";
 import { PriceBreakdown } from "./PriceBreakdown";
 
-type Tone = "surface" | "blue" | "lilac" | "mint" | "peach";
-const TONES: Record<Tone, string> = {
-  surface: "rgba(255,255,255,.85)",
-  blue: tints[0].bg,
-  lilac: tints[1].bg,
-  mint: tints[2].bg,
-  peach: tints[3].bg,
-};
-
-function Card({ title, children, tone = "surface" }: { title: string; children: React.ReactNode; tone?: Tone }) {
+function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <Box
       component="section"
@@ -45,9 +36,8 @@ function Card({ title, children, tone = "surface" }: { title: string; children: 
         p: { xs: 3, md: 4 },
         borderRadius: 5,
         border: 1,
-        borderColor: tone === "surface" ? "divider" : "transparent",
-        background: TONES[tone],
-        backdropFilter: tone === "surface" ? "blur(8px)" : undefined,
+        borderColor: "divider",
+        background: palette.surface,
         breakInside: "avoid",
       }}
     >
@@ -186,7 +176,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
             Mindhárom a te válaszaidból épül fel – a különbség a terjedelemben és a szolgáltatásokban van.
           </Typography>
           {offer.quote.budget && (
-            <Typography variant="body2" sx={{ mb: 2, px: 2, py: 1.25, borderRadius: 3, display: "inline-block", background: offer.quote.budget.withinBasic ? tints[2].bg : tints[3].bg }}>
+            <Typography variant="body2" sx={{ mb: 2, px: 2, py: 1.25, borderRadius: 3, display: "inline-block", background: palette.primaryTint }}>
               {offer.quote.budget.withinBasic
                 ? `A megadott kereted alapján a(z) ${offer.quote.packages[offer.quote.recommended].name} csomagot ajánljuk.`
                 : "Már a Basic csomag is meghaladja a megadott keretet. Egyeztetéskor megnézzük, hogyan lehet szakaszolni vagy egyszerűsíteni a projektet."}
@@ -201,7 +191,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
           </Card>
 
           <Stack spacing={3}>
-            <Card title="Javasolt technológia" tone="lilac">
+            <Card title="Javasolt technológia">
               <Typography variant="h6" component="p">
                 {offer.tech.title}
               </Typography>
@@ -210,12 +200,12 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
               </Typography>
               <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
                 {offer.tech.stack.map((tech) => (
-                  <Chip key={tech} label={tech} size="small" sx={{ background: "rgba(255,255,255,.7)" }} />
+                  <Chip key={tech} label={tech} size="small" variant="outlined" />
                 ))}
               </Stack>
             </Card>
 
-            <Card title="Fenntartás" tone="mint">
+            <Card title="Fenntartás">
               <Stack spacing={1.25}>
                 <Stack direction="row" sx={{ justifyContent: "space-between", gap: 2 }}>
                   <Typography variant="body2">Tárhely, üzemeltetés</Typography>
@@ -229,7 +219,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
                   <Typography variant="body2">Domain</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 600, whiteSpace: "nowrap" }}>{formatRon(pkg.maintenance.domainYearly)}/év</Typography>
                 </Stack>
-                <Box sx={{ borderTop: "1px solid rgba(20,22,26,.12)", pt: 1.5 }}>
+                <Box sx={{ borderTop: 1, borderColor: "divider", pt: 1.5 }}>
                   <Typography sx={{ fontWeight: 700 }}>{formatRon(pkg.maintenance.monthlyTotal)} / hó</Typography>
                   <Typography variant="body2" color="text.secondary">
                     Évente kb. {formatRon(pkg.maintenance.yearlyTotal)} · a karbantartás opcionális
@@ -271,7 +261,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
         </Box>
 
         <Box sx={{ mt: 3 }}>
-          <Card title="Következő lépések" tone="blue">
+          <Card title="Következő lépések">
             <Box component="ol" sx={{ listStyle: "none", p: 0, m: 0, display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }, gap: 3 }}>
               {offer.nextSteps.map((step, index) => (
                 <Box component="li" key={step}>

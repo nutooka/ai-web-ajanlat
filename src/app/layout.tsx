@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: { title: siteConfig.name, description: siteConfig.tagline, locale: "hu_HU", type: "website" },
 };
 
-export const viewport: Viewport = { themeColor: "#F2F0EA" };
+export const viewport: Viewport = { themeColor: "#F6F6F3" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

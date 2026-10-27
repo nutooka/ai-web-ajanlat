@@ -72,7 +72,6 @@ export const QuestionStep = forwardRef<HTMLHeadingElement, QuestionStepProps>(fu
                 selected={selected}
                 multiple={question.kind === "multi"}
                 shortcut={index < 9 ? index + 1 : undefined}
-                index={index}
                 recommended={recommended === option.id}
                 onSelect={() => {
                   if (question.kind === "multi") {

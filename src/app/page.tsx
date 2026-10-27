@@ -127,12 +127,12 @@ export default function HomePage() {
               </Typography>
             </Box>
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
-              {benefits.map((benefit, index) => (
-                <Box key={benefit.title} sx={{ p: 3, borderRadius: 5, background: tint(index).bg }}>
-                  <Typography variant="h6" component="h3" sx={{ color: tint(index).fg, mb: 0.75 }}>
+              {benefits.map((benefit) => (
+                <Box key={benefit.title} sx={{ pt: 2.5, borderTop: 1, borderColor: "divider" }}>
+                  <Typography variant="h6" component="h3" sx={{ mb: 0.75 }}>
                     {benefit.title}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: palette.inkSoft }}>
+                  <Typography variant="body2" color="text.secondary">
                     {benefit.text}
                   </Typography>
                 </Box>

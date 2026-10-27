@@ -9,7 +9,7 @@ import { OPTION_ICONS } from "@/components/icons";
 import { projectTypeQuestion } from "@/features/questionnaire/config/branches";
 import { getVisibleQuestions } from "@/features/questionnaire/engine";
 import { wizardStore } from "@/lib/storage";
-import { palette, tint } from "@/theme/tokens";
+import { palette } from "@/theme/tokens";
 
 export function ProjectTypeGrid() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export function ProjectTypeGrid() {
 
   return (
     <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" }, gap: 2 }}>
-      {projectTypeQuestion.options.map((option, index) => {
+      {projectTypeQuestion.options.map((option) => {
         const Icon = option.icon ? OPTION_ICONS[option.icon] : null;
         return (
             <ButtonBase
@@ -36,8 +36,7 @@ export function ProjectTypeGrid() {
                 borderRadius: 4,
                 border: 1,
                 borderColor: "divider",
-                background: "rgba(255,255,255,.75)",
-                backdropFilter: "blur(8px)",
+                background: palette.surface,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "flex-start",
@@ -53,7 +52,7 @@ export function ProjectTypeGrid() {
               }}
             >
               {Icon && (
-                <Box sx={{ width: 48, height: 48, borderRadius: 3.5, display: "grid", placeItems: "center", background: tint(index).bg, color: tint(index).fg }}>
+                <Box sx={{ width: 48, height: 48, borderRadius: 3.5, display: "grid", placeItems: "center", background: palette.paper, color: palette.ink }}>
                   <Icon sx={{ fontSize: 26 }} />
                 </Box>
               )}
