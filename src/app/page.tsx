@@ -10,7 +10,7 @@ import { ProjectTypeGrid } from "@/components/home/ProjectTypeGrid";
 import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
 import { pricingConfig } from "@/config/pricing";
-import { palette, tint } from "@/theme/tokens";
+import { palette } from "@/theme/tokens";
 
 const steps = [
   { title: "Válaszolj néhány kérdésre", text: "Egyszerre csak egy kérdés, szakszavak nélkül, tippekkel. A válaszaid automatikusan mentődnek." },
@@ -53,25 +53,21 @@ export default function HomePage() {
           </Box>
         </Container>
 
-        <Box sx={{ background: palette.ink, color: "#fff", position: "relative", overflow: "hidden" }}>
-          <Container maxWidth="lg" sx={{ py: { xs: 8, md: 11 }, position: "relative" }}>
-            <Typography variant="h2" sx={{ mb: 5, maxWidth: 620 }}>
+        <Box sx={{ background: palette.surface, borderBlock: 1, borderColor: "divider" }}>
+          <Container maxWidth="lg" sx={{ py: { xs: 8, md: 11 } }}>
+            <Typography variant="h2" sx={{ mb: { xs: 4, md: 6 }, maxWidth: 620 }}>
               Mintha egy tanácsadóval ülnél le – csak gyorsabb.
             </Typography>
-            <Box component="ol" sx={{ listStyle: "none", p: 0, m: 0, display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, gap: 2.5 }}>
+            <Box component="ol" sx={{ listStyle: "none", p: 0, m: 0, display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, columnGap: 5, rowGap: 4 }}>
               {steps.map((step, index) => (
-                <Box
-                  component="li"
-                  key={step.title}
-                  sx={{ p: 3.5, borderRadius: 5, border: "1px solid rgba(255,255,255,.1)", background: "rgba(255,255,255,.04)", backdropFilter: "blur(6px)" }}
-                >
-                  <Box sx={{ width: 44, height: 44, borderRadius: 3, display: "grid", placeItems: "center", background: tint(index).bg, color: tint(index).fg, fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 20 }}>
-                    {index + 1}
-                  </Box>
-                  <Typography variant="h5" component="h3" sx={{ mt: 2.5, mb: 1 }}>
+                <Box component="li" key={step.title} sx={{ pt: 2.5, borderTop: `2px solid ${index === 0 ? palette.primary : palette.line}` }}>
+                  <Typography sx={{ fontVariantNumeric: "tabular-nums", fontWeight: 600, color: index === 0 ? "primary.main" : "text.secondary", mb: 1.5 }}>
+                    {String(index + 1).padStart(2, "0")}
+                  </Typography>
+                  <Typography variant="h5" component="h3" sx={{ mb: 1 }}>
                     {step.title}
                   </Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                  <Typography variant="body2" color="text.secondary">
                     {step.text}
                   </Typography>
                 </Box>
