@@ -45,6 +45,7 @@ const sections: { title: string; body: string[] }[] = [
       `Az ajánlatkéréseket legfeljebb ${privacy.retentionMonths} hónapig őrizzük, vagy addig, amíg vissza nem vonod a hozzájárulásodat. Ha szerződés jön létre, a jogszabályban előírt ideig őrizzük.`,
       "A böngésződben tárolt válaszokat bármikor törölheted az „Újrakezdem” gombbal vagy a böngésző adatainak törlésével.",
       "A kedvezmény-ellenőrzéshez tárolt lenyomat és időpont 30 nap után automatikusan törlődik.",
+      "Hogy a gyors döntés kedvezmény ne induljon újra privát ablakban, az ajánlat első megnyitásának időpontját az IP-címed és a böngésződ típusának visszafejthetetlen lenyomatához (hash) kötve 7 napig tároljuk. Magát az IP-címet nem tároljuk.",
     ],
   },
   {

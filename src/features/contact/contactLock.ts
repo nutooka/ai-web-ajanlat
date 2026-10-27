@@ -24,6 +24,21 @@ export function contactKeys(contact: { phone?: string; email?: string }, secret:
   return parts.map((part) => `offer-first-seen:${createHmac("sha256", secret).update(part).digest("hex")}`);
 }
 
+/**
+ * Same device without cookies (incognito, cleared site data): IP + browser signature, hashed.
+ * Only the earliest clock start is stored, for 7 days – never the raw IP.
+ */
+export const DEVICE_CLOCK_TTL_SECONDS = 7 * 24 * 60 * 60;
+
+export function clientIp(headers: Headers): string | null {
+  const forwarded = headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded || headers.get("x-real-ip") || null;
+}
+
+export function deviceKey(ip: string, userAgent: string, secret: string): string {
+  return `offer-device-first-seen:${createHmac("sha256", secret).update(`device:${ip}|${userAgent.trim()}`).digest("hex")}`;
+}
+
 export interface FirstSeenResult {
   /** Earliest clock start known for any of the keys (including the candidate just stored). */
   firstSeenAt: number;
@@ -38,7 +53,11 @@ export type FirstSeenStore = (keys: string[], candidate: number) => Promise<Firs
  * Upstash Redis over its REST API (no SDK needed): SET NX EX + GET per key in one pipeline.
  * Returns null when the store is not configured, so the app keeps working without it.
  */
-export function createUpstashFirstSeenStore(env: NodeJS.ProcessEnv = process.env, fetchImpl: typeof fetch = fetch): FirstSeenStore | null {
+export function createUpstashFirstSeenStore(
+  env: NodeJS.ProcessEnv = process.env,
+  fetchImpl: typeof fetch = fetch,
+  ttlSeconds: number = CONTACT_LOCK_TTL_SECONDS,
+): FirstSeenStore | null {
   const url = env.KV_REST_API_URL ?? env.UPSTASH_REDIS_REST_URL;
   const token = env.KV_REST_API_TOKEN ?? env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return null;
@@ -46,7 +65,7 @@ export function createUpstashFirstSeenStore(env: NodeJS.ProcessEnv = process.env
   return async (keys, candidate) => {
     if (keys.length === 0) return { firstSeenAt: candidate, repeat: false };
     const commands = keys.flatMap((key) => [
-      ["SET", key, String(candidate), "NX", "EX", String(CONTACT_LOCK_TTL_SECONDS)],
+      ["SET", key, String(candidate), "NX", "EX", String(ttlSeconds)],
       ["GET", key],
     ]);
     const response = await fetchImpl(`${url.replace(/\/$/, "")}/pipeline`, {

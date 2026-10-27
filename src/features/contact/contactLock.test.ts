@@ -38,3 +38,16 @@ describe("Upstash store", () => {
     expect(JSON.parse(String(init.body))[0]).toEqual(["SET", "a", "5000", "NX", "EX", String(30 * 24 * 60 * 60)]);
   });
 });
+
+describe("device clock key", () => {
+  it("is stable per IP + browser, differs otherwise, and never contains the IP", async () => {
+    const { deviceKey, clientIp } = await import("./contactLock");
+    const a = deviceKey("203.0.113.7", "Safari/17", "secret");
+    expect(a).toBe(deviceKey("203.0.113.7", "Safari/17", "secret"));
+    expect(a).not.toBe(deviceKey("203.0.113.8", "Safari/17", "secret"));
+    expect(a).not.toBe(deviceKey("203.0.113.7", "Chrome/120", "secret"));
+    expect(a).not.toContain("203.0.113.7");
+    expect(clientIp(new Headers({ "x-forwarded-for": "203.0.113.7, 10.0.0.1" }))).toBe("203.0.113.7");
+    expect(clientIp(new Headers())).toBeNull();
+  });
+});
