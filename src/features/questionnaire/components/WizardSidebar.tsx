@@ -19,7 +19,6 @@ export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; a
   return (
     <Stack spacing={2} component="aside" aria-label="A projekted összefoglalója" sx={{ position: "sticky", top: 112 }}>
       <Box sx={{ borderRadius: 6, p: 3, background: palette.ink, color: "#fff", position: "relative", overflow: "hidden" }}>
-        <Box aria-hidden sx={{ position: "absolute", inset: 0, background: "radial-gradient(80% 60% at 100% 0%, rgba(43,75,255,.45), transparent 70%)" }} />
         <Box sx={{ position: "relative" }}>
           <Typography variant="overline" sx={{ color: palette.accent }}>
             A projekted

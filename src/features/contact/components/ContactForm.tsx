@@ -97,9 +97,8 @@ export function ContactForm({ answers, packageId, packageName }: ContactFormProp
         borderRadius: { xs: 5, md: 7 },
         border: 1,
         borderColor: "divider",
-        background: `linear-gradient(160deg, ${palette.surface} 40%, #EEF1FF 100%)`,
+        background: palette.surface,
         p: { xs: 3, sm: 4, md: 6 },
-        boxShadow: "0 30px 60px -40px rgba(43,75,255,.45)",
       }}
     >
       <AnimatePresence mode="wait" initial={false}>

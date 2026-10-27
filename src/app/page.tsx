@@ -4,7 +4,6 @@ import Chip from "@mui/material/Chip";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Backdrop } from "@/components/Backdrop";
 import { LinkButton } from "@/components/LinkButton";
 import { HeroActions } from "@/components/home/HeroActions";
 import { OfferPreview } from "@/components/home/OfferPreview";
@@ -38,7 +37,6 @@ export default function HomePage() {
 
   return (
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
-      <Backdrop />
       <Container maxWidth="lg" component="header" sx={{ py: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Logo />
         <LinkButton href="/tervezo" color="inherit" endIcon={<ArrowForward />} sx={{ display: { xs: "none", sm: "inline-flex" } }}>
@@ -57,10 +55,7 @@ export default function HomePage() {
                 />
               )}
               <Typography variant="h1">
-                Tervezzük meg együtt a{" "}
-                <Box component="span" sx={{ background: `linear-gradient(100deg, ${palette.primary}, #7A3FE0)`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>
-                  weboldalad.
-                </Box>
+                Tervezzük meg együtt a&nbsp;weboldalad.
               </Typography>
               <Typography variant="subtitle1" sx={{ maxWidth: 520, fontSize: { xs: "1.0625rem", md: "1.25rem" } }}>
                 Válaszolj néhány egyszerű kérdésre, és pár perc alatt személyre szabott, tételes árajánlatot kapsz – regisztráció nélkül.
@@ -82,7 +77,6 @@ export default function HomePage() {
         </Container>
 
         <Box sx={{ background: palette.ink, color: "#fff", position: "relative", overflow: "hidden" }}>
-          <Box aria-hidden sx={{ position: "absolute", inset: 0, background: "radial-gradient(50% 80% at 90% 0%, rgba(43,75,255,.35), transparent 70%), radial-gradient(40% 70% at 0% 100%, rgba(122,63,224,.3), transparent 70%)" }} />
           <Container maxWidth="lg" sx={{ py: { xs: 8, md: 11 }, position: "relative" }}>
             <Typography variant="overline" sx={{ color: palette.accent }}>
               Hogyan működik?
@@ -152,7 +146,7 @@ export default function HomePage() {
             sx={{
               borderRadius: { xs: 5, md: 7 },
               p: { xs: 4, md: 7 },
-              background: `linear-gradient(120deg, ${palette.primary} 0%, #5B3FE0 60%, #7A3FE0 100%)`,
+              background: palette.ink,
               color: "#fff",
               display: "flex",
               flexDirection: { xs: "column", md: "row" },

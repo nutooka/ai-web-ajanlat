@@ -15,7 +15,6 @@ import Typography from "@mui/material/Typography";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useMemo } from "react";
-import { Backdrop } from "@/components/Backdrop";
 import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ContactForm } from "@/features/contact/components/ContactForm";
@@ -113,7 +112,6 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
 
   return (
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
-      <Backdrop variant="quiet" />
       <Container maxWidth="lg" component="header" sx={{ py: 3, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2 }}>
         <Logo />
         <Stack direction="row" spacing={1} className="no-print">
@@ -140,7 +138,6 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
               gap: { xs: 4, md: 6 },
               position: "relative",
               overflow: "hidden",
-              backgroundImage: "radial-gradient(60% 90% at 100% 0%, rgba(43,75,255,.45), transparent 70%), radial-gradient(50% 80% at 0% 100%, rgba(122,63,224,.35), transparent 70%)",
               "@media print": { background: "#fff", color: palette.ink, border: `1px solid ${palette.line}` },
             }}
           >

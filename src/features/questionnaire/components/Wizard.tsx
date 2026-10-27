@@ -13,7 +13,6 @@ import Typography from "@mui/material/Typography";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Backdrop } from "@/components/Backdrop";
 import { Logo } from "@/components/Logo";
 import { calculateQuote } from "@/features/pricing/engine";
 import { formatRon } from "@/lib/format";
@@ -170,7 +169,6 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
 
   return (
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
-      <Backdrop />
       <Box component="header" sx={{ position: "sticky", top: 0, zIndex: 10, background: "rgba(242,240,234,.72)", backdropFilter: "blur(14px)" }}>
         <Container maxWidth="lg" sx={{ py: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
           <Logo />
