@@ -4,15 +4,12 @@ import ArrowForward from "@mui/icons-material/ArrowForward";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
-import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { OPTION_ICONS } from "@/components/icons";
 import { projectTypeQuestion } from "@/features/questionnaire/config/branches";
 import { getVisibleQuestions } from "@/features/questionnaire/engine";
 import { wizardStore } from "@/lib/storage";
 import { palette, tint } from "@/theme/tokens";
-
-const MotionBox = motion.create(Box);
 
 export function ProjectTypeGrid() {
   const router = useRouter();
@@ -29,14 +26,8 @@ export function ProjectTypeGrid() {
       {projectTypeQuestion.options.map((option, index) => {
         const Icon = option.icon ? OPTION_ICONS[option.icon] : null;
         return (
-          <MotionBox
-            key={option.id}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.05, duration: 0.4 }}
-          >
             <ButtonBase
+              key={option.id}
               onClick={() => start(option.id)}
               sx={{
                 width: "100%",
@@ -74,7 +65,6 @@ export function ProjectTypeGrid() {
               </Typography>
               <ArrowForward className="arrow" fontSize="small" sx={{ opacity: 0.5, transition: "all .2s ease" }} />
             </ButtonBase>
-          </MotionBox>
         );
       })}
     </Box>
