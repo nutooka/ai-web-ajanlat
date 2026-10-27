@@ -17,7 +17,7 @@ const sections: { title: string; body: string[] }[] = [
   {
     title: "1. Az adatkezelő",
     body: [
-      `${company.legalName}, székhely: ${company.address}, cégjegyzékszám: ${company.registrationNumber}, adószám (CUI): ${company.taxId}.`,
+      `${company.legalName}, székhely: ${company.address}, EUID / cégjegyzékszám: ${company.registrationNumber}, adószám (CUI): ${company.taxId}.`,
       `Kapcsolat: ${company.email}, ${company.phone}.`,
     ],
   },

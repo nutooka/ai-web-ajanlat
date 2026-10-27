@@ -112,7 +112,7 @@ Egy alkalmazás, egy spec, de belül jól elválasztott modulok. A függőség c
 - Később egy `claude-provider.ts` cserélhető be env változóval; az MVP-ben nincs AI-hívás és nincs AI-függőség.
 
 ### 3.7 Adatkezelési tájékoztató (`/adatkezeles`)
-- Statikus oldal: milyen adatot, milyen célból, meddig, kinek (Resend mint adatfeldolgozó), jogok, kapcsolat. Adatkezelő: **Nutooka Solutions SRL** (`src/config/site.ts`; a cím, CUI és e-mail helykitöltő, ki kell tölteni).
+- Statikus oldal: milyen adatot, milyen célból, meddig, kinek (Resend mint adatfeldolgozó), jogok, kapcsolat. Adatkezelő: **NUTOOKA SOLUTIONS S.R.L.** (`src/config/site.ts`; az e-mail és a telefonszám még helykitöltő).
 
 ## 4. Tech stack
 
@@ -244,7 +244,7 @@ export function calculateQuote(answers: Answers, config: PricingConfig = pricing
 - 3. kör: rejtett `productivityFactor` (0.4) – a configban lévő órák hagyományos becslések, a számlázott órák AI-asszisztált szinten. Az óraszámok nem jelennek meg az ügyfélnek (oldal, ügyfél-e-mail), csak a tulajdonosi e-mailben. Az átfutáshoz +1 hét visszajelzési puffer.
 - 2. kör: indulási kedvezmény 25% (+5% Standard), színesebb design (gradiens háttér, színes ikonok, sötét szekciók, oldalsáv), részletesebb kérdések (cél, célközönség, akciók, csatornák, skála, biztonság, domain, inspiráció, keret).
 - Árak: 200 RON/óra és a 3.3 szerinti alapórák maradnak, plusz indulási kedvezmény.
-- Cég / adatkezelő: Nutooka Solutions SRL.
+- Cég / adatkezelő: NUTOOKA SOLUTIONS S.R.L., CUI 49185840, EUID ROONRC.J2023000539198, Odorheiu Secuiesc.
 - Resend: még nincs fiók/domain → fejlesztéshez `onboarding@resend.dev`; kulcs nélkül az app működik, a küldés érthető hibát ad.
 - Nyelv: csak magyar.
 
