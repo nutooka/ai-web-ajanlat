@@ -8,5 +8,5 @@ import { SAMPLE_COMPANY_ANSWERS } from "@/features/pricing/startingPrice";
 /** The three packages for a typical company website – real numbers from the pricing engine. */
 export function HomePricing() {
   const quote = useMemo(() => calculateQuote(SAMPLE_COMPANY_ANSWERS)!, []);
-  return <PricingCards quote={quote} ctaHref="/tervezo" />;
+  return <PricingCards quote={quote} mode="home" />;
 }

@@ -203,7 +203,7 @@ function OfferContent({ answers, packageId }: { answers: Answers; packageId: Pac
             </Typography>
           )}
           <Box sx={{ pt: { md: 2 } }}>
-            <PricingCards quote={offer.quote} selected={packageId} onSelect={selectPackage} />
+            <PricingCards quote={offer.quote} mode="offer" selected={packageId} onSelect={selectPackage} />
           </Box>
         </Box>
 
