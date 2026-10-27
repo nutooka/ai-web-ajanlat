@@ -267,7 +267,16 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
             </Typography>
           )}
           {pricesReady ? (
-            <PricingCards quote={offer.quote} mode="offer" selected={packageId} onSelect={selectPackage} detailsHref={`#${DETAILS_ID}`} />
+            <PricingCards
+              quote={offer.quote}
+              mode="offer"
+              selected={packageId}
+              onSelect={(id) => {
+                selectPackage(id);
+                if (!submission) window.setTimeout(() => scrollToId(CONTACT_ID), 150);
+              }}
+              detailsHref={`#${DETAILS_ID}`}
+            />
           ) : (
             <Skeleton variant="rounded" height={520} sx={{ borderRadius: 4 }} aria-label="A csomagok betöltése" />
           )}
@@ -309,7 +318,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
 
       {!submission && (
         <>
-          <StickyCta targetId={CONTACT_ID} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} hideWhileVisible={["hero-cta"]} />
+          <StickyCta targetId={CONTACT_ID} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} hideWhileVisible={["hero-cta", DISCOUNTS_ID]} />
         </>
       )}
     </Frame>

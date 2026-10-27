@@ -268,7 +268,7 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
               endIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : <SendOutlined />}
               sx={{ alignSelf: { sm: "flex-start" } }}
             >
-              {isSubmitting ? "Küldés…" : "Egyeztetést kérek"}
+              {isSubmitting ? "Küldés…" : `Egyeztetést kérek – ${packageName}`}
             </Button>
           </Stack>
         </Box>

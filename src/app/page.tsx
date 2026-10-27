@@ -13,6 +13,7 @@ import { HeroActions } from "@/components/home/HeroActions";
 import { HomePricing } from "@/components/home/HomePricing";
 import { HeroTitle } from "@/components/home/HeroTitle";
 import { OfferPreview } from "@/components/home/OfferPreview";
+import { References } from "@/components/home/References";
 import { ProjectTypeGrid } from "@/components/home/ProjectTypeGrid";
 import { LinkButton } from "@/components/LinkButton";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -164,6 +165,8 @@ export default function HomePage() {
         </Box>
 
         <WaveDivider from={palette.ink} to={palette.paper} />
+        <References />
+
         {/* FAQ */}
         <Container maxWidth="md" component="section" sx={{ py: { xs: 9, md: 13 } }}>
           <Typography variant="h2" className="reveal" sx={{ mb: 4 }}>

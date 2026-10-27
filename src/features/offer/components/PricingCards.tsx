@@ -2,7 +2,7 @@
 
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import Check from "@mui/icons-material/Check";
-import Close from "@mui/icons-material/Close";
+import Remove from "@mui/icons-material/Remove";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Stack from "@mui/material/Stack";
@@ -182,7 +182,12 @@ export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#
                     <Stack component="ul" sx={{ listStyle: "none", p: 0, m: 0, flex: 1 }}>
                       <Row included label={pkg.design.label} />
                       {visibleRows.map((row) => (
-                        <Row key={row.id} included={pkg.items.some((item) => item.id === row.id)} label={row.label} />
+                        <Row
+                          key={row.id}
+                          included={pkg.items.some((item) => item.id === row.id)}
+                          label={row.label}
+                          availableIn={PACKAGE_IDS.map((pid) => quote.packages[pid]).find((other) => other.items.some((item) => item.id === row.id))?.name}
+                        />
                       ))}
                       {hiddenRows > 0 && (
                         <Box component="li" sx={{ pt: 1.25 }}>
@@ -257,8 +262,9 @@ export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#
   );
 }
 
-function Row({ included, label }: { included: boolean; label: string }) {
-  const Icon = included ? Check : Close;
+/** Included = green tick. Not included = quiet dash plus where it is available – no red crosses. */
+function Row({ included, label, availableIn }: { included: boolean; label: string; availableIn?: string }) {
+  const Icon = included ? Check : Remove;
   return (
     <Stack component="li" direction="row" spacing={1.5} sx={{ alignItems: "center", py: 1.1, borderBottom: `1px solid ${palette.inkLine}` }}>
       <Box
@@ -270,8 +276,8 @@ function Row({ included, label }: { included: boolean; label: string }) {
           borderRadius: "50%",
           display: "grid",
           placeItems: "center",
-          border: `1.5px solid ${included ? palette.check : palette.cross}`,
-          color: included ? palette.check : palette.cross,
+          border: `1.5px solid ${included ? palette.check : palette.inkLine}`,
+          color: included ? palette.check : palette.inkMuted,
         }}
       >
         <Icon sx={{ fontSize: 15 }} />
@@ -281,6 +287,11 @@ function Row({ included, label }: { included: boolean; label: string }) {
           {included ? "Tartalmazza: " : "Nem tartalmazza: "}
         </Box>
         {label}
+        {!included && availableIn && (
+          <Box component="span" sx={{ ml: 0.75, px: 0.75, py: 0.1, borderRadius: 1, border: `1px solid ${palette.inkLine}`, fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }}>
+            {availableIn}ban
+          </Box>
+        )}
       </Typography>
     </Stack>
   );
