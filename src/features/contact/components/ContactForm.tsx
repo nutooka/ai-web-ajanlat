@@ -80,9 +80,11 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
         return;
       }
       if (body && !body.ok && body.fieldErrors) {
+        let focused = false;
         for (const [path, message] of Object.entries(body.fieldErrors)) {
           const name = path.replace(/^contact\./, "") as keyof ContactInput;
-          if (name in contactSchema.shape) setError(name, { message });
+          if (name in contactSchema.shape) setError(name, { message }, { shouldFocus: !focused });
+          focused = true;
         }
       }
       setStatus({ kind: "error", message: body && !body.ok ? body.error : "Váratlan hiba történt. Kérjük, próbáld újra." });
@@ -114,6 +116,9 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
 
               <Box component="form" noValidate onSubmit={(event) => void handleSubmit(onSubmit)(event)} aria-label="Ajánlat elküldése">
                 <Stack spacing={2}>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    Add meg az e-mail-címed vagy a telefonszámod – a többi mező nem kötelező.
+                  </Typography>
                   <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
                     <TextField label="Név" autoComplete="name" {...field(register("name"))} error={Boolean(errors.name)} helperText={errors.name?.message} />
                     <TextField label="Cégnév" autoComplete="organization" {...field(register("company"))} error={Boolean(errors.company)} helperText={errors.company?.message} />
@@ -141,12 +146,22 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
                     <Controller
                       name="consent"
                       control={control}
-                      render={({ field: { value, onChange } }) => (
+                      render={({ field: { value, onChange, ref } }) => (
                         <FormControlLabel
                           sx={{ alignItems: "flex-start" }}
-                          control={<Checkbox checked={value} onChange={(event) => onChange(event.target.checked)} sx={{ mt: -0.75 }} />}
+                          control={
+                            <Checkbox
+                              checked={value}
+                              onChange={(event) => onChange(event.target.checked)}
+                              slotProps={{ input: { ref, "aria-required": true, "aria-invalid": Boolean(errors.consent) } }}
+                              sx={{ mt: -0.75 }}
+                            />
+                          }
                           label={
                             <Typography variant="body2">
+                              <Box component="span" aria-hidden sx={{ fontWeight: 700 }}>
+                                *{" "}
+                              </Box>
                               Elolvastam és elfogadom az{" "}
                               <MuiLink component={Link} href="/adatkezeles" target="_blank">
                                 adatkezelési tájékoztatót

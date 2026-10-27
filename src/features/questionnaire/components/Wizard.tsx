@@ -179,7 +179,13 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
           <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
             <Stack direction="row" spacing={0.75} sx={{ alignItems: "center", color: palette.inkMuted }} aria-live="polite">
               <CloudDoneOutlined sx={{ fontSize: 18 }} />
-              <Typography variant="body2" sx={{ display: { xs: "none", md: "block" } }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  // Visible from md; on small screens it stays readable for screen readers.
+                  "@media (max-width: 899.95px)": { position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap" },
+                }}
+              >
                 Automatikusan mentve
               </Typography>
             </Stack>
