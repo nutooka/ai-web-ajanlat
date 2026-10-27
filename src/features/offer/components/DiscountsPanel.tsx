@@ -15,6 +15,7 @@ import { formatRon } from "@/lib/format";
 import { ease, palette } from "@/theme/tokens";
 import { formatCountdown, offerAgeMinutesFrom, useNow, type OfferClockState } from "../useOfferClock";
 import { DeadlineSliderControl } from "./DeadlineSlider";
+import { Blob } from "@/components/Blob";
 
 export const DISCOUNTS_ID = "kedvezmenyek";
 const AMBER_SOFT = "#FFF4E0";
@@ -66,13 +67,18 @@ export function DiscountsPanel({ pkg, clockState, onDeadlineChange, onSelectPack
     { label: "Teljes ár", detail: `${(quickConfig.tiers.at(-1)?.withinMinutes ?? 0) / 60} óra után` },
   ];
   const activeStep = quick.expired ? steps.length - 1 : quick.tierIndex;
+  // Share of the whole quick-decision window still left (1 → 0): the amber shape shrinks with it.
+  const windowMinutes = quickConfig.tiers.at(-1)?.withinMinutes ?? 1;
+  const ageMinutes = offerAgeMinutesFrom(clockState.clock, now);
+  const timeLeft = quick.expired ? 0 : ageMinutes === undefined ? 1 : Math.max(0, Math.min(1, 1 - ageMinutes / windowMinutes));
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15, ease: ease.out }}>
       <Box id={DISCOUNTS_ID} component="section" aria-labelledby="discounts-title" sx={{ mt: 3, scrollMarginTop: 24, borderRadius: 4, border: `2px solid ${palette.amber}`, background: palette.surface, overflow: "hidden" }}>
         {/* Summary: one big number. */}
-        <Box sx={{ background: AMBER_SOFT, px: { xs: 2.5, md: 4 }, py: { xs: 2.5, md: 3 }, display: "flex", flexDirection: { xs: "column", md: "row" }, justifyContent: "space-between", alignItems: { md: "center" }, gap: 2 }}>
-          <Box>
+        <Box sx={{ position: "relative", overflow: "hidden", background: AMBER_SOFT, px: { xs: 2.5, md: 4 }, py: { xs: 2.5, md: 3 }, display: "flex", flexDirection: { xs: "column", md: "row" }, justifyContent: "space-between", alignItems: { md: "center" }, gap: 2 }}>
+          <Blob tone="discount" size={180} position={{ top: "-95px", right: "-75px" }} scale={0.4 + 0.8 * timeLeft} opacity={timeLeft > 0 ? 0.9 : 0.35} duration={18} />
+          <Box sx={{ position: "relative", zIndex: 1 }}>
             <Typography id="discounts-title" variant="h4" component="h2">
               A kedvezményeid
             </Typography>
@@ -80,7 +86,7 @@ export function DiscountsPanel({ pkg, clockState, onDeadlineChange, onSelectPack
               {pkg.name} csomag · eredeti ár <s>{formatRon(fullPrice)}</s> → most <b>{formatRon(pkg.finalPrice)}</b>
             </Typography>
           </Box>
-          <Box aria-live="polite" sx={{ textAlign: { md: "right" } }}>
+          <Box aria-live="polite" sx={{ position: "relative", zIndex: 1, textAlign: { md: "right" } }}>
             <Typography sx={{ fontSize: 13, fontWeight: 600 }}>Összes megtakarítás</Typography>
             <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: { xs: 36, md: 44 }, lineHeight: 1.05, letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>
               −{formatRon(total)}

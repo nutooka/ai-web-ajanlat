@@ -12,13 +12,17 @@ import { palette } from "@/theme/tokens";
 const MAX_FEATURES = 6;
 
 /** Desktop-only "consultant" panel: what we know so far. Prices are shown only at the end. */
+/** Rough length of a questionnaire, for the progress shape (exact count is shown in the wizard). */
+const TYPICAL_QUESTIONS = 15;
+
 export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; answeredCount: number }) {
+  const progress = Math.min(1, answeredCount / TYPICAL_QUESTIONS);
   const features = quote?.packages.standard.items.filter((item) => item.source === "answer").map((item) => item.label) ?? [];
 
   return (
     <Stack spacing={2} component="aside" aria-label="A projekted összefoglalója" sx={{ position: "sticky", top: 112 }}>
       <Box sx={{ borderRadius: 4, p: 3, background: palette.ink, color: "#fff", position: "relative", overflow: "hidden" }}>
-        <FluidBlobs variant="corner" />
+        <FluidBlobs variant="corner" tone={quote && progress >= 0.7 ? quote.recommended : "neutral"} scale={0.55 + 0.6 * progress} />
         <Box sx={{ position: "relative", zIndex: 1, pr: 6 }}>
           <Typography sx={{ fontSize: 13, opacity: 0.65 }}>A projekted</Typography>
           <Typography variant="h5" component="p" sx={{ mt: 0.5 }}>

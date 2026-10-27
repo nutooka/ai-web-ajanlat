@@ -49,7 +49,13 @@ A forrás a kódban: `src/theme/tokens.ts` (tokenek) és `src/theme/theme.ts` (M
 ## Liquid motívum
 
 - **Hullámvonal** (`WaveDivider`): ugyanaz a görbe minden sötét ↔ világos szekcióhatáron (kezdőlap hero, ajánlat hero, kérdőív fejléc, adatkezelés fejléc, csomag-szekció). Csomagkártya-fejléc alja hullámos.
-- **Folyékony formák** (`FluidBlobs`): csak sötét felületen, a széleken (kezdőlap hero, ajánlat hero, kérdőív oldalsáv sarka).
+- **Folyékony formák** (`Blob`, `FluidBlobs`): egyetlen közös komponens. **A színe mindig jelent valamit**, különben nem kerül oda:
+  | Szín | Jelentés | Hol |
+  |---|---|---|
+  | kék / narancs / zöld | Basic / Standard / Premium csomag | kezdőlap hero (a kártyán látható csomag gömbje nő és előre jön), ajánlat hero sarka (a választott csomag), egyeztetés-űrlap címkéje |
+  | borostyán (`discount`) | kedvezmény és idő | kedvezménypanel fejléce (a gyors döntés idejével együtt zsugorodik), ragadós sáv kedvezmény-jele |
+  | áttetsző fehér (`neutral`) | még formálódik | kérdőív oldalsáv: a kitöltéssel nő, a végén az ajánlott csomag színét veszi fel |
+  - Nincs gömb a referencia-, GYIK- és szöveges részekben. Méret = érték (haladás, hátralévő idő, kiemelés). Színváltáskor áttűnés. `prefers-reduced-motion` esetén nincs lebegés.
 - **Soha** szöveg, ár, űrlapmező vagy válaszkártya mögött. Képernyőnként max. **egy** mozgó forma. `prefers-reduced-motion`: áll.
 - Kérdőív haladás: hullámos lime vonal.
 
@@ -73,4 +79,4 @@ A forrás a kódban: `src/theme/tokens.ts` (tokenek) és `src/theme/theme.ts` (M
 
 ## Komponensek
 
-`SiteHeader` · `SiteFooter` · `WaveDivider` · `FluidBlobs` · `PricingCards` · `OptionCard` · `QuickDecisionBanner` · `StickyCta` · `OfferDetails`
+`SiteHeader` · `SiteFooter` · `WaveDivider` · `Blob` · `FluidBlobs` · `DiscountsPanel` · `PricingCards` · `OptionCard` · `StickyCta` · `OfferDetails`

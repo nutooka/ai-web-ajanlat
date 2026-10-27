@@ -142,7 +142,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
       {/* 1 – Hero: what it is, what it costs, the one action. */}
       <Box component="section" aria-labelledby="offer-title" className="offer-hero" sx={{ background: palette.ink, color: "#fff", position: "relative", overflow: "hidden", "@media print": { background: "#fff", color: palette.ink } }}>
         <Box sx={{ display: { xs: "none", lg: "block" } }} className="no-print">
-          <FluidBlobs variant="corner" />
+          <FluidBlobs variant="corner" tone={packageId} />
         </Box>
         <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1, pt: { xs: 4, md: 6 }, pb: { xs: 5, md: 7 } }}>
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: ease.out }}>

@@ -22,6 +22,7 @@ import { useEffect, useRef, useState } from "react";
 import { Controller, useForm, useWatch, type UseFormRegisterReturn } from "react-hook-form";
 import type { PackageId } from "@/features/pricing/types";
 import type { Answers } from "@/features/questionnaire/types";
+import { Blob } from "@/components/Blob";
 import { palette } from "@/theme/tokens";
 import { CALLBACK_LABELS, CALLBACK_TIMES, isEmailLike, quickContactSchema, toContact, type QuickContactValues } from "../schema";
 
@@ -121,6 +122,12 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
     <Box sx={{ borderRadius: { xs: 3, md: 4 }, border: 1, borderColor: "divider", background: palette.surface, p: { xs: 3, sm: 4, md: 6 } }}>
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "0.8fr 1.2fr" }, gap: { xs: 4, md: 6 } }}>
         <Box>
+          <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 1.5 }}>
+            <Blob tone={packageId} size={22} duration={12} />
+            <Typography variant="body2" sx={{ fontWeight: 700 }}>
+              {packageName} csomag
+            </Typography>
+          </Stack>
           <Typography variant="h3" component="h2" sx={{ mb: 2 }}>
             Kérj ingyenes, 30 perces egyeztetést
           </Typography>

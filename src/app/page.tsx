@@ -8,7 +8,6 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { FluidBlobs } from "@/components/home/FluidBlobs";
 import { HeroActions } from "@/components/home/HeroActions";
 import { HomePricing } from "@/components/home/HomePricing";
 import { HeroTitle } from "@/components/home/HeroTitle";
@@ -72,10 +71,7 @@ export default function HomePage() {
               <HeroActions />
             </Stack>
             <Box sx={{ position: "relative", py: { xs: 2, md: 4 } }}>
-              <FluidBlobs />
-              <Box sx={{ position: "relative", zIndex: 1 }}>
-                <OfferPreview />
-              </Box>
+              <OfferPreview />
             </Box>
           </Box>
         </Container>

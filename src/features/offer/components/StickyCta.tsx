@@ -8,6 +8,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { Blob } from "@/components/Blob";
 import { pricingConfig } from "@/config/pricing";
 import { resolveQuickDecision } from "@/features/pricing/quickDecision";
 import { formatRon } from "@/lib/format";
@@ -77,9 +78,12 @@ export function StickyCta({
                 <Stack direction={{ xs: "column", sm: "row" }} sx={{ alignItems: { xs: "flex-start", sm: "center" }, gap: { xs: 0.25, sm: 1.25 } }}>
                   <Typography sx={{ fontWeight: 700, fontSize: { xs: 17, sm: 20 }, whiteSpace: "nowrap" }}>{formatRon(price)}</Typography>
                   {!quick.expired && quick.minutesLeft !== null && (
+                    <Stack direction="row" spacing={0.75} sx={{ alignItems: "center" }}>
+                    <Blob tone="discount" size={14} duration={10} />
                     <Box sx={{ px: 1, py: 0.25, borderRadius: 1.5, background: palette.amber, color: palette.ink, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                       −{quick.percent}% · {formatCountdown(quick.minutesLeft)}
                     </Box>
+                    </Stack>
                   )}
                 </Stack>
               </Box>
