@@ -12,7 +12,7 @@ export const siteConfig = {
     registrationNumber: "ROONRC.J2023000539198",
     taxId: "49185840",
     // Opcionális: ha kitöltöd, megjelenik az adatkezelési tájékoztatóban.
-    email: "",
+    email: "info@nutooka.tech",
     phone: "",
   },
   privacy: {
