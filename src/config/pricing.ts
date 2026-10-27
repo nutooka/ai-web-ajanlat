@@ -23,37 +23,37 @@ export const pricingConfig: PricingConfig = {
 
   baseItems: {
     company: [
-      { id: "base.planning", label: "Konzultáció és oldaltérkép", hours: 6, category: "planning", essential: true },
-      { id: "base.design", label: "UI design (főoldal + aloldal-sablonok)", hours: 12, category: "design", essential: true },
-      { id: "base.dev", label: "Reszponzív fejlesztés (5 oldalig)", hours: 16, category: "development", essential: true },
-      { id: "base.cms", label: "Tartalomkezelő rendszer beállítása", hours: 6, category: "backend", essential: true },
-      { id: "base.launch", label: "Tesztelés, alap SEO, élesítés", hours: 5, category: "quality", essential: true },
+      { id: "base.planning", label: "Konzultáció és oldaltérkép", hours: 3, category: "planning", essential: true },
+      { id: "base.design", label: "UI design (főoldal + aloldal-sablonok)", hours: 8, category: "design", essential: true },
+      { id: "base.dev", label: "Reszponzív fejlesztés (5 oldalig)", hours: 11, category: "development", essential: true },
+      { id: "base.cms", label: "Tartalomkezelő rendszer beállítása", hours: 4, category: "backend", essential: true },
+      { id: "base.launch", label: "Tesztelés, alap SEO, élesítés", hours: 4, category: "quality", essential: true },
     ],
     webshop: [
-      { id: "base.planning", label: "Konzultáció, webshop-struktúra", hours: 8, category: "planning", essential: true },
-      { id: "base.design", label: "UI design (főoldal, kategória, termék, kosár)", hours: 18, category: "design", essential: true },
-      { id: "base.dev", label: "Reszponzív frontend fejlesztés", hours: 28, category: "development", essential: true },
-      { id: "base.engine", label: "Webshop-motor: kosár, rendelés, e-mail értesítők", hours: 24, category: "backend", essential: true },
-      { id: "base.legal", label: "Jogi oldalak (ÁSZF, GDPR, ANPC), tesztelés, élesítés", hours: 8, category: "quality", essential: true },
+      { id: "base.planning", label: "Konzultáció, webshop-struktúra", hours: 5, category: "planning", essential: true },
+      { id: "base.design", label: "UI design (főoldal, kategória, termék, kosár)", hours: 12, category: "design", essential: true },
+      { id: "base.dev", label: "Reszponzív frontend fejlesztés", hours: 19, category: "development", essential: true },
+      { id: "base.engine", label: "Webshop-motor: kosár, rendelés, e-mail értesítők", hours: 16, category: "backend", essential: true },
+      { id: "base.legal", label: "Jogi oldalak (ÁSZF, GDPR, ANPC), tesztelés, élesítés", hours: 6, category: "quality", essential: true },
     ],
     webapp: [
-      { id: "base.planning", label: "Követelményfeltárás és specifikáció", hours: 16, category: "planning", essential: true },
-      { id: "base.design", label: "UX/UI tervezés", hours: 24, category: "design", essential: true },
-      { id: "base.dev", label: "Frontend fejlesztés", hours: 40, category: "development", essential: true },
-      { id: "base.backend", label: "Backend architektúra és alapok", hours: 32, category: "backend", essential: true },
-      { id: "base.launch", label: "Tesztelés, dokumentáció, élesítés", hours: 12, category: "quality", essential: true },
+      { id: "base.planning", label: "Követelményfeltárás és specifikáció", hours: 10, category: "planning", essential: true },
+      { id: "base.design", label: "UX/UI tervezés", hours: 16, category: "design", essential: true },
+      { id: "base.dev", label: "Frontend fejlesztés", hours: 28, category: "development", essential: true },
+      { id: "base.backend", label: "Backend architektúra és alapok", hours: 22, category: "backend", essential: true },
+      { id: "base.launch", label: "Tesztelés, dokumentáció, élesítés", hours: 8, category: "quality", essential: true },
     ],
     landing: [
-      { id: "base.planning", label: "Üzenet- és konverziótervezés", hours: 3, category: "planning", essential: true },
-      { id: "base.design", label: "Landing page design", hours: 8, category: "design", essential: true },
-      { id: "base.dev", label: "Reszponzív fejlesztés (5 szekcióig)", hours: 8, category: "development", essential: true },
-      { id: "base.launch", label: "Tesztelés, mérőkódok, élesítés", hours: 3, category: "quality", essential: true },
+      { id: "base.planning", label: "Üzenet- és konverziótervezés", hours: 2, category: "planning", essential: true },
+      { id: "base.design", label: "Landing page design", hours: 5, category: "design", essential: true },
+      { id: "base.dev", label: "Reszponzív fejlesztés (5 szekcióig)", hours: 6, category: "development", essential: true },
+      { id: "base.launch", label: "Tesztelés, mérőkódok, élesítés", hours: 2, category: "quality", essential: true },
     ],
     redesign: [
-      { id: "base.audit", label: "Jelenlegi oldal auditja és tervezés", hours: 8, category: "planning", essential: true },
-      { id: "base.design", label: "Új UI design", hours: 12, category: "design", essential: true },
-      { id: "base.dev", label: "Reszponzív fejlesztés (5 oldalig)", hours: 14, category: "development", essential: true },
-      { id: "base.launch", label: "Átirányítások, tesztelés, élesítés", hours: 5, category: "quality", essential: true },
+      { id: "base.audit", label: "Jelenlegi oldal auditja és tervezés", hours: 5, category: "planning", essential: true },
+      { id: "base.design", label: "Új UI design", hours: 8, category: "design", essential: true },
+      { id: "base.dev", label: "Reszponzív fejlesztés (5 oldalig)", hours: 9, category: "development", essential: true },
+      { id: "base.launch", label: "Átirányítások, tesztelés, élesítés", hours: 4, category: "quality", essential: true },
     ],
   },
 
@@ -302,6 +302,15 @@ export const pricingConfig: PricingConfig = {
     normal: { label: "Normál határidő", priceMultiplier: 1, timeMultiplier: 1 },
     fast: { label: "Gyorsított határidő", priceMultiplier: 1.2, timeMultiplier: 0.75 },
     urgent: { label: "Sürgős határidő", priceMultiplier: 1.4, timeMultiplier: 0.6 },
+  },
+
+  // Határidő-csúszka: minél több időt adsz, annál olcsóbb (a normál ütemezéshez képest).
+  flexibility: {
+    fastestRatio: 0.6, // leggyorsabb: a normál idő 60%-a
+    maxMultiplier: 1.4, // ...+40% áron
+    relaxedRatio: 2.5, // a normál idő 2,5-szereséig nő a kedvezmény
+    minMultiplier: 0.8, // ...legfeljebb −20%
+    maxWeeks: 26,
   },
 
   premiumExtras: [

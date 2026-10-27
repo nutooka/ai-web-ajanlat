@@ -28,6 +28,7 @@ import { useWizardSnapshot, wizardStore, type Submission } from "@/lib/storage";
 import { ease, palette } from "@/theme/tokens";
 import { buildOffer } from "../buildOffer";
 import { offerAgeMinutesFrom, useNow, useOfferClock } from "../useOfferClock";
+import { DeadlineSlider } from "./DeadlineSlider";
 import { OfferDetails } from "./OfferDetails";
 import { PricingCards } from "./PricingCards";
 import { QuickDecisionBanner } from "./QuickDecisionBanner";
@@ -237,6 +238,13 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
           </Box>
         )}
 
+        {/* Time vs money slider. */}
+        {!submission && pricesReady && (
+          <Box className="no-print">
+            <DeadlineSlider pkg={pkg} onChange={(weeks) => wizardStore.update({ answers: { ...answers, deadlineWeeks: String(weeks) } })} />
+          </Box>
+        )}
+
         {/* 3 – Package choice. */}
         <Box component="section" aria-labelledby="packages-title" sx={{ mt: { xs: 6, md: 8 } }} className="no-print">
           <Typography id="packages-title" variant="h3" component="h2" sx={{ mb: 1 }}>
@@ -285,7 +293,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
       {!submission && (
         <>
           <Box sx={{ height: 88 }} className="no-print" />
-          <StickyCta targetId={CONTACT_ID} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} hideWhileVisible={["hero-cta"]} />
+          <StickyCta targetId={CONTACT_ID} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} hideWhileVisible={["hero-cta", "site-footer"]} />
         </>
       )}
     </Frame>

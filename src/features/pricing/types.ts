@@ -1,4 +1,5 @@
 import type { ResolvedProjectType } from "@/features/questionnaire/types";
+import type { FlexibilityConfig } from "./flexibility";
 import type { QuickDecisionConfig, QuickDecisionState } from "./quickDecision";
 
 export const PACKAGE_IDS = ["basic", "standard", "premium"] as const;
@@ -56,6 +57,7 @@ export interface PricingConfig {
   design: { multipliers: Record<DesignLevel, number>; labels: Record<DesignLevel, string>; basic: DesignLevel; premium: DesignLevel };
   languages: { extraByAnswer: Record<string, number>; multiplierPerExtra: number; setupHoursPerExtra: number };
   urgency: Record<UrgencyLevel, { label: string; priceMultiplier: number; timeMultiplier: number }>;
+  flexibility: FlexibilityConfig;
   premiumExtras: PremiumExtra[];
   /** Premium extras are scaled to the project size (a landing page needs less SEO work than a webshop). */
   premiumExtrasScale: Record<ResolvedProjectType, number>;
@@ -110,6 +112,16 @@ export interface PackageQuote {
   subtotal: number;
   /** Positive = surcharge, negative = discount for a flexible deadline. */
   urgencyAdjustment: number;
+  /** Delivery schedule for this package and the price effect of the chosen deadline. */
+  schedule: {
+    normalWeeks: number;
+    fastestWeeks: number;
+    latestWeeks: number;
+    /** Set when the visitor picked a deadline on the slider. */
+    chosenWeeks: number | null;
+    multiplier: number;
+    label: string;
+  };
   /** Price before discounts, rounded. */
   listPrice: number;
   discounts: AppliedDiscount[];

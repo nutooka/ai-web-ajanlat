@@ -30,6 +30,10 @@ npm run dev                  # http://localhost:3000
 
 Az árazó motor (`src/features/pricing/engine.ts`) tiszta, determinisztikus függvény; a szerver beküldéskor mindig újraszámolja az árat a válaszokból.
 
+## Határidő-csúszka (idő ↔ pénz)
+
+Az ajánlatoldalon a látogató hetekben választhat határidőt. A normál ütemezés a listaár; gyorsabban legfeljebb +40%, ha ráér, legfeljebb −20% (`src/config/pricing.ts` → `flexibility`). A választás `deadlineWeeks` válaszként mentődik, a szerver is ebből számol.
+
 ## Gyors döntés kedvezmény
 
 Az ajánlat első megnyitásától számítva: 1 órán belül −25%, 1–2 óra között −15%, utána teljes ár (`src/config/pricing.ts` → `discounts.quickDecision`).

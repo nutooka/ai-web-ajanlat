@@ -56,10 +56,10 @@ describe("calculateQuote", () => {
       noDiscounts,
     )!;
     const standard = quote.packages.standard;
-    // 3 + 8 + 8 + 3 base hours × 200 RON
-    expect(standard.hours).toBe(22);
-    expect(standard.subtotal).toBe(4400);
-    expect(standard.finalPrice).toBe(4400);
+    // 2 + 5 + 6 + 2 base hours × 200 RON (no discounts, productivity factor 1)
+    expect(standard.hours).toBe(15);
+    expect(standard.subtotal).toBe(3000);
+    expect(standard.finalPrice).toBe(3000);
   });
 
   it("puts only essential selections into Basic", () => {
@@ -143,6 +143,45 @@ describe("productivity factor", () => {
   it("adds the feedback buffer to the timeline", () => {
     const pkg = calculateQuote(fixtures.landing)!.packages.standard;
     expect(pkg.timeline.minWeeks).toBeGreaterThanOrEqual(1 + pricingConfig.feedbackWeeks);
+  });
+});
+
+describe("deadline slider (time vs money)", () => {
+  const at = (weeks: number | undefined) =>
+    calculateQuote({ ...fixtures.company, ...(weeks === undefined ? {} : { deadlineWeeks: String(weeks) }) }, noDiscounts)!.packages.standard;
+
+  it("charges the normal price at the normal schedule", () => {
+    const normal = at(undefined).schedule.normalWeeks;
+    expect(at(normal).schedule.multiplier).toBe(1);
+    expect(at(normal).urgencyAdjustment).toBe(0);
+  });
+
+  it("gets cheaper the more time we get, down to the configured floor", () => {
+    const { normalWeeks, latestWeeks } = at(undefined).schedule;
+    const later = at(normalWeeks + 2);
+    const latest = at(latestWeeks);
+    expect(later.finalPrice).toBeLessThan(at(normalWeeks).finalPrice);
+    expect(latest.finalPrice).toBeLessThanOrEqual(later.finalPrice);
+    expect(latest.schedule.multiplier).toBeGreaterThanOrEqual(pricingConfig.flexibility.minMultiplier);
+  });
+
+  it("costs more when faster and clamps to the fastest possible delivery", () => {
+    const { normalWeeks, fastestWeeks } = at(undefined).schedule;
+    expect(at(Math.max(fastestWeeks, normalWeeks - 1)).finalPrice).toBeGreaterThanOrEqual(at(normalWeeks).finalPrice);
+    expect(at(1).schedule.chosenWeeks).toBe(fastestWeeks);
+    // Rounding the fastest week up can land just above the fastest ratio, so the surcharge is at most the max.
+    expect(at(1).schedule.multiplier).toBeGreaterThan(1);
+    expect(at(1).schedule.multiplier).toBeLessThanOrEqual(pricingConfig.flexibility.maxMultiplier);
+  });
+
+  it("uses the chosen weeks as the timeline", () => {
+    const pkg = at(9);
+    expect(pkg.timeline).toEqual({ minWeeks: pkg.schedule.chosenWeeks, maxWeeks: pkg.schedule.chosenWeeks });
+  });
+
+  it("keeps the deadline answer through pruning and rejects nonsense", () => {
+    expect(calculateQuote({ ...fixtures.company, deadlineWeeks: "abc" }, noDiscounts)!.packages.standard.schedule.chosenWeeks).toBeNull();
+    expect(calculateQuote({ ...fixtures.company, deadlineWeeks: "99" }, noDiscounts)!.packages.standard.schedule.chosenWeeks).toBeNull();
   });
 });
 

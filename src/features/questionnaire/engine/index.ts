@@ -114,6 +114,21 @@ function sanitizeValue(question: Question, value: unknown): AnswerValue | undefi
 }
 
 /**
+ * Answers set outside the questionnaire (e.g. the deadline slider on the offer page).
+ * Stored as strings like every other answer and validated here.
+ */
+const EXTRA_ANSWERS: Record<string, (value: unknown) => string | undefined> = {
+  deadlineWeeks: (value) => {
+    const weeks = Number(value);
+    return Number.isInteger(weeks) && weeks >= 1 && weeks <= 52 ? String(weeks) : undefined;
+  },
+};
+
+function sanitizeExtra(id: string, value: unknown): string | undefined {
+  return EXTRA_ANSWERS[id]?.(value);
+}
+
+/**
  * Keep only answers that belong to currently visible questions and are valid.
  * Answers left behind on an abandoned branch are dropped, so they never affect pricing.
  * Safe to run on untrusted input (used by the API route).
@@ -122,14 +137,14 @@ export function pruneAnswers(input: Record<string, unknown>): Answers {
   let current: Answers = {};
   for (const [id, value] of Object.entries(input)) {
     const question = QUESTION_BY_ID.get(id);
-    const clean = question ? sanitizeValue(question, value) : undefined;
+    const clean = question ? sanitizeValue(question, value) : sanitizeExtra(id, value);
     if (clean !== undefined) current[id] = clean;
   }
 
   // Visibility depends on answers, so repeat until nothing else drops out.
   for (let pass = 0; pass < 5; pass += 1) {
     const visibleIds = new Set(getVisibleQuestions(current).map((question) => question.id));
-    const next = Object.fromEntries(Object.entries(current).filter(([id]) => visibleIds.has(id)));
+    const next = Object.fromEntries(Object.entries(current).filter(([id]) => visibleIds.has(id) || id in EXTRA_ANSWERS));
     if (Object.keys(next).length === Object.keys(current).length) return next;
     current = next;
   }

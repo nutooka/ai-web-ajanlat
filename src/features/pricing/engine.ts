@@ -1,6 +1,7 @@
 import { pricingConfig } from "@/config/pricing";
 import { getEffectiveProjectType, pruneAnswers } from "@/features/questionnaire/engine";
 import type { Answers, ResolvedProjectType } from "@/features/questionnaire/types";
+import { flexibilityMultiplier, scheduleRange } from "./flexibility";
 import { resolveQuickDecision } from "./quickDecision";
 import {
   PACKAGE_IDS,
@@ -170,13 +171,22 @@ function buildPackage(
   });
 
   const subtotal = items.reduce((sum, item) => sum + item.price, 0);
-  const urgencyAdjustment = roundTo(subtotal * (urgency.priceMultiplier - 1), config.roundTo);
+  const hours = roundHalf(items.reduce((sum, item) => sum + item.hours, 0));
+
+  // Schedule: a slider-chosen deadline (deadlineWeeks) overrides the categorical deadline answer.
+  const normalWeeks = Math.max(1, Math.ceil(hours / config.weeklyCapacityHours)) + config.feedbackWeeks;
+  const range = scheduleRange(normalWeeks, config.flexibility);
+  const requestedWeeks = typeof answers.deadlineWeeks === "string" ? Number(answers.deadlineWeeks) : NaN;
+  const chosenWeeks = Number.isInteger(requestedWeeks) ? Math.min(range.latestWeeks, Math.max(range.fastestWeeks, requestedWeeks)) : null;
+  const priceMultiplier = chosenWeeks === null ? urgency.priceMultiplier : flexibilityMultiplier(chosenWeeks, normalWeeks, config.flexibility);
+  const scheduleLabel = chosenWeeks === null ? urgency.label : `Választott határidő: ${chosenWeeks} hét`;
+
+  const urgencyAdjustment = roundTo(subtotal * (priceMultiplier - 1), config.roundTo);
   const listPrice = roundTo(subtotal + urgencyAdjustment, config.roundTo);
   const discounts = applyDiscounts(listPrice, packageId, config, quickPercent);
   const savings = discounts.reduce((sum, discount) => sum + discount.amount, 0);
-  const hours = roundHalf(items.reduce((sum, item) => sum + item.hours, 0));
   const buildWeeks = Math.max(1, Math.ceil((hours / config.weeklyCapacityHours) * urgency.timeMultiplier));
-  const minWeeks = buildWeeks + config.feedbackWeeks;
+  const minWeeks = chosenWeeks ?? buildWeeks + config.feedbackWeeks;
 
   return {
     id: packageId,
@@ -185,12 +195,13 @@ function buildPackage(
     items,
     subtotal,
     urgencyAdjustment,
+    schedule: { ...range, chosenWeeks, multiplier: priceMultiplier, label: scheduleLabel },
     listPrice,
     discounts,
     finalPrice: listPrice - savings,
     savings,
     hours,
-    timeline: { minWeeks, maxWeeks: Math.max(minWeeks + 1, Math.ceil(minWeeks * 1.3)) },
+    timeline: chosenWeeks === null ? { minWeeks, maxWeeks: Math.max(minWeeks + 1, Math.ceil(minWeeks * 1.3)) } : { minWeeks: chosenWeeks, maxWeeks: chosenWeeks },
     maintenance: estimateMaintenance(projectType, packageId, config),
   };
 }

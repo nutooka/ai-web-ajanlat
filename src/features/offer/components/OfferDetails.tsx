@@ -79,7 +79,7 @@ export function OfferDetails({ offer, packageId }: { offer: Offer; packageId: Pa
             <Typography variant="h5" component="h3" sx={{ mb: 2 }}>
               Tételes kalkuláció – {pkg.name}
             </Typography>
-            <PriceBreakdown quote={offer.quote} pkg={pkg} />
+            <PriceBreakdown pkg={pkg} />
             {offer.selectedFeatures.length > 0 && (
               <Box sx={{ mt: 4 }}>
                 <Typography variant="h6" component="h4" sx={{ mb: 1.5 }}>

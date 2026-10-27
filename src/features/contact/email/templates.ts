@@ -46,7 +46,7 @@ function quoteSection(offer: Offer, packageId: PackageId, internal: boolean): { 
     internal ? `${item.label} (${formatHours(item.hours)})` : item.label,
     formatRon(item.price),
   ]);
-  if (pkg.urgencyAdjustment !== 0) itemRows.push([offer.quote.urgency.label, formatRon(pkg.urgencyAdjustment)]);
+  if (pkg.urgencyAdjustment !== 0) itemRows.push([pkg.schedule.label, formatRon(pkg.urgencyAdjustment)]);
   itemRows.push(["Listaár", formatRon(pkg.listPrice)]);
   for (const discount of pkg.discounts) itemRows.push([`${discount.label} (−${discount.percent}%)`, `−${formatRon(discount.amount)}`]);
   itemRows.push(["Becsült projektár (nettó)", formatRon(pkg.finalPrice)]);

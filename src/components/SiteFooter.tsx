@@ -9,7 +9,7 @@ import { siteConfig } from "@/config/site";
 
 export function SiteFooter() {
   return (
-    <Box component="footer" className="no-print" sx={{ borderTop: 1, borderColor: "divider", py: 4, mt: 8 }}>
+    <Box component="footer" id="site-footer" className="no-print" sx={{ borderTop: 1, borderColor: "divider", py: 4, mt: 8 }}>
       <Container maxWidth="lg" sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "space-between" }}>
         <Typography variant="body2" color="text.secondary">
           © {siteConfig.company.legalName}

@@ -30,6 +30,13 @@ import { WaveProgress } from "./WaveProgress";
 import { WizardSidebar } from "./WizardSidebar";
 
 const AUTO_ADVANCE_MS = 260;
+
+/** Set one answer; re-answering the deadline question discards a deadline picked on the offer slider. */
+function withAnswer(answers: Answers, id: string, value: AnswerValue | undefined): Answers {
+  const next: Answers = { ...answers, [id]: value };
+  if (id === "deadline") delete next.deadlineWeeks;
+  return next;
+}
 /** Typical length before the project type is known (keeps the first step from showing 0%). */
 const ESTIMATED_TOTAL = 15;
 
@@ -98,7 +105,7 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
       setError({ questionId: question.id, message });
       return;
     }
-    const nextAnswers = { ...answers, [question.id]: nextValue };
+    const nextAnswers = withAnswer(answers, question.id, nextValue);
     if (nextValue !== answers[question.id]) wizardStore.update({ answers: nextAnswers });
 
     const sequence = getVisibleQuestions(nextAnswers);
@@ -128,7 +135,7 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
 
   const handleChange = (nextValue: AnswerValue | undefined, options?: { advance?: boolean }) => {
     setError(null);
-    wizardStore.update({ answers: { ...answers, [question.id]: nextValue }, currentId: question.id });
+    wizardStore.update({ answers: withAnswer(answers, question.id, nextValue), currentId: question.id });
     if (options?.advance) {
       window.clearTimeout(advanceTimer.current);
       advanceTimer.current = window.setTimeout(() => goNext(nextValue), AUTO_ADVANCE_MS);

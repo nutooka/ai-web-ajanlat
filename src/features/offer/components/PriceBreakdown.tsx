@@ -3,7 +3,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { AnimatePresence, motion } from "motion/react";
-import type { PackageQuote, Quote } from "@/features/pricing/types";
+import type { PackageQuote } from "@/features/pricing/types";
 import { formatRon } from "@/lib/format";
 import { palette } from "@/theme/tokens";
 
@@ -25,7 +25,7 @@ function Row({ label, detail, value, strong, accent }: { label: string; detail?:
   );
 }
 
-export function PriceBreakdown({ quote, pkg }: { quote: Quote; pkg: PackageQuote }) {
+export function PriceBreakdown({ pkg }: { pkg: PackageQuote }) {
   return (
     <Box>
       <AnimatePresence mode="wait" initial={false}>
@@ -45,8 +45,8 @@ export function PriceBreakdown({ quote, pkg }: { quote: Quote; pkg: PackageQuote
             <Row label="Részösszeg" value={formatRon(pkg.subtotal)} />
             {pkg.urgencyAdjustment !== 0 && (
               <Row
-                label={quote.urgency.label}
-                detail={pkg.urgencyAdjustment > 0 ? `+${Math.round((quote.urgency.priceMultiplier - 1) * 100)}% felár` : `${Math.round((quote.urgency.priceMultiplier - 1) * 100)}% kedvezmény`}
+                label={pkg.schedule.label}
+                detail={pkg.urgencyAdjustment > 0 ? `+${Math.round((pkg.schedule.multiplier - 1) * 100)}% felár` : `−${Math.round((1 - pkg.schedule.multiplier) * 100)}% kedvezmény a rugalmas határidőért`}
                 value={`${pkg.urgencyAdjustment > 0 ? "+" : "−"}${formatRon(Math.abs(pkg.urgencyAdjustment))}`}
                 accent={pkg.urgencyAdjustment < 0}
               />
