@@ -22,8 +22,8 @@ export const theme = createTheme({
   shape: { borderRadius: 4 },
   typography: {
     fontFamily: body,
-    h1: { fontFamily: display, fontWeight: 700, fontSize: "clamp(2.5rem, 6vw, 4.5rem)", lineHeight: 1.02, letterSpacing: "-0.035em" },
-    h2: { fontFamily: display, fontWeight: 700, fontSize: "clamp(1.85rem, 4.4vw, 2.75rem)", lineHeight: 1.1, letterSpacing: "-0.03em" },
+    h1: { fontFamily: display, fontWeight: 700, fontSize: "clamp(2.5rem, 6vw, 4.5rem)", lineHeight: 1.04, letterSpacing: "-0.025em" },
+    h2: { fontFamily: display, fontWeight: 700, fontSize: "clamp(1.85rem, 4.4vw, 2.75rem)", lineHeight: 1.12, letterSpacing: "-0.02em" },
     h3: { fontFamily: display, fontWeight: 650, fontSize: "clamp(1.5rem, 3.2vw, 2rem)", lineHeight: 1.15, letterSpacing: "-0.02em" },
     h4: { fontFamily: display, fontWeight: 650, fontSize: "1.375rem", lineHeight: 1.25, letterSpacing: "-0.01em" },
     h5: { fontFamily: display, fontWeight: 650, fontSize: "1.125rem", lineHeight: 1.3 },
