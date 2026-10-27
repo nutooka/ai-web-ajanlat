@@ -35,7 +35,7 @@ export function PriceBreakdown({ pkg }: { pkg: PackageQuote }) {
               <Box component="li" key={item.id}>
                 <Row
                   label={item.label}
-                  detail={item.source === "premium" ? "Premium extra" : undefined}
+                  detail={item.source === "premium" ? `${pkg.name} csomag extra` : undefined}
                   value={formatRon(item.price)}
                 />
               </Box>

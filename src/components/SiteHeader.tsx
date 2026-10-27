@@ -11,7 +11,7 @@ import { Logo } from "./Logo";
 /** The shared dark header: logo left, one way back into the planner right. */
 export function SiteHeader({ action, cta = true }: { action?: React.ReactNode; cta?: boolean }) {
   return (
-    <Box component="header" sx={{ background: palette.ink, color: "#fff" }}>
+    <Box component="header" className="site-header" sx={{ background: palette.ink, color: "#fff" }}>
       <Container maxWidth="lg" sx={{ py: 2.5, minHeight: 72, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2 }}>
         <Logo tone="light" />
         {action ??

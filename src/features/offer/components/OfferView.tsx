@@ -18,6 +18,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WaveDivider } from "@/components/WaveDivider";
 import { pricingConfig } from "@/config/pricing";
+import { siteConfig } from "@/config/site";
 import { ContactForm } from "@/features/contact/components/ContactForm";
 import { resolveQuickDecision } from "@/features/pricing/quickDecision";
 import type { PackageId } from "@/features/pricing/types";
@@ -139,7 +140,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
   return (
     <Frame header={header} stickyBar={!submission}>
       {/* 1 – Hero: what it is, what it costs, the one action. */}
-      <Box component="section" aria-labelledby="offer-title" sx={{ background: palette.ink, color: "#fff", position: "relative", overflow: "hidden", "@media print": { background: "#fff", color: palette.ink } }}>
+      <Box component="section" aria-labelledby="offer-title" className="offer-hero" sx={{ background: palette.ink, color: "#fff", position: "relative", overflow: "hidden", "@media print": { background: "#fff", color: palette.ink } }}>
         <Box sx={{ display: { xs: "none", lg: "block" } }} className="no-print">
           <FluidBlobs variant="corner" />
         </Box>
@@ -287,11 +288,22 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
         </Box>
 
         {/* 5 – Details, collapsed into tabs. */}
-        <Box id={DETAILS_ID} component="section" aria-labelledby="details-title" sx={{ mt: { xs: 6, md: 8 }, scrollMarginTop: 24 }}>
+        <Box id={DETAILS_ID} component="section" aria-labelledby="details-title" className="offer-details" sx={{ mt: { xs: 6, md: 8 }, scrollMarginTop: 24 }}>
           <Typography id="details-title" variant="h3" component="h2" sx={{ mb: 3 }}>
             Részletek
           </Typography>
           <OfferDetails offer={offer} packageId={packageId} />
+        </Box>
+
+        {/* Printed offers carry who it is from. */}
+        <Box className="print-only" sx={{ mt: 4, pt: 2, borderTop: `1px solid ${palette.line}`, fontSize: 12, color: "#3A3C42" }}>
+          {siteConfig.company.legalName} · CUI {siteConfig.company.taxId} · {siteConfig.company.registrationNumber}
+          <br />
+          {siteConfig.company.address}
+          <br />
+          nutooka.tech
+          {siteConfig.company.email ? ` · ${siteConfig.company.email}` : ""}
+          {siteConfig.company.phone ? ` · ${siteConfig.company.phone}` : ""}
         </Box>
       </Container>
 

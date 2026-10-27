@@ -22,7 +22,7 @@ interface WaveDividerProps {
 export function WaveDivider({ from, to, flip = false, line = true, height = 64 }: WaveDividerProps) {
   const id = useId().replace(/:/g, "");
   return (
-    <Box aria-hidden sx={{ background: from, lineHeight: 0, transform: flip ? "scaleX(-1)" : undefined }}>
+    <Box aria-hidden className="no-print" sx={{ background: from, lineHeight: 0, transform: flip ? "scaleX(-1)" : undefined }}>
       <Box component="svg" viewBox="0 0 400 70" preserveAspectRatio="none" sx={{ display: "block", width: "100%", height }}>
         <defs>
           <linearGradient id={`wave-${id}`} x1="0" x2="1" y1="0" y2="0">

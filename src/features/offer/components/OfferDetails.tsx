@@ -74,8 +74,8 @@ export function OfferDetails({ offer, packageId }: { offer: Offer; packageId: Pa
       </Tabs>
 
       <Box sx={{ p: { xs: 3, md: 4 } }}>
-        {tab === "kalkulacio" && (
-          <Box role="tabpanel" id="panel-kalkulacio" aria-labelledby="tab-kalkulacio">
+        {(
+          <Box role="tabpanel" id="panel-kalkulacio" aria-labelledby="tab-kalkulacio" className="print-panel" sx={{ display: tab === "kalkulacio" ? "block" : "none", "@media print": { display: "block" } }}>
             <Typography variant="h5" component="h3" sx={{ mb: 2 }}>
               Tételes kalkuláció – {pkg.name}
             </Typography>
@@ -104,8 +104,8 @@ export function OfferDetails({ offer, packageId }: { offer: Offer; packageId: Pa
           </Box>
         )}
 
-        {tab === "tartalom" && (
-          <Box role="tabpanel" id="panel-tartalom" aria-labelledby="tab-tartalom" sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 4 }}>
+        {(
+          <Box role="tabpanel" id="panel-tartalom" aria-labelledby="tab-tartalom" className="print-panel" sx={{ display: tab === "tartalom" ? "grid" : "none", "@media print": { display: "grid" }, gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 4 }}>
             <Box>
               <Typography variant="h5" component="h3" sx={{ mb: 2 }}>
                 Mit tartalmaz?
@@ -121,8 +121,8 @@ export function OfferDetails({ offer, packageId }: { offer: Offer; packageId: Pa
           </Box>
         )}
 
-        {tab === "tech" && (
-          <Box role="tabpanel" id="panel-tech" aria-labelledby="tab-tech" sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 4 }}>
+        {(
+          <Box role="tabpanel" id="panel-tech" aria-labelledby="tab-tech" className="print-panel" sx={{ display: tab === "tech" ? "grid" : "none", "@media print": { display: "grid" }, gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 4 }}>
             <Box>
               <Typography variant="h5" component="h3" sx={{ mb: 1 }}>
                 {offer.tech.title}
