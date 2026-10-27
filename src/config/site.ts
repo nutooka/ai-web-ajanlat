@@ -6,7 +6,7 @@ export const siteConfig = {
   /** Munkanév – a végleges név itt cserélhető. */
   name: "Nutooka Projekttervező",
   shortName: "Projekttervező",
-  tagline: "Tervezd meg a weboldalad 4 perc alatt – azonnali, tételes árajánlattal.",
+  tagline: "Tervezd meg a weboldalad 3 perc alatt – azonnali, tételes árajánlattal.",
   company: {
     legalName: "NUTOOKA SOLUTIONS S.R.L.",
     address:

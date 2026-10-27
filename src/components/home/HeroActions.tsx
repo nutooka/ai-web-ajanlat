@@ -44,7 +44,7 @@ export function HeroActions() {
         )}
       </Stack>
       <Typography variant="body2" sx={{ color: palette.inkMuted }}>
-        Kb. 4 perc · ingyenes · nem kell regisztrálni
+        Kb. 3 perc · ingyenes · nem kell regisztrálni
         {bestPercent > 0 && (
           <Box component="span" sx={{ display: "block", mt: 0.75, color: palette.amber, fontWeight: 600 }}>
             −{bestPercent}% kedvezmény, ha az ajánlatod elkészülte után 1 órán belül egyeztetést kérsz.

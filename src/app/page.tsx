@@ -241,7 +241,7 @@ export default function HomePage() {
           >
             <Box>
               <Typography variant="h2" sx={{ maxWidth: 640 }}>
-                Négy perc, és tudod, mennyibe kerül.
+                Három perc, és tudod, mennyibe kerül.
               </Typography>
               <Typography sx={{ mt: 1.5, fontSize: "1.125rem", color: palette.inkMuted }}>
                 Ingyenes, kötelezettség nélkül.
