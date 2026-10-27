@@ -63,6 +63,8 @@ const companyQuestions: Question[] = [
     id: "company_goal",
     kind: "single",
     required: true,
+    // Already asked as "unsure_goal" on the "not sure yet" path.
+    showIf: (answers) => answers.projectType !== "unsure",
     title: "Mi a weboldal legfontosabb célja?",
     hint: "Erre optimalizáljuk a szerkezetet és a gombokat – minden oldal egy célt szolgál.",
     options: [

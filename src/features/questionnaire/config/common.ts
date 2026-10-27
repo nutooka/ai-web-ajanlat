@@ -1,4 +1,7 @@
-import type { Question } from "../types";
+import type { Answers, Question } from "../types";
+
+/** Project type after the "not sure" step is resolved (kept local to avoid an import cycle). */
+const effectiveType = (answers: Answers) => (answers.projectType === "unsure" ? answers.resolvedType : answers.projectType) as string | undefined;
 
 /** Asked once, after every branch, so no branch repeats them. */
 export const commonQuestions: Question[] = [
@@ -17,6 +20,8 @@ export const commonQuestions: Question[] = [
     id: "domain",
     kind: "single",
     required: true,
+    // An existing website means an existing domain.
+    showIf: (answers) => effectiveType(answers) !== "redesign" && answers.unsure_hasSite !== "yes",
     title: "Van már domain neved?",
     hint: "A domain a weboldal címe, pl. cegnev.ro.",
     options: [
@@ -28,6 +33,8 @@ export const commonQuestions: Question[] = [
     id: "branding",
     kind: "single",
     required: true,
+    // Redesign: "keep the logo" already answers this.
+    showIf: (answers) => !(Array.isArray(answers.redesign_keep) && answers.redesign_keep.includes("logo")),
     title: "Van már arculatod és logód?",
     options: [
       { id: "full", label: "Igen, teljes arculat", description: "Logó, színek, betűtípusok", icon: "palette" },
@@ -48,20 +55,11 @@ export const commonQuestions: Question[] = [
     ],
   },
   {
-    id: "inspiration",
-    kind: "text",
-    required: false,
-    maxLength: 500,
-    multiline: true,
-    title: "Van olyan weboldal, amelyik tetszik?",
-    subtitle: "Írj 1–3 címet, és pár szót arról, mi tetszik bennük. Ki is hagyhatod.",
-    placeholder: "Pl. www.pelda.ro – letisztult, sok fehér tér; www.masik.hu – jók a fotók",
-  },
-  {
     id: "contentUpload",
     kind: "single",
     required: true,
-    showIf: (answers) => answers.projectType !== "webapp" && answers.resolvedType !== "webapp",
+    // Web apps have no content pages; company and landing pages already ask about their texts.
+    showIf: (answers) => !["webapp", "company", "landing"].includes(effectiveType(answers) ?? ""),
     title: "Ki tölti fel az oldalak tartalmát?",
     options: [
       { id: "self", label: "Én magam", description: "Könnyen szerkeszthető rendszert kapsz", icon: "person" },
@@ -103,7 +101,7 @@ export const commonQuestions: Question[] = [
     maxLength: 2000,
     multiline: true,
     title: "Van még valami, amit tudnunk kell?",
-    subtitle: "Bármilyen ötlet, kérdés vagy különleges kérés. Ki is hagyhatod.",
-    placeholder: "Pl. fontos, hogy a szezon kezdetére elkészüljön…",
+    subtitle: "Egy weboldal, ami tetszik, egy ötlet vagy kérés. Ki is hagyhatod.",
+    placeholder: "Pl. tetszik a www.pelda.ro letisztultsága; fontos, hogy a szezon kezdetére elkészüljön…",
   },
 ];

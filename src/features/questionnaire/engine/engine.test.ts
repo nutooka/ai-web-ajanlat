@@ -41,9 +41,44 @@ describe("getVisibleQuestions", () => {
     expect(ids({ projectType: "webapp", app_auth: "yes" })).toContain("app_roles");
   });
 
-  it("skips the content upload question for web apps", () => {
+  it("asks who uploads content only where no other question covers it", () => {
     expect(ids({ projectType: "webapp" })).not.toContain("contentUpload");
-    expect(ids({ projectType: "company" })).toContain("contentUpload");
+    expect(ids({ projectType: "company" })).not.toContain("contentUpload");
+    expect(ids({ projectType: "landing" })).not.toContain("contentUpload");
+    expect(ids({ projectType: "webshop" })).toContain("contentUpload");
+    expect(ids({ projectType: "redesign" })).toContain("contentUpload");
+  });
+
+  it("does not ask the goal twice on the 'not sure' path", () => {
+    const visible = ids({ projectType: "unsure", unsure_goal: "present", unsure_hasSite: "no", resolvedType: "company" });
+    expect(visible).toContain("unsure_goal");
+    expect(visible).not.toContain("company_goal");
+    expect(ids({ projectType: "company" })).toContain("company_goal");
+  });
+
+  it("does not ask about a domain when there is already a website", () => {
+    expect(ids({ projectType: "redesign" })).not.toContain("domain");
+    expect(ids({ projectType: "unsure", unsure_goal: "present", unsure_hasSite: "yes", resolvedType: "company" })).not.toContain("domain");
+    expect(ids({ projectType: "company" })).toContain("domain");
+  });
+
+  it("does not ask about the logo when the visitor keeps the old one", () => {
+    expect(ids({ projectType: "redesign", redesign_keep: ["logo"] })).not.toContain("branding");
+    expect(ids({ projectType: "redesign", redesign_keep: ["colors"] })).toContain("branding");
+  });
+
+  it("has a single free-text question at the end", () => {
+    for (const type of Object.keys(branchQuestions)) {
+      const common = getVisibleQuestions({ projectType: type }).filter((q) => q.kind === "text" && commonQuestions.includes(q));
+      expect(common.map((q) => q.id)).toEqual(["notes"]);
+    }
+  });
+
+  it("never shows two questions with the same title", () => {
+    for (const type of Object.keys(branchQuestions)) {
+      const titles = getVisibleQuestions({ projectType: type, app_auth: "yes" }).map((q) => q.title);
+      expect(new Set(titles).size).toBe(titles.length);
+    }
   });
 
   it("asks unsure questions first, then the branch chosen on the recommendation step", () => {
