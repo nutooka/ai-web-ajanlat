@@ -28,10 +28,9 @@ import { useWizardSnapshot, wizardStore, type Submission } from "@/lib/storage";
 import { ease, palette } from "@/theme/tokens";
 import { buildOffer } from "../buildOffer";
 import { offerAgeMinutesFrom, useNow, useOfferClock } from "../useOfferClock";
-import { DeadlineSlider } from "./DeadlineSlider";
+import { DISCOUNTS_ID, DiscountsPanel, totalSavings } from "./DiscountsPanel";
 import { OfferDetails } from "./OfferDetails";
 import { PricingCards } from "./PricingCards";
-import { QuickDecisionBanner } from "./QuickDecisionBanner";
 import { StickyCta } from "./StickyCta";
 import { SubmittedPanel } from "./SubmittedPanel";
 
@@ -159,15 +158,22 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
                 <Typography sx={{ color: palette.inkMuted, fontSize: 14 }}>{pkg.name} csomag · becsült projektár</Typography>
                 {pricesReady ? (
                   <>
-                    <Typography sx={{ textDecoration: "line-through", color: palette.inkMuted, mt: 1, visibility: pkg.savings > 0 ? "visible" : "hidden" }}>
-                      {formatRon(pkg.listPrice)}
+                    <Typography sx={{ textDecoration: "line-through", color: palette.inkMuted, mt: 1, visibility: totalSavings(pkg) > 0 ? "visible" : "hidden" }}>
+                      {formatRon(pkg.finalPrice + totalSavings(pkg))}
                     </Typography>
                     <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: { xs: 40, md: 52 }, letterSpacing: "-0.03em", lineHeight: 1.05 }}>
                       {formatRon(pkg.finalPrice)}
                     </Typography>
-                    {pkg.savings > 0 && (
-                      <Box component="span" sx={{ display: "inline-block", mt: 1.25, px: 1.25, py: 0.5, borderRadius: 1.5, border: `1.5px solid ${palette.amber}`, color: palette.amber, fontSize: 13, fontWeight: 700 }}>
-                        Megtakarítás: {formatRon(pkg.savings)}
+                    {totalSavings(pkg) > 0 && (
+                      <Box
+                        component="button"
+                        type="button"
+                        onClick={() => scrollToId(DISCOUNTS_ID)}
+                        className="no-print"
+                        sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, mt: 1.25, minHeight: 36, px: 1.5, py: 0.5, borderRadius: 1.5, border: 0, background: palette.amber, color: palette.ink, font: "inherit", fontSize: 14, fontWeight: 800, cursor: "pointer", "&:hover": { filter: "brightness(1.05)" }, "&:focus-visible": { outline: "2px solid #fff", outlineOffset: 2 } }}
+                      >
+                        Kedvezményeid: −{formatRon(totalSavings(pkg))}
+                        <ArrowDownward sx={{ fontSize: 16 }} />
                       </Box>
                     )}
                   </>
@@ -231,17 +237,16 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
           )}
         </Box>
 
-        {/* 2 – Countdown (only while the request is still open). */}
-        {!submission && (
-          <Box className="no-print">
-            <QuickDecisionBanner clockState={clockState} onCta={() => scrollToId(CONTACT_ID)} />
-          </Box>
-        )}
-
-        {/* Time vs money slider. */}
+        {/* 2 – All discounts in one place (only while the request is still open). */}
         {!submission && pricesReady && (
           <Box className="no-print">
-            <DeadlineSlider pkg={pkg} onChange={(weeks) => wizardStore.update({ answers: { ...answers, deadlineWeeks: String(weeks) } })} />
+            <DiscountsPanel
+              pkg={pkg}
+              clockState={clockState}
+              onDeadlineChange={(weeks) => wizardStore.update({ answers: { ...answers, deadlineWeeks: String(weeks) } })}
+              onSelectPackage={selectPackage}
+              onCta={() => scrollToId(CONTACT_ID)}
+            />
           </Box>
         )}
 
