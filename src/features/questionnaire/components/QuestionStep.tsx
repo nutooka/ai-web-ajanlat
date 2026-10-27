@@ -16,10 +16,12 @@ interface QuestionStepProps {
   recommended?: string;
   error: string | null;
   onChange: (value: AnswerValue | undefined, options?: { advance?: boolean }) => void;
+  /** Replaces the default answer UI (e.g. the deadline slider). */
+  customControl?: React.ReactNode;
 }
 
 export const QuestionStep = forwardRef<HTMLHeadingElement, QuestionStepProps>(function QuestionStep(
-  { question, value, recommended, error, onChange },
+  { question, value, recommended, error, onChange, customControl },
   headingRef,
 ) {
   const errorId = `${question.id}-error`;
@@ -40,7 +42,9 @@ export const QuestionStep = forwardRef<HTMLHeadingElement, QuestionStepProps>(fu
         )}
       </Stack>
 
-      {question.kind === "text" ? (
+      {customControl ? (
+        customControl
+      ) : question.kind === "text" ? (
         <TextField
           autoFocus
           value={typeof value === "string" ? value : ""}

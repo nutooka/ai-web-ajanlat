@@ -25,11 +25,22 @@ import {
   validateAnswer,
 } from "../engine";
 import type { AnswerValue, Answers } from "../types";
+import { pricingConfig } from "@/config/pricing";
+import { DeadlineSliderControl } from "@/features/offer/components/DeadlineSlider";
+import { flexibilityMultiplier } from "@/features/pricing/flexibility";
 import { QuestionStep } from "./QuestionStep";
 import { WaveProgress } from "./WaveProgress";
 import { WizardSidebar } from "./WizardSidebar";
 
 const AUTO_ADVANCE_MS = 260;
+
+/** Readable category for the chosen deadline (used in e-mails and the summary). */
+function deadlineCategory(multiplier: number): string {
+  if (multiplier >= 1.25) return "urgent";
+  if (multiplier > 1.02) return "fast";
+  if (multiplier < 0.98) return "flexible";
+  return "normal";
+}
 
 /** Set one answer; re-answering the deadline question discards a deadline picked on the offer slider. */
 function withAnswer(answers: Answers, id: string, value: AnswerValue | undefined): Answers {
@@ -79,7 +90,8 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
   const question = visible[index];
   const recommended = getRecommendedOption(question.id, answers);
   // The recommendation is shown as a label, never pre-selected: the visitor decides.
-  const value = answers[question.id];
+  // The deadline slider starts on the normal schedule, so "Tovább" works without touching it.
+  const value = answers[question.id] ?? (question.id === "deadline" ? "normal" : undefined);
   const isLast = index === visible.length - 1 && question.id === "notes";
   const typeKnown = getEffectiveProjectType(answers) !== undefined;
 
@@ -131,6 +143,13 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
       return;
     }
     goTo(visible[index - 1].id, -1);
+  };
+
+  const setDeadlineWeeks = (weeks: number) => {
+    setError(null);
+    const schedule = quote?.packages.standard.schedule;
+    const multiplier = schedule ? flexibilityMultiplier(weeks, schedule.normalWeeks, pricingConfig.flexibility) : 1;
+    wizardStore.update({ answers: { ...answers, deadline: deadlineCategory(multiplier), deadlineWeeks: String(weeks) }, currentId: question.id });
   };
 
   const handleChange = (nextValue: AnswerValue | undefined, options?: { advance?: boolean }) => {
@@ -227,6 +246,11 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
               recommended={recommended}
               error={error?.questionId === question.id ? error.message : null}
               onChange={handleChange}
+              customControl={
+                question.id === "deadline" && quote ? (
+                  <DeadlineSliderControl pkg={quote.packages.standard} onChange={setDeadlineWeeks} labelledBy={`${question.id}-title`} showAmount={false} />
+                ) : undefined
+              }
             />
           </motion.div>
         </AnimatePresence>

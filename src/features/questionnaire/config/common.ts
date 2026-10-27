@@ -71,7 +71,9 @@ export const commonQuestions: Question[] = [
     id: "deadline",
     kind: "single",
     required: true,
-    title: "Milyen határidővel szeretnéd elkészíttetni?",
+    // Rendered as the time-vs-money slider in the planner; the options stay as categories for e-mails.
+    title: "Mikorra kell elkészülnie?",
+    hint: "Minél több időt adsz, annál olcsóbb – a pontos árat a végén látod.",
     options: [
       { id: "flexible", label: "Rugalmas", description: "Nem sürgős – ezt jutalmazzuk", icon: "schedule" },
       { id: "normal", label: "Normál", description: "Szokásos ütemezés", icon: "calendar" },
