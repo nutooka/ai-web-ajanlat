@@ -14,7 +14,7 @@ export function SiteFooter() {
         <Typography variant="body2" color="text.secondary">
           © {siteConfig.company.legalName}
         </Typography>
-        <MuiLink component={Link} href="/adatkezeles" variant="body2" color="text.secondary">
+        <MuiLink component={Link} href="/adatkezeles" variant="body2" color="text.secondary" sx={{ display: "inline-flex", alignItems: "center", minHeight: 44 }}>
           Adatkezelési tájékoztató
         </MuiLink>
       </Container>

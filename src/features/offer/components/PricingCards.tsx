@@ -277,7 +277,7 @@ function Row({ included, label }: { included: boolean; label: string }) {
         <Icon sx={{ fontSize: 15 }} />
       </Box>
       <Typography sx={{ fontSize: 14, color: included ? "#fff" : palette.inkMuted }}>
-        <Box component="span" sx={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)" }}>
+        <Box component="span" sx={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0 0 0 0)" }}>
           {included ? "Tartalmazza: " : "Nem tartalmazza: "}
         </Box>
         {label}

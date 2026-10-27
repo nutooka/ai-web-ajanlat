@@ -198,7 +198,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
                       Kérésed elküldve
                     </Button>
                   ) : (
-                    <Button variant="contained" color="primary" size="large" endIcon={<ArrowDownward />} onClick={() => scrollToId(CONTACT_ID)}>
+                    <Button id="hero-cta" variant="contained" color="primary" size="large" endIcon={<ArrowDownward />} onClick={() => scrollToId(CONTACT_ID)}>
                       Ingyenes egyeztetést kérek
                     </Button>
                   )}
@@ -285,7 +285,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
       {!submission && (
         <>
           <Box sx={{ height: 88 }} className="no-print" />
-          <StickyCta targetId={CONTACT_ID} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} />
+          <StickyCta targetId={CONTACT_ID} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} hideWhileVisible={["hero-cta"]} />
         </>
       )}
     </Frame>

@@ -128,7 +128,7 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
                   <TextField label="Megjegyzés" multiline minRows={3} {...field(register("message"))} error={Boolean(errors.message)} helperText={errors.message?.message} />
 
                   {/* Honeypot – hidden from people and assistive tech. */}
-                  <Box aria-hidden sx={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
+                  <Box aria-hidden sx={{ position: "absolute", left: "-10000px", width: "1px", height: "1px", overflow: "hidden" }}>
                     <label>
                       Weboldal
                       <input ref={honeypot} type="text" name="website" tabIndex={-1} autoComplete="off" />

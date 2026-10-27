@@ -1,6 +1,6 @@
 # Design-terv: egységes vizuális rendszer (gradiens + liquid) érthető UX-szel
 
-Dátum: 2026-10-27 · Állapot: JÓVÁHAGYVA (19/19 döntés) – megvalósításra kész
+Dátum: 2026-10-27 · Állapot: MEGVALÓSÍTVA (19/19 döntés, 12/12 feladat)
 
 ## Kérés (felhasználó)
 "Legyen egységes a design a többi színnel és liquid forma vonallal, de UX/UI szempontból legyen érthető, egyértelmű, könnyen követhető."
@@ -96,49 +96,49 @@ Nincs elhalasztott dizájnadósság: minden jóváhagyott javítás ebben a kör
 
 ## Implementation Tasks
 
-- [ ] **T1 (P1, human: ~2h / CC: ~10min)** — Tokenek — színszerepek, egy sötét + emelt, borostyán, info, árnyék token; lilás sötétek törlése
+- [x] **T1 (P1, human: ~2h / CC: ~10min)** — Tokenek — színszerepek, egy sötét + emelt, borostyán, info, árnyék token; lilás sötétek törlése
   - Surfaced by: Pass 5 — 9A, 12A, 8A
   - Files: `src/theme/tokens.ts`, `src/theme/theme.ts`
   - Verify: `npm run typecheck`, nincs több `cardBody`/`#121124` hivatkozás
-- [ ] **T2 (P1, human: ~2h / CC: ~10min)** — DESIGN.md megírása a döntésekből
+- [x] **T2 (P1, human: ~2h / CC: ~10min)** — DESIGN.md megírása a döntésekből
   - Surfaced by: Pass 5 — 14A
   - Files: `DESIGN.md`
   - Verify: fájl létezik, tokenek egyeznek a `tokens.ts`-sel
-- [ ] **T3 (P1, human: ~3h / CC: ~15min)** — WaveDivider + SiteHeader + liquid szabályok minden oldalon
+- [x] **T3 (P1, human: ~3h / CC: ~15min)** — WaveDivider + SiteHeader + liquid szabályok minden oldalon
   - Surfaced by: Pass 5 — 11A; Pass 6 — 18A
   - Files: `src/components/WaveDivider.tsx`, `src/components/SiteHeader.tsx`, `src/components/home/FluidBlobs.tsx`, `src/app/page.tsx`, `src/app/adatkezeles/page.tsx`, `Wizard.tsx`, `WizardSidebar.tsx`, `OfferView.tsx`
   - Verify: böngésző – minden oldalon azonos fejléc és hullám, forma soha nem szöveg mögött
-- [ ] **T4 (P1, human: ~3h / CC: ~15min)** — PricingCards: ink szöveg, egy jel oldalanként, semleges árnyék, mobil kapcsoló, „+N további”
+- [x] **T4 (P1, human: ~3h / CC: ~15min)** — PricingCards: ink szöveg, egy jel oldalanként, semleges árnyék, mobil kapcsoló, „+N további”
   - Surfaced by: 10A, 13A, 8A, 15A, 19A
   - Files: `src/features/offer/components/PricingCards.tsx`, `HomePricing.tsx`
   - Verify: kontraszt ≥4,5:1; 390px-en kapcsoló + 1 kártya
-- [ ] **T5 (P1, human: ~4h / CC: ~20min)** — Ajánlatoldal új sorrend + Részletek fülek
+- [x] **T5 (P1, human: ~4h / CC: ~20min)** — Ajánlatoldal új sorrend + Részletek fülek
   - Surfaced by: Pass 1 — 1A
   - Files: `OfferView.tsx`, új `OfferDetails.tsx`
   - Verify: első képernyőn ár + CTA; űrlap a csomagok után
-- [ ] **T6 (P1, human: ~3h / CC: ~15min)** — Elküldve állapot (mentett)
+- [x] **T6 (P1, human: ~3h / CC: ~15min)** — Elküldve állapot (mentett)
   - Surfaced by: Pass 2 — 2A
   - Files: `src/lib/storage.ts`, `ContactForm.tsx`, `OfferView.tsx`, `StickyCta.tsx`, `QuickDecisionBanner.tsx`
   - Verify: elküldés után újratöltve is „Elküldve”, sáv és időzítő nincs
-- [ ] **T7 (P1, human: ~2h / CC: ~10min)** — Óra betöltés/hiba/sávváltás állapotok
+- [x] **T7 (P1, human: ~2h / CC: ~10min)** — Óra betöltés/hiba/sávváltás állapotok
   - Surfaced by: Pass 2 — 3A
   - Files: `useOfferClock.ts`, `OfferView.tsx`, `QuickDecisionBanner.tsx`, `StickyCta.tsx`
   - Verify: betöltéskor skeleton; hálózati hiba esetén üzenet
-- [ ] **T8 (P2, human: ~1h / CC: ~5min)** — Kezdőlapi kedvezményszöveg
+- [x] **T8 (P2, human: ~1h / CC: ~5min)** — Kezdőlapi kedvezményszöveg
   - Surfaced by: Pass 3 — 4A
   - Files: `HeroActions.tsx`, `src/app/page.tsx`
-- [ ] **T9 (P2, human: ~1h / CC: ~10min)** — Javasolt opció nem előre kijelölt + haladás
+- [x] **T9 (P2, human: ~1h / CC: ~10min)** — Javasolt opció nem előre kijelölt + haladás
   - Surfaced by: Pass 3 — 5A, 6A
   - Files: `Wizard.tsx`, `QuestionStep.tsx`, `OptionCard.tsx`
   - Verify: unit tesztek zöldek; 1. kérdésnél a sáv >0%, utolsónál 100%
-- [ ] **T10 (P2, human: ~1h / CC: ~5min)** — Hero előnézet: egy kör, fókusz/érintés stop, 44px fülek, tabpanel
+- [x] **T10 (P2, human: ~1h / CC: ~5min)** — Hero előnézet: egy kör, fókusz/érintés stop, 44px fülek, tabpanel
   - Surfaced by: Pass 4 — 7A
   - Files: `src/components/home/OfferPreview.tsx`
-- [ ] **T11 (P2, human: ~2h / CC: ~10min)** — Akadálymentesség és űrlap
+- [x] **T11 (P2, human: ~2h / CC: ~10min)** — Akadálymentesség és űrlap
   - Surfaced by: Pass 6 — 16A, 17A
   - Files: `QuickDecisionBanner.tsx`, `Wizard.tsx`, `ContactForm.tsx`
   - Verify: érintési célok ≥44px, kontraszt, fókusz az első hibára
-- [ ] **T12 (P1, human: ~1h / CC: ~10min)** — Ellenőrzés: tesztek, build, böngésző 1440 + 390, `/design-review`
+- [x] **T12 (P1, human: ~1h / CC: ~10min)** — Ellenőrzés: tesztek, build, böngésző 1440 + 390, `/design-review`
   - Verify: `npm test`, `npm run build`, nincs vízszintes görgetés
 
 ## Completion Summary

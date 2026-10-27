@@ -21,29 +21,45 @@ export function StickyCta({
   packageName,
   clockState,
   pricesReady,
+  hideWhileVisible = [],
 }: {
   targetId: string;
   price: number;
   packageName: string;
   clockState: OfferClockState;
   pricesReady: boolean;
+  /** Extra element ids (e.g. the hero CTA) that make the bar redundant while visible. */
+  hideWhileVisible?: string[];
 }) {
   const clock = clockState.clock;
-  const [formVisible, setFormVisible] = useState(false);
+  // Hidden while the form or the hero's own CTA is on screen – one call to action at a time.
+  const [visibleTargets, setVisibleTargets] = useState<Record<string, boolean>>({});
+  const hidden = Object.values(visibleTargets).some(Boolean);
   const now = useNow(1000);
   const quick = resolveQuickDecision(pricingConfig.discounts.quickDecision, offerAgeMinutesFrom(clock, now));
 
+  const watchKey = [targetId, ...hideWhileVisible].join("|");
   useEffect(() => {
-    const target = document.getElementById(targetId);
-    if (!target) return;
-    const observer = new IntersectionObserver(([entry]) => setFormVisible(entry.isIntersecting), { threshold: 0.15 });
-    observer.observe(target);
+    const ids = watchKey.split("|");
+    const observer = new IntersectionObserver(
+      (entries) =>
+        setVisibleTargets((current) => {
+          const next = { ...current };
+          for (const entry of entries) next[entry.target.id] = entry.isIntersecting;
+          return next;
+        }),
+      { threshold: 0.15 },
+    );
+    for (const id of ids) {
+      const element = document.getElementById(id);
+      if (element) observer.observe(element);
+    }
     return () => observer.disconnect();
-  }, [targetId]);
+  }, [watchKey]);
 
   return (
     <AnimatePresence>
-      {!formVisible && pricesReady && (
+      {!hidden && pricesReady && (
         <motion.div
           className="no-print"
           initial={{ y: 80, opacity: 0 }}

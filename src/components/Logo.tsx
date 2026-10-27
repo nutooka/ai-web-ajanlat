@@ -12,7 +12,7 @@ export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
       component={Link}
       href="/"
       aria-label={`${siteConfig.name} – kezdőlap`}
-      sx={{ display: "inline-flex", alignItems: "center", gap: 1.25, color: onDark ? "#fff" : palette.ink, textDecoration: "none" }}
+      sx={{ display: "inline-flex", alignItems: "center", gap: 1.25, minHeight: 44, color: onDark ? "#fff" : palette.ink, textDecoration: "none" }}
     >
       <Box
         aria-hidden
