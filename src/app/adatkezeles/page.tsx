@@ -51,6 +51,7 @@ const sections: { title: string; body: string[] }[] = [
     body: [
       "E-mail-küldés: Resend (Resend, Inc.) – az ajánlatkérést e-mailben továbbítja.",
       "Tárhely: Vercel (Vercel Inc.) – a weboldal üzemeltetése.",
+      "Látogatottsági statisztika: Vercel Web Analytics – süti nélkül, összesített, névtelen adatokat gyűjt (pl. megtekintett oldalak, ország, eszköztípus); személy azonosítására nem alkalmas.",
       "Kulcs-érték tároló: Upstash (Upstash, Inc.) – a kedvezmény-ellenőrzéshez használt lenyomatok 30 napos tárolása.",
       "Az adatfeldolgozók az EU-n kívül is kezelhetnek adatot; ilyenkor az Európai Bizottság általános szerződési feltételei biztosítják a megfelelő védelmet.",
     ],

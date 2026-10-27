@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 import { ThemeRegistry } from "@/components/ThemeRegistry";
 import { siteConfig } from "@/config/site";
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AppRouterCacheProvider>
           <ThemeRegistry>{children}</ThemeRegistry>
         </AppRouterCacheProvider>
+        <Analytics />
       </body>
     </html>
   );
