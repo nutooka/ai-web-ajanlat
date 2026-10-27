@@ -39,13 +39,46 @@ function setup() {
 }
 
 describe("submitOffer", () => {
+  it("puts everything into the owner e-mail", async () => {
+    const { sent, deps } = setup();
+    const opened = Date.UTC(2026, 9, 27, 10, 0);
+    await submitOffer(
+      submission({
+        answers: { ...answers, deadlineWeeks: "8" },
+        contact: { name: "Teszt Elek", phone: "+40 712 345 678", company: "Elek Kft", message: "Hívjatok", callbackTime: "evening", wantsCopy: false, consent: true },
+      }),
+      { ...deps, offerOpenedAt: opened, offerAgeMinutes: 42, now: () => opened + 42 * 60_000 },
+    );
+    const text = sent[0].text;
+    // Who and when to call – at the top and in the subject.
+    expect(sent[0].subject).toContain("hívás: este");
+    expect(text.split("\n").slice(0, 4).join(" ")).toContain("+40 712 345 678");
+    expect(text).toContain("Mikor kérte: Este");
+    // Timing.
+    expect(text).toContain("Ennyi idő után kért egyeztetést: 42 perc");
+    expect(text).toMatch(/Ajánlat első megnyitása: 2026\./);
+    // Deadline slider.
+    expect(text).toMatch(/Választott határidő: \d+ hét \(csúszkán\)/);
+    // All packages, details, every answer, contact fields.
+    for (const name of ["Basic", "Standard", "Premium"]) expect(text).toContain(name);
+    for (const part of ["Keret:", "VÁLASZTOTT FUNKCIÓK", "MIT TARTALMAZ", "MIT NEM TARTALMAZ", "JAVASOLT TECHNOLÓGIA", "FENNTARTÁS", "Elek Kft", "Hívjatok", "<b>hello</b>"]) {
+      expect(text).toContain(part);
+    }
+  });
+
+  it("says when the offer clock was unknown", async () => {
+    const { sent, deps } = setup();
+    await submitOffer(submission(), { ...deps, offerOpenedAt: null });
+    expect(sent[0].text).toContain("Ajánlat első megnyitása: ismeretlen");
+  });
+
   it("locks in the quick-decision discount from the server clock", async () => {
     const early = setup();
     await submitOffer(submission(), { ...early.deps, offerAgeMinutes: 10 });
     const late = setup();
     await submitOffer(submission(), { ...late.deps, offerAgeMinutes: 200 });
-    expect(early.sent[0].text).toMatch(/Gyors döntés kedvezmény \(rögzítve\): −25%/);
-    expect(late.sent[0].text).not.toMatch(/Gyors döntés/);
+    expect(early.sent[0].text).toMatch(/Gyors döntés kedvezmény: −25% \(rögzítve\)/);
+    expect(late.sent[0].text).toMatch(/Gyors döntés kedvezmény: nem járt/);
   });
 
   it("sends the owner e-mail and the customer copy", async () => {

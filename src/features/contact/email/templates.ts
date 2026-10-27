@@ -46,7 +46,7 @@ function quoteSection(offer: Offer, packageId: PackageId, internal: boolean): { 
     internal ? `${item.label} (${formatHours(item.hours)})` : item.label,
     formatRon(item.price),
   ]);
-  if (pkg.urgencyAdjustment !== 0) itemRows.push([pkg.schedule.label, formatRon(pkg.urgencyAdjustment)]);
+  itemRows.push([pkg.schedule.label, pkg.urgencyAdjustment === 0 ? "0 RON" : formatRon(pkg.urgencyAdjustment)]);
   itemRows.push(["Listaár", formatRon(pkg.listPrice)]);
   for (const discount of pkg.discounts) itemRows.push([`${discount.label} (−${discount.percent}%)`, `−${formatRon(discount.amount)}`]);
   itemRows.push(["Becsült projektár (nettó)", formatRon(pkg.finalPrice)]);
@@ -79,31 +79,134 @@ function contactRows(contact: ContactData): [string, string][] {
   ];
 }
 
-export function ownerEmail(offer: Offer, packageId: PackageId, contact: ContactData): EmailContent {
+/** Server-side facts about the request that the visitor cannot change. */
+export interface SubmissionMeta {
+  submittedAt: number;
+  /** First time this browser opened an offer (signed cookie); null if no valid cookie arrived. */
+  offerOpenedAt: number | null;
+  offerAgeMinutes: number;
+}
+
+const dateTime = new Intl.DateTimeFormat("hu-HU", { timeZone: "Europe/Bucharest", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
+
+function formatDuration(minutes: number): string {
+  const total = Math.round(minutes);
+  if (total < 1) return "kevesebb mint 1 perc";
+  const hours = Math.floor(total / 60);
+  const rest = total % 60;
+  if (hours === 0) return `${rest} perc`;
+  if (hours < 48) return rest ? `${hours} óra ${rest} perc` : `${hours} óra`;
+  return `${Math.floor(hours / 24)} nap`;
+}
+
+function bulletList(items: string[]): string {
+  return `<ul style="margin:6px 0 18px;padding-left:20px;font-size:14px;line-height:1.7;">${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+}
+
+/** The "what do I do now" box at the very top of the owner's e-mail. */
+function actionBox(contact: ContactData, offer: Offer, packageId: PackageId): string {
+  const pkg = offer.quote.packages[packageId];
+  const reach = [contact.phone, contact.email].filter(Boolean).join(" · ");
+  const when = contact.callbackTime ? CALLBACK_LABELS[contact.callbackTime] : "nincs megadva";
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F3FBD6;border:2px solid #0E0F12;border-radius:12px;margin:0 0 20px;">
+<tr><td style="padding:16px 18px;font-size:15px;line-height:1.7;">
+<b>Teendő: keresd ${escapeHtml(contact.name ?? "az érdeklődőt")}${contact.company ? ` (${escapeHtml(contact.company)})` : ""}</b><br>
+Elérhetőség: <b>${escapeHtml(reach || "–")}</b><br>
+Mikor kérte: <b>${escapeHtml(when)}</b><br>
+Csomag: <b>${escapeHtml(pkg.name)}</b> · <b>${escapeHtml(formatRon(pkg.finalPrice))}</b> · ${escapeHtml(formatWeeks(pkg.timeline.minWeeks, pkg.timeline.maxWeeks))}
+</td></tr></table>`;
+}
+
+function timingRows(offer: Offer, meta: SubmissionMeta): [string, string][] {
+  const quick = offer.quote.quickDecision;
+  return [
+    ["Kérés beküldve", dateTime.format(meta.submittedAt)],
+    ["Ajánlat első megnyitása", meta.offerOpenedAt === null ? "ismeretlen (nem érkezett érvényes süti)" : dateTime.format(meta.offerOpenedAt)],
+    ["Ennyi idő után kért egyeztetést", meta.offerOpenedAt === null ? "–" : formatDuration(meta.offerAgeMinutes)],
+    ["Gyors döntés kedvezmény", quick.percent > 0 ? `−${quick.percent}% (rögzítve)` : "nem járt (lejárt az idő)"],
+  ];
+}
+
+function scheduleRows(offer: Offer, packageId: PackageId): [string, string][] {
+  const { schedule } = offer.quote.packages[packageId];
+  const change = Math.round((schedule.multiplier - 1) * 100);
+  return [
+    ["Választott határidő", schedule.chosenWeeks ? `${schedule.chosenWeeks} hét (csúszkán)` : `${offer.quote.urgency.label} (kérdőív)`],
+    ["Normál ütemezés", `${schedule.normalWeeks} hét`],
+    ["Lehetséges tartomány", `${schedule.fastestWeeks}–${schedule.latestWeeks} hét`],
+    ["Határidő hatása az árra", change === 0 ? "nincs" : change > 0 ? `+${change}% felár` : `${change}% kedvezmény`],
+  ];
+}
+
+function packagesRows(offer: Offer, packageId: PackageId): [string, string][] {
+  return (["basic", "standard", "premium"] as const).map((id) => {
+    const pkg = offer.quote.packages[id];
+    const marks = [id === packageId ? "VÁLASZTOTT" : "", id === offer.quote.recommended ? "ajánlott" : ""].filter(Boolean).join(", ");
+    return [`${pkg.name}${marks ? ` (${marks})` : ""}`, `${formatRon(pkg.finalPrice)} (lista: ${formatRon(pkg.listPrice)}) · ${formatWeeks(pkg.timeline.minWeeks, pkg.timeline.maxWeeks)}`];
+  });
+}
+
+function maintenanceRows(offer: Offer, packageId: PackageId): [string, string][] {
+  const m = offer.quote.packages[packageId].maintenance;
+  return [
+    ["Tárhely, üzemeltetés", `${formatRon(m.hostingMonthly)}/hó`],
+    [m.supportLabel, `${formatRon(m.supportMonthly)}/hó`],
+    ["Domain", `${formatRon(m.domainYearly)}/év`],
+    ["Összesen", `${formatRon(m.monthlyTotal)}/hó · ${formatRon(m.yearlyTotal)}/év`],
+  ];
+}
+
+export function ownerEmail(offer: Offer, packageId: PackageId, contact: ContactData, meta: SubmissionMeta): EmailContent {
+  const pkg = offer.quote.packages[packageId];
   const quote = quoteSection(offer, packageId, true);
   const answers: [string, string][] = offer.answerRows.map((row) => [row.question, row.answer]);
-  const who = contact.company ?? contact.name ?? contact.email ?? "Új érdeklődő";
-  const when = contact.callbackTime ? ` · ${CALLBACK_LABELS[contact.callbackTime].toLowerCase()}` : "";
-  const subject = `Új ajánlatkérés: ${offer.projectTypeLabel} – ${who} (${formatRon(offer.quote.packages[packageId].finalPrice)})${when}`;
+  const who = contact.company ?? contact.name ?? contact.phone ?? contact.email ?? "Új érdeklődő";
+  const when = contact.callbackTime ? ` · hívás: ${CALLBACK_LABELS[contact.callbackTime].toLowerCase()}` : "";
+  const subject = `Új ajánlatkérés: ${offer.projectTypeLabel} – ${who} (${formatRon(pkg.finalPrice)})${when}`;
+  const budget = offer.quote.budget
+    ? offer.quote.budget.withinBasic
+      ? `belefér, ajánlott: ${offer.quote.packages[offer.quote.recommended].name}`
+      : "a Basic csomag is meghaladja"
+    : "nem adott meg keretet";
 
-  const html = layout(
-    "Új ajánlatkérés érkezett",
-    `${heading("Kapcsolat")}${rows(contactRows(contact))}
-${heading("Összefoglaló")}<p style="font-size:14px;line-height:1.6;margin:4px 0 16px;">${escapeHtml(offer.summary)}</p>
-${quote.html}${heading("Válaszok")}${rows(answers)}`,
-  );
+  const sections: { title: string; rows?: [string, string][]; list?: string[]; text?: string }[] = [
+    { title: "Időzítés", rows: timingRows(offer, meta) },
+    { title: "Kapcsolat", rows: contactRows(contact) },
+    { title: "Összefoglaló", text: offer.summary },
+    { title: "Határidő", rows: scheduleRows(offer, packageId) },
+    { title: "Mindhárom csomag", rows: [...packagesRows(offer, packageId), ["Keret", budget]] },
+    { title: "Választott funkciók", list: offer.selectedFeatures.length ? offer.selectedFeatures : ["–"] },
+    { title: `Mit tartalmaz (${pkg.name})`, list: offer.includes[packageId] },
+    { title: `Mit nem tartalmaz (${pkg.name})`, list: offer.excludes[packageId] },
+    { title: "Javasolt technológia", rows: [["Megoldás", offer.tech.title], ["Leírás", offer.tech.description], ["Stack", offer.tech.stack.join(", ")]] },
+    { title: "Fenntartás", rows: maintenanceRows(offer, packageId) },
+    { title: "Minden válasz a kérdőívből", rows: answers },
+  ];
 
+  const sectionHtml = sections
+    .map((section) =>
+      section.rows
+        ? `${heading(section.title)}${rows(section.rows)}`
+        : section.list
+          ? `${heading(section.title)}${bulletList(section.list)}`
+          : `${heading(section.title)}<p style="font-size:14px;line-height:1.6;margin:4px 0 16px;">${escapeHtml(section.text ?? "")}</p>`,
+    )
+    .join("\n");
+
+  const html = layout("Új ajánlatkérés érkezett", `${actionBox(contact, offer, packageId)}${quote.html}${sectionHtml}`);
+
+  const sectionText = sections.flatMap((section) => [
+    "",
+    section.title.toUpperCase(),
+    ...(section.rows ? section.rows.map(([key, value]) => `- ${key}: ${value}`) : section.list ? section.list.map((item) => `- ${item}`) : [section.text ?? ""]),
+  ]);
   const text = [
     "ÚJ AJÁNLATKÉRÉS",
-    "",
-    ...contactRows(contact).map(([key, value]) => `${key}: ${value}`),
-    "",
-    offer.summary,
+    `Teendő: keresd ${contact.name ?? "az érdeklődőt"} – ${[contact.phone, contact.email].filter(Boolean).join(" · ")}`,
+    `Mikor kérte: ${contact.callbackTime ? CALLBACK_LABELS[contact.callbackTime] : "nincs megadva"}`,
     "",
     quote.text,
-    "",
-    "VÁLASZOK",
-    ...answers.map(([key, value]) => `- ${key}: ${value}`),
+    ...sectionText,
   ].join("\n");
 
   return { subject, html, text };

@@ -20,6 +20,10 @@ export interface SubmitDeps {
   ownerEmail: string | undefined;
   /** Server-verified minutes since the offer was first opened (see offerClock). */
   offerAgeMinutes?: number;
+  /** When the offer was first opened (signed cookie), null if unknown. */
+  offerOpenedAt?: number | null;
+  /** Injectable clock for tests. */
+  now?: () => number;
 }
 
 /**
@@ -51,7 +55,8 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
   }
 
   try {
-    await deps.send({ ...ownerEmail(offer, packageId, contact), to: deps.ownerEmail, replyTo: contact.email });
+    const meta = { submittedAt: (deps.now ?? Date.now)(), offerOpenedAt: deps.offerOpenedAt ?? null, offerAgeMinutes: deps.offerAgeMinutes ?? 0 };
+    await deps.send({ ...ownerEmail(offer, packageId, contact, meta), to: deps.ownerEmail, replyTo: contact.email });
   } catch (error) {
     console.error("[offer] owner e-mail failed", error);
     return { status: 500, body: { ok: false, error: "Nem sikerült elküldeni az ajánlatot. Kérjük, próbáld újra néhány perc múlva." } };

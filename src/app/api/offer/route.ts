@@ -33,6 +33,7 @@ export async function POST(request: Request) {
     send: createResendSender(),
     ownerEmail: process.env.OFFER_OWNER_EMAIL,
     offerAgeMinutes: offerAgeMinutes(issuedAt, now),
+    offerOpenedAt: issuedAt,
   });
   return Response.json(result.body, { status: result.status });
 }
