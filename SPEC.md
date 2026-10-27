@@ -239,6 +239,7 @@ export function calculateQuote(answers: Answers, config: PricingConfig = pricing
 ## 11. Döntések és nyitott kérdések
 
 **Eldöntve (2026-10-27):**
+- 4. kör: 160 RON/óra, productivityFactor 0.3, tételárak 50 RON-ra kerekítve, karbantartás 90/190/390 RON/hó. Design: ink + lime márkarendszer, Instrument Sans + Bricolage Grotesque, animált hero, valódi „már X RON-tól” árak, GYIK, ajánlatoldalon ragadós „Ingyenes egyeztetést kérek” sáv.
 - 3. kör: rejtett `productivityFactor` (0.4) – a configban lévő órák hagyományos becslések, a számlázott órák AI-asszisztált szinten. Az óraszámok nem jelennek meg az ügyfélnek (oldal, ügyfél-e-mail), csak a tulajdonosi e-mailben. Az átfutáshoz +1 hét visszajelzési puffer.
 - 2. kör: indulási kedvezmény 25% (+5% Standard), színesebb design (gradiens háttér, színes ikonok, sötét szekciók, oldalsáv), részletesebb kérdések (cél, célközönség, akciók, csatornák, skála, biztonság, domain, inspiráció, keret).
 - Árak: 200 RON/óra és a 3.3 szerinti alapórák maradnak, plusz indulási kedvezmény.
