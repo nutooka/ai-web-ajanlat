@@ -16,6 +16,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { track } from "@vercel/analytics";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm, useWatch, type UseFormRegisterReturn } from "react-hook-form";
@@ -96,6 +97,7 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
         | null;
 
       if (response.ok && body?.ok) {
+        track("Egyeztetés kérve", { package: packageId, callbackTime: values.callbackTime, channel: isEmailLike(values.reach) ? "email" : "phone" });
         onSubmitted(body.copySent);
         return;
       }

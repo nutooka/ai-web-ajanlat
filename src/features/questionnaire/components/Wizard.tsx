@@ -9,6 +9,7 @@ import Container from "@mui/material/Container";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { track } from "@vercel/analytics";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -118,6 +119,8 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
       return;
     }
     const nextAnswers = withAnswer(answers, question.id, nextValue);
+    // Funnel: first answer = questionnaire started.
+    if (question.id === "projectType" && answers.projectType === undefined) track("Kérdőív elkezdve", { projectType: String(nextValue) });
     if (nextValue !== answers[question.id]) wizardStore.update({ answers: nextAnswers });
 
     const sequence = getVisibleQuestions(nextAnswers);
@@ -129,6 +132,7 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
     }
     if (isComplete(nextAnswers)) {
       wizardStore.update({ packageId: calculateQuote(nextAnswers)?.recommended ?? "standard" });
+      track("Kérdőív kitöltve", { projectType: String(nextAnswers.projectType) });
       router.push("/ajanlat");
       return;
     }

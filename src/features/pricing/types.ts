@@ -25,6 +25,8 @@ export interface PremiumExtra extends ItemDefinition {
   id: string;
   /** Skip the extra when the visitor already chose one of these items (id = "questionId.optionId"). */
   skipIfSelected?: string[];
+  /** "standard": already part of Standard (so Standard always offers more than Basic). Default: Premium only. */
+  fromPackage?: "standard" | "premium";
 }
 
 export type DesignLevel = "template" | "tailored" | "custom";
@@ -68,6 +70,8 @@ export interface PricingConfig {
     quickDecision: QuickDecisionConfig;
     perPackage: Partial<Record<PackageId, Discount>>;
     maxTotalPercent: number;
+    /** A higher package costs at least this much (%) more than the one below it. */
+    minTierStepPercent: number;
   };
   maintenance: {
     hostingMonthly: Record<ResolvedProjectType, number>;

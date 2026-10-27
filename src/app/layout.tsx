@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   title: { default: `${siteConfig.name} – azonnali weboldal-árajánlat`, template: `%s · ${siteConfig.name}` },
   description: siteConfig.tagline,
   openGraph: { title: siteConfig.name, description: siteConfig.tagline, locale: "hu_HU", type: "website" },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = { themeColor: "#0E0F12" };

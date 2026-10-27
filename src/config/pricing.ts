@@ -307,10 +307,11 @@ export const pricingConfig: PricingConfig = {
     maxWeeks: 26,
   },
 
+  // Extrák: a fromPackage: "standard" tételek már a Standardban is benne vannak, a többi csak Premiumban.
   premiumExtras: [
     { id: "premium.seo", label: "Kiemelt SEO-csomag", hours: 12, category: "content", essential: false, skipIfSelected: ["company_seo.advanced"] },
-    { id: "premium.analytics", label: "Analitika és konverziómérés (GA4)", hours: 6, category: "integration", essential: false, skipIfSelected: ["landing_analytics.yes"] },
-    { id: "premium.performance", label: "Teljesítmény-finomhangolás (Core Web Vitals)", hours: 6, category: "quality", essential: false, skipIfSelected: ["redesign_problems.slow"] },
+    { id: "premium.analytics", label: "Analitika és konverziómérés (GA4)", hours: 6, fromPackage: "standard", category: "integration", essential: false, skipIfSelected: ["landing_analytics.yes"] },
+    { id: "premium.performance", label: "Teljesítmény-finomhangolás (Core Web Vitals)", hours: 6, fromPackage: "standard", category: "quality", essential: false, skipIfSelected: ["redesign_problems.slow"] },
     { id: "premium.qa", label: "Bővített tesztelés (eszközök, akadálymentesség)", hours: 6, category: "quality", essential: false },
     { id: "premium.support", label: "3 hónap kiemelt támogatás és apró módosítások", hours: 10, category: "quality", essential: false },
   ],
@@ -341,6 +342,8 @@ export const pricingConfig: PricingConfig = {
       standard: { enabled: true, percent: 5, label: "Standard csomag extra kedvezmény" },
     },
     maxTotalPercent: 30,
+    // Egy magasabb csomag legalább ennyivel (%) drágább, hogy a csomagok ne legyenek egyforma árúak.
+    minTierStepPercent: 10,
   },
 
   maintenance: {

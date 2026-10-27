@@ -90,10 +90,11 @@ function itemsForPackage(
 ): CandidateItem[] {
   const base: CandidateItem[] = config.baseItems[projectType].map((item) => ({ ...item, source: "base" }));
   const chosen = packageId === "basic" ? answerItems.filter((item) => item.essential) : answerItems;
-  if (packageId !== "premium") return [...base, ...chosen];
+  if (packageId === "basic") return [...base, ...chosen];
 
   const selectedIds = new Set(answerItems.map((item) => item.id));
   const extras: CandidateItem[] = config.premiumExtras
+    .filter((extra) => packageId === "premium" || extra.fromPackage === "standard")
     .filter((extra) => !extra.skipIfSelected?.some((id) => selectedIds.has(id)))
     .map((extra) => ({
       id: extra.id,
@@ -206,13 +207,19 @@ function buildPackage(
   };
 }
 
-/** A higher tier must never cost less than a lower one, even after tier-specific discounts. */
-function enforceTierOrder(packages: PackageQuote[]): PackageQuote[] {
+/**
+ * A higher tier must cost visibly more than a lower one, even after tier-specific discounts:
+ * at least `minTierStepPercent` more (as far as its discounts allow).
+ */
+function enforceTierOrder(packages: PackageQuote[], config: PricingConfig): PackageQuote[] {
   return packages.reduce<PackageQuote[]>((result, current) => {
     const previous = result.at(-1);
-    if (!previous || current.finalPrice >= previous.finalPrice) return [...result, current];
+    if (!previous) return [current];
+    const step = Math.max(config.roundTo, roundTo((previous.finalPrice * config.discounts.minTierStepPercent) / 100, config.roundTo));
+    const floor = previous.finalPrice + step;
+    if (current.finalPrice >= floor) return [...result, current];
 
-    const shortfall = previous.finalPrice - current.finalPrice;
+    const shortfall = floor - current.finalPrice;
     const discounts = [...current.discounts];
     let remaining = shortfall;
     for (let index = discounts.length - 1; index >= 0 && remaining > 0; index -= 1) {
@@ -258,6 +265,7 @@ export function calculateQuote(rawAnswers: Answers, config: PricingConfig = pric
 
   const ordered = enforceTierOrder(
     PACKAGE_IDS.map((id) => buildPackage(id, projectType, answers, answerItems, languageMultiplier, config, quickDecision.percent)),
+    config,
   );
 
   const budgetAnswer = typeof answers.budget === "string" ? answers.budget : undefined;

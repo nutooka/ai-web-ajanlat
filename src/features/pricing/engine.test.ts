@@ -28,7 +28,7 @@ const noDiscounts: PricingConfig = {
   ...pricingConfig,
   hourlyRate: 200,
   productivityFactor: 1,
-  discounts: { quickDecision: { ...pricingConfig.discounts.quickDecision, enabled: false }, perPackage: {}, maxTotalPercent: 25 },
+  discounts: { quickDecision: { ...pricingConfig.discounts.quickDecision, enabled: false }, perPackage: {}, maxTotalPercent: 25, minTierStepPercent: 10 },
 };
 
 describe("calculateQuote", () => {
@@ -55,11 +55,20 @@ describe("calculateQuote", () => {
       { projectType: "landing", landing_goal: "leads", landing_sections: "3-5", landing_analytics: "no", landing_ads: "no", ...common },
       noDiscounts,
     )!;
-    const standard = quote.packages.standard;
+    const basic = quote.packages.basic;
     // 2 + 5 + 6 + 2 base hours × 200 RON (no discounts, productivity factor 1)
-    expect(standard.hours).toBe(15);
-    expect(standard.subtotal).toBe(3000);
-    expect(standard.finalPrice).toBe(3000);
+    expect(basic.hours).toBe(15);
+    expect(basic.subtotal).toBe(3000);
+    expect(basic.finalPrice).toBe(3000);
+  });
+
+  it("never prices Standard the same as Basic, even with only essential, template choices", () => {
+    const quote = calculateQuote({ ...fixtures.company, design: "template", company_features: ["contact_form"] })!;
+    const { basic, standard, premium } = quote.packages;
+    expect(standard.finalPrice).toBeGreaterThan(basic.finalPrice);
+    expect(premium.finalPrice).toBeGreaterThan(standard.finalPrice);
+    expect(standard.items.map((item) => item.id)).toContain("premium.analytics");
+    expect(basic.items.map((item) => item.id)).not.toContain("premium.analytics");
   });
 
   it("puts only essential selections into Basic", () => {
@@ -262,6 +271,7 @@ describe("discounts", () => {
         quickDecision: { enabled: true, label: "A", tiers: [{ withinMinutes: 60, percent: 20 }] },
         perPackage: { standard: { enabled: true, percent: 20, label: "B" } },
         maxTotalPercent: 25,
+        minTierStepPercent: 10,
       },
     };
     const standard = calculateQuote(fixtures.company, greedy)!.packages.standard;
