@@ -14,3 +14,10 @@ export const pageRangeOptions: QuestionOption[] = [
 
 export const answerIs = (questionId: string, value: string) => (answers: Answers) =>
   answers[questionId] === value;
+
+/** True when a single answer is one of `values`, or a multi answer contains one of them. */
+export const answerIn = (questionId: string, values: readonly string[]) => (answers: Answers) => {
+  const value = answers[questionId];
+  const list = Array.isArray(value) ? value : value === undefined ? [] : [value];
+  return list.some((item) => values.includes(item));
+};

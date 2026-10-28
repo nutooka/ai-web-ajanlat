@@ -30,6 +30,34 @@ export interface PremiumExtra extends ItemDefinition {
 }
 
 export type DesignLevel = "template" | "tailored" | "custom";
+
+/** questionId → accepted option ids. Every listed question must match (any of its options). */
+export type AnswerCondition = Record<string, readonly string[]>;
+
+/**
+ * A fixed-price complexity surcharge in RON (not hour-based, never scaled).
+ * Rules sharing a `group` are mutually exclusive: the first matching rule of the group wins,
+ * so a bigger option replaces a smaller one instead of being added on top.
+ */
+export interface SurchargeRule {
+  id: string;
+  label: string;
+  price: number;
+  when: AnswerCondition;
+  group?: string;
+  /** Shown under the line item: what it covers, limits, the price range behind the estimate. */
+  description?: string;
+  /** When set, the offer needs a technical review: no unconditional fixed price. */
+  review?: string;
+}
+
+/** A condition, limit or exclusion printed on the offer (no price effect). */
+export interface OfferNoteRule {
+  id: string;
+  when: AnswerCondition;
+  kind: "requirement" | "exclusion";
+  text: string;
+}
 export type UrgencyLevel = "flexible" | "normal" | "fast" | "urgent";
 
 export interface Discount {
@@ -54,9 +82,27 @@ export interface PricingConfig {
   baseItems: Record<ResolvedProjectType, (ItemDefinition & { id: string })[]>;
   /** questionId → optionId → cost item. Options not listed cost nothing extra. */
   answerItems: Record<string, Record<string, ItemDefinition>>;
-  /** Product upload is priced by product count (webshop). */
-  productUpload: { label: string; category: CostCategory; essential: boolean; hoursByCount: Record<string, number> };
-  design: { multipliers: Record<DesignLevel, number>; labels: Record<DesignLevel, string>; basic: DesignLevel; premium: DesignLevel };
+  /** Fixed-price complexity surcharges (see SurchargeRule). */
+  surcharges: SurchargeRule[];
+  /** Conditions, limits and exclusions shown on the offer. */
+  offerNotes: OfferNoteRule[];
+  design: {
+    multipliers: Record<DesignLevel, number>;
+    labels: Record<DesignLevel, string>;
+    basic: DesignLevel;
+    premium: DesignLevel;
+    /** Per project type: different names for the same levels (e.g. "Shopify theme"). */
+    labelsByType?: Partial<Record<ResolvedProjectType, Record<DesignLevel, string>>>;
+    /** Per project type: the level Premium upgrades to (default: `premium`). */
+    premiumByType?: Partial<Record<ResolvedProjectType, DesignLevel>>;
+    /** Answers that set the design level instead of the shared `design` question (e.g. shop_design). */
+    answerMap?: Record<string, Record<string, DesignLevel>>;
+    /**
+     * Per project type: fixed RON surcharges per design level instead of the multiplier
+     * (e.g. webshop: theme customisation is the base, fully custom UI is a fixed surcharge).
+     */
+    fixedByType?: Partial<Record<ResolvedProjectType, Partial<Record<DesignLevel, { label: string; price: number; description?: string }>>>>;
+  };
   languages: { extraByAnswer: Record<string, number>; multiplierPerExtra: number; setupHoursPerExtra: number };
   urgency: Record<UrgencyLevel, { label: string; priceMultiplier: number; timeMultiplier: number }>;
   flexibility: FlexibilityConfig;
@@ -75,6 +121,8 @@ export interface PricingConfig {
   };
   maintenance: {
     hostingMonthly: Record<ResolvedProjectType, number>;
+    /** Name of the monthly running cost per project type (default: hosting). */
+    hostingLabels?: Partial<Record<ResolvedProjectType, string>>;
     domainYearly: number;
     support: Record<PackageId, { label: string; monthly: number }>;
   };
@@ -88,6 +136,10 @@ export interface LineItem {
   hours: number;
   price: number;
   source: "base" | "answer" | "premium";
+  /** "base" = core features; "surcharge" = complexity surcharge (fixed RON). */
+  group: "base" | "surcharge";
+  /** Set when this item needs a technical review before a fixed price. */
+  review?: string;
 }
 
 export interface AppliedDiscount {
@@ -99,6 +151,7 @@ export interface AppliedDiscount {
 
 export interface Maintenance {
   hostingMonthly: number;
+  hostingLabel: string;
   supportMonthly: number;
   supportLabel: string;
   domainYearly: number;
@@ -146,5 +199,11 @@ export interface Quote {
   quickDecision: QuickDecisionState;
   /** null when the visitor gave no budget or answered "not sure". */
   budget: { max: number | null; withinBasic: boolean } | null;
+  /** Risky or custom requests: the price is a starting estimate, a technical review comes first. */
+  review: { required: boolean; reasons: string[] };
+  /** What the customer needs to provide or arrange (contracts, accounts, content). */
+  requirements: string[];
+  /** What the development price does not cover, given these answers. */
+  exclusions: string[];
   packages: Record<PackageId, PackageQuote>;
 }

@@ -141,7 +141,7 @@ export function OfferDetails({ offer, packageId }: { offer: Offer; packageId: Pa
               <Typography variant="h5" component="h3" sx={{ mb: 1 }}>
                 Fenntartás
               </Typography>
-              <Row label="Tárhely, üzemeltetés" value={`${formatRon(pkg.maintenance.hostingMonthly)}/hó`} />
+              <Row label={pkg.maintenance.hostingLabel} value={`${formatRon(pkg.maintenance.hostingMonthly)}/hó`} />
               <Row label={pkg.maintenance.supportLabel} value={`${formatRon(pkg.maintenance.supportMonthly)}/hó`} />
               <Row label="Domain" value={`${formatRon(pkg.maintenance.domainYearly)}/év`} />
               <Typography sx={{ fontWeight: 700, mt: 1.5 }}>{formatRon(pkg.maintenance.monthlyTotal)} / hó</Typography>

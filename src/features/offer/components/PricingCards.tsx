@@ -177,7 +177,7 @@ export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#
                           {priceFormatter.format(pkg.finalPrice)}
                         </Typography>
                         <Typography component="span" sx={{ fontWeight: 700, fontSize: 16, mt: 0.75 }}>
-                          RON
+                          {quote.review.required ? "RON-tól" : "RON"}
                         </Typography>
                       </Stack>
                       <Typography sx={{ fontSize: 14, fontWeight: 600, mt: 0.5 }}>

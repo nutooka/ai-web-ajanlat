@@ -53,10 +53,19 @@ const ALWAYS_EXCLUDED = [
   "Az egyeztetett terjedelmen túli új funkciók",
 ];
 
+/** Shopify gives these out of the box – part of every webshop package. */
+const WEBSHOP_INCLUDED = [
+  "Shopify bolt beállítása: kosár, pénztár, készletkezelés, rendelésértesítők",
+  "Legfeljebb 10 termék feltöltése",
+  "Egy standard fizetési mód beállítása",
+  "Jogi oldalak technikai létrehozása a kapott szöveggel",
+];
+
 function buildIncludes(quote: Quote, packageId: PackageId): string[] {
   const pkg = quote.packages[packageId];
   const premiumExtras = pkg.items.filter((item) => item.source === "premium").map((item) => item.label);
-  return [pkg.design.label, ...ALWAYS_INCLUDED, ...premiumExtras];
+  const typeSpecific = quote.projectType === "webshop" ? WEBSHOP_INCLUDED : [];
+  return [pkg.design.label, ...typeSpecific, ...ALWAYS_INCLUDED, ...premiumExtras];
 }
 
 function buildExcludes(quote: Quote, packageId: PackageId, answers: Answers): string[] {
@@ -70,7 +79,7 @@ function buildExcludes(quote: Quote, packageId: PackageId, answers: Answers): st
   if (answers.company_content === "ready") contextual.push("Szövegírás");
   if (answers.shop_productUpload === "self") contextual.push("Termékfeltöltés");
 
-  return [...missingSelections, ...contextual, ...ALWAYS_EXCLUDED];
+  return [...missingSelections, ...contextual, ...quote.exclusions, ...ALWAYS_EXCLUDED];
 }
 
 const NEXT_STEPS = [

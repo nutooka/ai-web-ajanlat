@@ -8,6 +8,7 @@ import {
   type Question,
   type ResolvedProjectType,
 } from "../types";
+import { migrateLegacyAnswers } from "./legacy";
 
 const ALL_QUESTIONS: Question[] = [
   projectTypeQuestion,
@@ -133,7 +134,8 @@ function sanitizeExtra(id: string, value: unknown): string | undefined {
  * Answers left behind on an abandoned branch are dropped, so they never affect pricing.
  * Safe to run on untrusted input (used by the API route).
  */
-export function pruneAnswers(input: Record<string, unknown>): Answers {
+export function pruneAnswers(rawInput: Record<string, unknown>): Answers {
+  const input = migrateLegacyAnswers(rawInput);
   let current: Answers = {};
   for (const [id, value] of Object.entries(input)) {
     const question = QUESTION_BY_ID.get(id);

@@ -9,6 +9,8 @@ export const commonQuestions: Question[] = [
     id: "languages",
     kind: "single",
     required: true,
+    // The webshop asks its own language and translation questions.
+    showIf: (answers) => effectiveType(answers) !== "webshop",
     title: "Hány nyelven jelenjen meg az oldal?",
     options: [
       { id: "1", label: "Egy nyelven", icon: "language" },
@@ -46,6 +48,8 @@ export const commonQuestions: Question[] = [
     id: "design",
     kind: "single",
     required: true,
+    // The webshop asks its own design question (theme vs custom UI).
+    showIf: (answers) => effectiveType(answers) !== "webshop",
     title: "Milyen designt szeretnél?",
     hint: "Az egyedi design drágább, de jobban megkülönböztet a versenytársaktól.",
     options: [
@@ -59,7 +63,8 @@ export const commonQuestions: Question[] = [
     kind: "single",
     required: true,
     // Web apps have no content pages; company and landing pages already ask about their texts.
-    showIf: (answers) => !["webapp", "company", "landing"].includes(effectiveType(answers) ?? ""),
+    // Webshop: product upload is asked separately; the few static pages are part of the base.
+    showIf: (answers) => !["webapp", "company", "landing", "webshop"].includes(effectiveType(answers) ?? ""),
     title: "Ki tölti fel az oldalak tartalmát?",
     options: [
       { id: "self", label: "Én magam", description: "Könnyen szerkeszthető rendszert kapsz", icon: "person" },

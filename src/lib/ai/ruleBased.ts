@@ -29,9 +29,10 @@ export function summarizeProject(answers: Answers, projectType: ResolvedProjectT
     }
     case "webshop": {
       const products = typeof answers.shop_products === "string" ? `, amelyben ${answers.shop_products} kerülnek értékesítésre` : "";
-      parts.push(`Egy ${typeName} készül${products}; a kínálat mérete: ${label(answers, "shop_count")} termék.`);
-      if (answers.shop_onlinePayment === "yes") parts.push("A vásárlók online, bankkártyával is fizethetnek.");
-      if (answers.shop_current === "existing") parts.push("A meglévő webshop adatait átköltöztetjük.");
+      parts.push(`Egy Shopify-alapú ${typeName} készül${products}; a kínálat mérete: ${label(answers, "shop_count")}.`);
+      if (Array.isArray(answers.shop_payments) && answers.shop_payments.includes("card")) parts.push("A vásárlók online, bankkártyával is fizethetnek.");
+      if (answers.shop_courier === "yes") parts.push("A csomagokat futárszolgálat viszi ki.");
+      if (answers.shop_current === "migrate") parts.push("A meglévő webshop adatait átköltöztetjük.");
       break;
     }
     case "webapp": {
@@ -50,6 +51,18 @@ export function summarizeProject(answers: Answers, projectType: ResolvedProjectT
     }
   }
 
+  if (projectType === "webshop") {
+    // The webshop asks its own language and design questions.
+    const shopLanguages = answers.shop_languages === "2" || answers.shop_languages === "3+" ? ` ${label(answers, "shop_languages")},` : "";
+    const look: Record<string, string> = {
+      theme: "a márkádra szabott profi Shopify-témával",
+      layouts: "egyedi oldalelrendezésekkel bővített témával",
+      custom: "teljesen egyedi designnal",
+    };
+    const design = look[String(answers.shop_design)] ?? look.theme;
+    parts.push(`A bolt${shopLanguages} ${design}, ${label(answers, "deadline")} ütemezéssel készül.`);
+    return parts.join(" ");
+  }
   const languages = answers.languages === "1" || answers.languages === undefined ? "" : ` ${label(answers, "languages")},`;
   parts.push(`Az oldal${languages} ${label(answers, "design")} megoldással, ${label(answers, "deadline")} ütemezéssel készül.`);
   return parts.join(" ");
@@ -59,12 +72,10 @@ export function recommendTechnology(answers: Answers, projectType: ResolvedProje
   switch (projectType) {
     case "webshop":
       return {
-        title: "Gyors, skálázható webáruház",
+        title: "Shopify-webáruház",
         description:
-          answers.shop_count === "1000+"
-            ? "Nagy katalógushoz headless megoldást javaslunk: villámgyors kirakat, erős termékkezelő háttérrel."
-            : "Modern, gyors kirakat és könnyen kezelhető termékadmin – webshop-motor és kirakat összehangolva.",
-        stack: ["Next.js", "Shopify / WooCommerce (headless)", "Stripe vagy Netopia", "Vercel"],
+          "Megbízható, könnyen kezelhető Shopify bolt profi témával és bevált appokkal – a rendeléseket, készletet és termékeket egy helyen kezeled, programozói tudás nélkül.",
+        stack: ["Shopify", "Shopify-téma", "Netopia / EuPlatesc", "Futár- és számlázó-appok"],
       };
     case "webapp":
       return {

@@ -31,10 +31,24 @@ export const pricingConfig: PricingConfig = {
     ],
     webshop: [
       { id: "base.planning", label: "Konzultáció, webshop-struktúra", hours: 5, category: "planning", essential: true },
-      { id: "base.design", label: "UI design (főoldal, kategória, termék, kosár)", hours: 12, category: "design", essential: true },
-      { id: "base.dev", label: "Reszponzív frontend fejlesztés", hours: 19, category: "development", essential: true },
-      { id: "base.engine", label: "Webshop-motor: kosár, rendelés, e-mail értesítők", hours: 16, category: "backend", essential: true },
-      { id: "base.legal", label: "Jogi oldalak (ÁSZF, GDPR, ANPC), tesztelés, élesítés", hours: 6, category: "quality", essential: true },
+      { id: "base.design", label: "Shopify-téma testreszabása (főoldal, kategória, termék, kosár)", hours: 12, category: "design", essential: true },
+      { id: "base.dev", label: "Reszponzív kirakat, téma-beállítások", hours: 19, category: "development", essential: true },
+      {
+        id: "base.engine",
+        label: "Shopify bolt beállítása: kosár, pénztár, készlet, e-mail értesítők",
+        hours: 16,
+        category: "backend",
+        essential: true,
+        description: "Legfeljebb 10 termék feltöltése és egy standard fizetési mód beállítása benne van.",
+      },
+      {
+        id: "base.legal",
+        label: "Jogi oldalak létrehozása (a kapott szöveggel), tesztelés, élesítés",
+        hours: 6,
+        category: "quality",
+        essential: true,
+        description: "A jogi szövegek megírása és jogi ellenőrzése nem része.",
+      },
     ],
     webapp: [
       { id: "base.planning", label: "Követelményfeltárás és specifikáció", hours: 10, category: "planning", essential: true },
@@ -89,10 +103,7 @@ export const pricingConfig: PricingConfig = {
       advanced: { label: "Kiemelt SEO (kulcsszókutatás, on-page optimalizálás)", hours: 14, category: "content", essential: false },
     },
 
-    // Webshop
-    shop_current: {
-      existing: { label: "Költözés a régi webshopból (termékek, vásárlók)", hours: 10, category: "content", essential: true },
-    },
+    // Webshop (óraalapú tételek – a fix árú felárak lent, a `surcharges` alatt vannak)
     shop_accounts: {
       optional: { label: "Vásárlói fiók (opcionális regisztráció)", hours: 4, category: "backend", essential: true },
       required: { label: "Kötelező vásárlói fiók, zárt bolt", hours: 6, category: "backend", essential: true },
@@ -113,30 +124,20 @@ export const pricingConfig: PricingConfig = {
       related: { label: "Kapcsolódó termékek ajánlása", hours: 3, category: "development", essential: false },
     },
     shop_count: {
-      "51-200": { label: "Kategóriarendszer és szűrők (51–200 termék)", hours: 6, category: "backend", essential: true },
-      "201-1000": { label: "Kategóriák, szűrők, tömeges import (201–1000 termék)", hours: 14, category: "backend", essential: true },
-      "1000+": { label: "Nagy katalógus: import, keresés, szűrők (1000+ termék)", hours: 26, category: "backend", essential: true },
+      "51-200": { label: "Kollekciók és szűrők beállítása (51–200 termék)", hours: 6, category: "backend", essential: true },
+      "200+": { label: "Nagy katalógus: kollekciók, szűrők, kereső (200+ termék)", hours: 14, category: "backend", essential: true },
     },
     shop_variants: {
-      yes: { label: "Termékváltozatok (méret, szín, kiszerelés)", hours: 10, category: "backend", essential: true },
+      simple: { label: "Termékváltozatok (pl. méret, szín)", hours: 10, category: "backend", essential: true },
+      complex: { label: "Termékváltozatok (pl. méret, szín)", hours: 10, category: "backend", essential: true },
     },
-    shop_onlinePayment: {
-      yes: { label: "Online bankkártyás fizetés integráció", hours: 12, category: "integration", essential: true },
+    shop_payments: {
+      card: { label: "Online bankkártyás fizetés (egy szolgáltató)", hours: 12, category: "integration", essential: true },
+      cod: { label: "Utánvétes fizetés", hours: 2, category: "backend", essential: true },
+      transfer: { label: "Banki átutalás", hours: 1, category: "backend", essential: true },
     },
-    shop_cod: {
-      yes: { label: "Utánvétes fizetés", hours: 2, category: "backend", essential: true },
-    },
-    shop_shipping: {
-      courier: { label: "Futárszolgálat integráció", hours: 6, category: "integration", essential: true },
-      locker: { label: "Csomagautomata integráció", hours: 6, category: "integration", essential: true },
-      pickup: { label: "Személyes átvétel", hours: 1, category: "backend", essential: true },
+    shop_delivery: {
       international: { label: "Nemzetközi szállítás, zónák és díjak", hours: 10, category: "integration", essential: false },
-    },
-    shop_inventory: {
-      yes: { label: "Készletkezelés", hours: 8, category: "backend", essential: false },
-    },
-    shop_invoicing: {
-      yes: { label: "Számlázó-integráció (SmartBill / Oblio / FGO)", hours: 12, category: "integration", essential: false },
     },
 
     // Webalkalmazás
@@ -271,18 +272,238 @@ export const pricingConfig: PricingConfig = {
     },
   },
 
-  productUpload: {
-    label: "Termékfeltöltés (képek, leírások)",
-    category: "content",
-    essential: false,
-    hoursByCount: { upto50: 6, "51-200": 16, "201-1000": 40, "1000+": 80 },
-  },
+  // Komplexitási felárak, fix RON-ban (nem óraalapúak, nem skálázódnak).
+  // Azonos `group` → csak az első illeszkedő számít, így nincs dupla felszámítás.
+  // `review` → "Technikai egyeztetés szükséges": az ár ilyenkor "-tól" becslés.
+  surcharges: [
+    // Futárintegráció – teljes díj, a legmagasabb illeszkedő szint számít (300 / 750 / 1000 / 1600).
+    {
+      id: "shipping.carrier_rates",
+      group: "shipping",
+      label: "Futárintegráció automatikus díjszámítással",
+      price: 1600,
+      when: { shop_courier: ["yes"], shop_shippingFee: ["carrier"] },
+      description: "A szállítási díjat a futárszolgálat rendszere számolja (súly, cím alapján).",
+      review: "Automatikus futárdíj-számítás: a futárcég rendszerétől függ, előbb technikailag ellenőrizzük.",
+    },
+    {
+      id: "shipping.three_plus",
+      group: "shipping",
+      label: "Futárintegráció: három vagy több futárszolgálat",
+      price: 1000,
+      when: { shop_courier: ["yes"], shop_couriers: ["3+"] },
+      description: "Az ár két futárig biztos; a további futárok az egyeztetésen derülnek ki.",
+      review: "Három vagy több futárszolgálat: a pontos munka a futárcégektől függ.",
+    },
+    {
+      id: "shipping.two",
+      group: "shipping",
+      label: "Futárintegráció: két futárszolgálat",
+      price: 1000,
+      when: { shop_courier: ["yes"], shop_couriers: ["2"] },
+    },
+    {
+      id: "shipping.locker",
+      group: "shipping",
+      label: "Futárintegráció csomagautomatával (pl. easybox)",
+      price: 750,
+      when: { shop_courier: ["yes"], shop_delivery: ["locker"] },
+      description: "Egy futár házhoz szállítással és csomagautomata-választással.",
+    },
+    {
+      id: "shipping.basic",
+      group: "shipping",
+      label: "Futárintegráció (egy futár, házhoz szállítás)",
+      price: 300,
+      when: { shop_courier: ["yes"] },
+    },
+
+    // Termékfeltöltés – darabszám szerint (1–10 termék az alapárban).
+    {
+      id: "upload.11_50",
+      group: "upload",
+      label: "Termékfeltöltés (11–50 termék)",
+      price: 300,
+      when: { shop_productUpload: ["us"], shop_count: ["11-50"] },
+    },
+    {
+      id: "upload.51_200",
+      group: "upload",
+      label: "Termékfeltöltés (51–200 termék)",
+      price: 900,
+      when: { shop_productUpload: ["us"], shop_count: ["51-200"] },
+    },
+    {
+      id: "upload.200_plus",
+      group: "upload",
+      label: "Termékfeltöltés (200+ termék)",
+      price: 900,
+      when: { shop_productUpload: ["us"], shop_count: ["200+"] },
+      description: "Az ár 200 termékig érvényes; e fölött tömeges importtal, egyedi ajánlat alapján.",
+      review: "200-nál több termék feltöltése: egyedi ajánlat a termékadatok alapján.",
+    },
+
+    // Termékadatok előkészítettsége – külön tényező a darabszámtól.
+    {
+      id: "productData.docs",
+      group: "productData",
+      label: "Termékadatok rendezése külön dokumentumokból",
+      price: 400,
+      when: { shop_productUpload: ["us"], shop_productData: ["docs"] },
+    },
+    {
+      id: "productData.collect",
+      group: "productData",
+      label: "Termékadatok összegyűjtése, leírások megírása",
+      price: 1200,
+      when: { shop_productUpload: ["us"], shop_productData: ["collect"] },
+      description: "Becslés: a pontos ár a termékek számától és a leírások hosszától függ.",
+    },
+
+    // Termékváltozatok
+    {
+      id: "variants.complex",
+      label: "Összetett termékkonfiguráció (egymástól függő opciók)",
+      price: 1000,
+      when: { shop_variants: ["complex"] },
+      description: "Becslés: 500–1 500 RON, az opciók logikájától függően.",
+      review: "Egymástól függő termékopciók: a megvalósítás (app vagy egyedi kód) egyeztetés után dől el.",
+    },
+
+    // Számlázó-integráció
+    {
+      id: "invoicing.smartbill",
+      group: "invoicing",
+      label: "Számlázó-integráció (SmartBill)",
+      price: 500,
+      when: { shop_invoicing: ["smartbill"] },
+      description: "Becslés: 350–650 RON. Automatikus számla minden rendelésnél.",
+    },
+    {
+      id: "invoicing.oblio",
+      group: "invoicing",
+      label: "Számlázó-integráció (Oblio)",
+      price: 500,
+      when: { shop_invoicing: ["oblio"] },
+      description: "Becslés: 350–650 RON. Automatikus számla minden rendelésnél.",
+    },
+    {
+      id: "invoicing.other",
+      group: "invoicing",
+      label: "Számlázó- vagy ERP-integráció (egyedi)",
+      price: 650,
+      when: { shop_invoicing: ["other"] },
+      description: "Kiinduló becslés; a pontos ár a rendszer lehetőségeitől függ.",
+      review: "Egyedi számlázó- vagy ERP-integráció: előbb megnézzük, mit tud a rendszer.",
+    },
+
+    // Többnyelvűség – technikai beállítás kész fordításokkal (a fordítás külön).
+    {
+      id: "languages.shop_2",
+      group: "shopLanguages",
+      label: "Második nyelv technikai beállítása",
+      price: 300,
+      when: { shop_languages: ["2"] },
+      description: "Kész fordításokkal; becslés: 250–400 RON nyelvenként.",
+    },
+    {
+      id: "languages.shop_3plus",
+      group: "shopLanguages",
+      label: "További nyelvek technikai beállítása (+2 nyelv)",
+      price: 600,
+      when: { shop_languages: ["3+"] },
+      description: "Kész fordításokkal; becslés: 250–400 RON nyelvenként.",
+    },
+
+    // Meglévő webshop költöztetése – amit át kell vinni.
+    {
+      id: "migration.products",
+      label: "Termékek átköltöztetése a régi webshopból",
+      price: 600,
+      when: { shop_current: ["migrate"], shop_migrateData: ["products"] },
+    },
+    {
+      id: "migration.customers",
+      label: "Vásárlói adatok átköltöztetése",
+      price: 300,
+      when: { shop_current: ["migrate"], shop_migrateData: ["customers"] },
+    },
+    {
+      id: "migration.orders",
+      label: "Korábbi rendelések átköltöztetése",
+      price: 500,
+      when: { shop_current: ["migrate"], shop_migrateData: ["orders"] },
+      review: "Rendelések átköltöztetése: a régi rendszertől függ, előbb ellenőrizzük.",
+    },
+    {
+      id: "migration.redirects",
+      label: "URL-átirányítások, SEO megőrzése",
+      price: 300,
+      when: { shop_current: ["migrate"], shop_migrateData: ["redirects"] },
+    },
+  ],
+
+  // Feltételek, korlátok, kizárások az ajánlaton (nincs árhatásuk).
+  offerNotes: [
+    {
+      id: "payment.account",
+      kind: "requirement",
+      when: { shop_payments: ["card"], shop_paymentAccount: ["no", "unsure"] },
+      text: "Bankkártyás fizetéshez fiók kell egy fizetési szolgáltatónál (pl. Netopia, EuPlatesc) – a regisztrációban segítünk.",
+    },
+    {
+      id: "courier.contract",
+      kind: "requirement",
+      when: { shop_courier: ["yes"], shop_courierContract: ["no", "unsure"] },
+      text: "A futárintegrációhoz futárszerződés és hozzáférés (API-kulcs) kell – ezt a futárcég adja.",
+    },
+    {
+      id: "invoicing.responsibility",
+      kind: "requirement",
+      when: { shop_invoicing: ["smartbill", "oblio", "other"] },
+      text: "A számlázóprogram előfizetése és a jogszabályi megfelelés (pl. e-Factura) a te oldaladon marad – mi az összekötést végezzük.",
+    },
+    {
+      id: "translations",
+      kind: "exclusion",
+      when: { shop_translations: ["partial", "full"] },
+      text: "A fordítás (a nyelvek technikai beállítása benne van, a fordítást külön ajánljuk)",
+    },
+    {
+      id: "legal.texts",
+      kind: "exclusion",
+      when: { shop_legal: ["notyet", "help"] },
+      text: "A jogi dokumentumok (ÁSZF, adatkezelés, elállás) megírása és jogi ellenőrzése – a kapott szöveget feltöltjük",
+    },
+    {
+      id: "shopify.fees",
+      kind: "exclusion",
+      when: { $type: ["webshop"] },
+      text: "Shopify-előfizetés, fizetős téma és appok díja, futár- és tranzakciós díjak, domain",
+    },
+  ],
 
   design: {
     multipliers: { template: 1, tailored: 1.3, custom: 1.7 },
     labels: { template: "Sablonalapú design", tailored: "Testreszabott design", custom: "Teljesen egyedi design" },
     basic: "template",
     premium: "custom",
+    // Webshopnál a Premium testreszabott designt kap; a teljesen egyedi UI külön felár.
+    premiumByType: { webshop: "tailored" },
+    labelsByType: {
+      webshop: { template: "Profi Shopify-téma a márkádra szabva", tailored: "Shopify-téma egyedi oldalelrendezésekkel", custom: "Teljesen egyedi design" },
+    },
+    answerMap: { shop_design: { theme: "template", layouts: "tailored", custom: "custom" } },
+    fixedByType: {
+      webshop: {
+        tailored: { label: "Egyedi oldalelrendezések a témán belül", price: 600 },
+        custom: {
+          label: "Teljesen egyedi design és komponensek",
+          price: 2000,
+          description: "Becslés: 1 500–3 000 RON, a követelményektől függően.",
+        },
+      },
+    },
   },
 
   languages: {
@@ -347,7 +568,9 @@ export const pricingConfig: PricingConfig = {
   },
 
   maintenance: {
-    hostingMonthly: { company: 40, webshop: 120, webapp: 200, landing: 25, redesign: 40 },
+    // Webshop: a Shopify Basic előfizetés becsült havidíja (a Shopify felé fizetendő, nem a fejlesztési ár része).
+    hostingMonthly: { company: 40, webshop: 180, webapp: 200, landing: 25, redesign: 40 },
+    hostingLabels: { webshop: "Shopify-előfizetés (kb., a Shopify felé fizetendő)" },
     domainYearly: 80,
     support: {
       basic: { label: "Alap karbantartás (frissítések, mentések)", monthly: 90 },

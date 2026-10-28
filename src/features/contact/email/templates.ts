@@ -42,14 +42,15 @@ const heading = (text: string) => `<h2 style="font-size:16px;margin:20px 0 4px;"
 /** `internal` adds effective hours – only for the owner's e-mail, never the customer's. */
 function quoteSection(offer: Offer, packageId: PackageId, internal: boolean): { html: string; text: string } {
   const pkg = offer.quote.packages[packageId];
-  const itemRows: [string, string][] = pkg.items.map((item) => [
-    internal ? `${item.label} (${formatHours(item.hours)})` : item.label,
-    formatRon(item.price),
-  ]);
+  const review = offer.quote.review;
+  const itemRows: [string, string][] = pkg.items.map((item) => {
+    const name = `${item.group === "surcharge" ? "Felár: " : ""}${item.label}${item.review ? " *" : ""}`;
+    return [internal ? `${name} (${formatHours(item.hours)})` : name, `${formatRon(item.price)}${item.review ? "-tól" : ""}`];
+  });
   itemRows.push([pkg.schedule.label, pkg.urgencyAdjustment === 0 ? "0 RON" : formatRon(pkg.urgencyAdjustment)]);
   itemRows.push(["Listaár", formatRon(pkg.listPrice)]);
   for (const discount of pkg.discounts) itemRows.push([`${discount.label} (−${discount.percent}%)`, `−${formatRon(discount.amount)}`]);
-  itemRows.push(["Becsült projektár (nettó)", formatRon(pkg.finalPrice)]);
+  itemRows.push([review.required ? "Becsült projektár (nettó, kiinduló)" : "Becsült projektár (nettó)", `${formatRon(pkg.finalPrice)}${review.required ? "-tól" : ""}`]);
 
   const meta: [string, string][] = [
     ["Csomag", pkg.name],
@@ -62,8 +63,19 @@ function quoteSection(offer: Offer, packageId: PackageId, internal: boolean): { 
     ["Fenntartás (évente, domainnel)", formatRon(pkg.maintenance.yearlyTotal)],
   ];
 
-  const html = `${heading(`${pkg.name} csomag`)}${rows(meta)}${heading("Tételes kalkuláció")}${rows(itemRows)}`;
-  const text = [...meta, ...itemRows].map(([key, value]) => `${key}: ${value}`).join("\n");
+  const notes: [string, string[]][] = [
+    ...(review.required ? ([["Technikai egyeztetés szükséges (* = kiinduló becslés)", review.reasons]] as [string, string[]][]) : []),
+    ...(offer.quote.requirements.length > 0 ? ([["Amire szükség lesz", offer.quote.requirements]] as [string, string[]][]) : []),
+    // The owner e-mail lists includes/excludes separately.
+    ...(internal ? [] : ([["Nem része az árnak", offer.excludes[packageId]]] as [string, string[]][])),
+  ];
+  const html = `${heading(`${pkg.name} csomag`)}${rows(meta)}${heading("Tételes kalkuláció")}${rows(itemRows)}${notes
+    .map(([title, list]) => `${heading(title)}${bulletList(list)}`)
+    .join("")}`;
+  const text = [
+    ...[...meta, ...itemRows].map(([key, value]) => `${key}: ${value}`),
+    ...notes.flatMap(([title, list]) => ["", `${title}:`, ...list.map((item) => `- ${item}`)]),
+  ].join("\n");
   return { html, text };
 }
 
@@ -117,7 +129,9 @@ function actionBox(contact: ContactData, offer: Offer, packageId: PackageId): st
 <b>Teendő: keresd ${escapeHtml(contact.name ?? "az érdeklődőt")}${contact.company ? ` (${escapeHtml(contact.company)})` : ""}</b><br>
 Elérhetőség: <b>${escapeHtml(reach || "–")}</b><br>
 Mikor kérte: <b>${escapeHtml(when)}</b><br>
-Csomag: <b>${escapeHtml(pkg.name)}</b> · <b>${escapeHtml(formatRon(pkg.finalPrice))}</b> · ${escapeHtml(formatWeeks(pkg.timeline.minWeeks, pkg.timeline.maxWeeks))}
+Csomag: <b>${escapeHtml(pkg.name)}</b> · <b>${escapeHtml(formatRon(pkg.finalPrice))}${offer.quote.review.required ? "-tól" : ""}</b> · ${escapeHtml(formatWeeks(pkg.timeline.minWeeks, pkg.timeline.maxWeeks))}${
+    offer.quote.review.required ? `<br><b>⚠ Technikai egyeztetés szükséges:</b> ${escapeHtml(offer.quote.review.reasons.join(" "))}` : ""
+  }
 </td></tr></table>`;
 }
 
@@ -169,7 +183,7 @@ function packagesRows(offer: Offer, packageId: PackageId): [string, string][] {
 function maintenanceRows(offer: Offer, packageId: PackageId): [string, string][] {
   const m = offer.quote.packages[packageId].maintenance;
   return [
-    ["Tárhely, üzemeltetés", `${formatRon(m.hostingMonthly)}/hó`],
+    [m.hostingLabel, `${formatRon(m.hostingMonthly)}/hó`],
     [m.supportLabel, `${formatRon(m.supportMonthly)}/hó`],
     ["Domain", `${formatRon(m.domainYearly)}/év`],
     ["Összesen", `${formatRon(m.monthlyTotal)}/hó · ${formatRon(m.yearlyTotal)}/év`],

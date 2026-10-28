@@ -23,6 +23,7 @@ export function StickyCta({
   clockState,
   pricesReady,
   hideWhileVisible = [],
+  fromPrice = false,
 }: {
   targetId: string;
   price: number;
@@ -31,6 +32,8 @@ export function StickyCta({
   pricesReady: boolean;
   /** Extra element ids (e.g. the hero CTA) that make the bar redundant while visible. */
   hideWhileVisible?: string[];
+  /** The price is a starting estimate (technical review needed). */
+  fromPrice?: boolean;
 }) {
   const clock = clockState.clock;
   // Hidden while the form or the hero's own CTA is on screen – one call to action at a time.
@@ -76,7 +79,7 @@ export function StickyCta({
                   {packageName} csomag · becsült ár
                 </Typography>
                 <Stack direction={{ xs: "column", sm: "row" }} sx={{ alignItems: { xs: "flex-start", sm: "center" }, gap: { xs: 0.25, sm: 1.25 } }}>
-                  <Typography sx={{ fontWeight: 700, fontSize: { xs: 17, sm: 20 }, whiteSpace: "nowrap" }}>{formatRon(price)}</Typography>
+                  <Typography sx={{ fontWeight: 700, fontSize: { xs: 17, sm: 20 }, whiteSpace: "nowrap" }}>{formatRon(price)}{fromPrice ? "-tól" : ""}</Typography>
                   {!quick.expired && quick.minutesLeft !== null && (
                     <Stack direction="row" spacing={0.75} sx={{ alignItems: "center" }}>
                     <Blob tone="discount" size={14} duration={10} />

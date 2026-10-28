@@ -114,12 +114,12 @@ describe("calculateQuote", () => {
     expect(urgent.timeline.minWeeks).toBeLessThan(normal.timeline.minWeeks);
   });
 
-  it("prices product upload by product count", () => {
-    const small = calculateQuote({ ...fixtures.webshop, shop_count: "upto50" }, noDiscounts)!.packages.standard;
-    const large = calculateQuote({ ...fixtures.webshop, shop_count: "1000+" }, noDiscounts)!.packages.standard;
-    const upload = (pkg: typeof small) => pkg.items.find((item) => item.id === "shop_productUpload.us")!.hours;
-    expect(upload(small)).toBe(6);
-    expect(upload(large)).toBe(80);
+  it("prices product upload by product count (1–10 included)", () => {
+    const upload = (count: string) =>
+      calculateQuote({ ...fixtures.webshop, shop_count: count }, noDiscounts)!.packages.standard.items.find((item) => item.id.startsWith("upload."))?.price;
+    expect(upload("1-10")).toBeUndefined();
+    expect(upload("11-50")).toBe(300);
+    expect(upload("51-200")).toBe(900);
   });
 
   it("ignores answers left on an abandoned branch", () => {

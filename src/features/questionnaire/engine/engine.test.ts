@@ -23,7 +23,8 @@ describe("getVisibleQuestions", () => {
   it.each(Object.keys(branchQuestions))("shows the %s branch followed by the common questions", (type) => {
     const visible = ids({ projectType: type, app_auth: "yes" });
     expect(visible[0]).toBe("projectType");
-    for (const question of branchQuestions[type as keyof typeof branchQuestions]) {
+    // Follow-up questions (showIf) appear only after their trigger answer.
+    for (const question of branchQuestions[type as keyof typeof branchQuestions].filter((q) => !q.showIf)) {
       expect(visible).toContain(question.id);
     }
     expect(visible.at(-1)).toBe("notes");
@@ -45,7 +46,7 @@ describe("getVisibleQuestions", () => {
     expect(ids({ projectType: "webapp" })).not.toContain("contentUpload");
     expect(ids({ projectType: "company" })).not.toContain("contentUpload");
     expect(ids({ projectType: "landing" })).not.toContain("contentUpload");
-    expect(ids({ projectType: "webshop" })).toContain("contentUpload");
+    expect(ids({ projectType: "webshop" })).not.toContain("contentUpload");
     expect(ids({ projectType: "redesign" })).toContain("contentUpload");
   });
 

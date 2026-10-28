@@ -26,21 +26,41 @@ function Row({ label, detail, value, strong, accent }: { label: string; detail?:
 }
 
 export function PriceBreakdown({ pkg }: { pkg: PackageQuote }) {
+  // Core features first, then the complexity surcharges (fixed RON), so it is clear what costs extra and why.
+  const groups = [
+    { id: "base", title: "Alapfunkciók", items: pkg.items.filter((item) => item.group === "base") },
+    { id: "surcharge", title: "Komplexitási felárak", items: pkg.items.filter((item) => item.group === "surcharge") },
+  ].filter((group) => group.items.length > 0);
+  const hasSurcharges = groups.length > 1;
   return (
     <Box>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={pkg.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
-          <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0 }}>
-            {pkg.items.map((item) => (
-              <Box component="li" key={item.id}>
-                <Row
-                  label={item.label}
-                  detail={item.source === "premium" ? `${pkg.name} csomag extra` : undefined}
-                  value={formatRon(item.price)}
-                />
+          {groups.map((group) => (
+            <Box key={group.id} sx={{ "& + &": { mt: 3 } }}>
+              {hasSurcharges && (
+                <Typography variant="overline" component="h4" sx={{ display: "block", color: "text.secondary", fontWeight: 700, letterSpacing: "0.08em" }}>
+                  {group.title}
+                </Typography>
+              )}
+              <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0 }}>
+                {group.items.map((item) => (
+                  <Box component="li" key={item.id} className="print-row">
+                    <Row
+                      label={item.review ? `${item.label} *` : item.label}
+                      detail={[item.source === "premium" ? `${pkg.name} csomag extra` : null, item.description].filter(Boolean).join(" · ") || undefined}
+                      value={item.review ? `${formatRon(item.price)}-tól` : formatRon(item.price)}
+                    />
+                  </Box>
+                ))}
               </Box>
-            ))}
-          </Box>
+            </Box>
+          ))}
+          {pkg.items.some((item) => item.review) && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              * Technikai egyeztetés után véglegesítjük – az ár kiinduló becslés.
+            </Typography>
+          )}
           <Box sx={{ mt: 2 }}>
             <Row label="Részösszeg" value={formatRon(pkg.subtotal)} />
             {pkg.urgencyAdjustment !== 0 && (
@@ -59,7 +79,10 @@ export function PriceBreakdown({ pkg }: { pkg: PackageQuote }) {
               <Typography variant="h5" component="p">
                 Becsült projektár
               </Typography>
-              <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 28, whiteSpace: "nowrap" }}>{formatRon(pkg.finalPrice)}</Typography>
+              <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 28, whiteSpace: "nowrap" }}>
+                {formatRon(pkg.finalPrice)}
+                {pkg.items.some((item) => item.review) ? "-tól" : ""}
+              </Typography>
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ textAlign: "right" }}>
               nettó, ÁFA nélkül

@@ -5,6 +5,7 @@ import { flexibilityMultiplier, scheduleRange } from "./flexibility";
 import { resolveQuickDecision } from "./quickDecision";
 import {
   PACKAGE_IDS,
+  type AnswerCondition,
   type AppliedDiscount,
   type CostCategory,
   type DesignLevel,
@@ -15,12 +16,16 @@ import {
   type PackageQuote,
   type PricingConfig,
   type Quote,
+  type SurchargeRule,
   type UrgencyLevel,
 } from "./types";
 
 interface CandidateItem extends ItemDefinition {
   id: string;
   source: LineItem["source"];
+  /** Fixed RON price (surcharges): not hour-based, never scaled. */
+  fixedPrice?: number;
+  review?: string;
 }
 
 const roundTo = (value: number, step: number) => Math.round(value / step) * step;
@@ -29,6 +34,27 @@ const roundHalf = (value: number) => Math.round(value * 2) / 2;
 function asList(value: Answers[string]): string[] {
   if (value === undefined) return [];
   return Array.isArray(value) ? value : [value];
+}
+
+/** `$type` in a condition matches the effective project type (also when reached via "not sure yet"). */
+export function matchesCondition(answers: Answers, condition: AnswerCondition): boolean {
+  const projectType = getEffectiveProjectType(answers);
+  return Object.entries(condition).every(([questionId, accepted]) => {
+    const values = questionId === "$type" ? (projectType ? [projectType] : []) : asList(answers[questionId]);
+    return values.some((value) => accepted.includes(value));
+  });
+}
+
+/** Surcharge rules that apply; within a group only the first match counts (no double charging). */
+export function matchingSurcharges(answers: Answers, config: PricingConfig): SurchargeRule[] {
+  const usedGroups = new Set<string>();
+  return config.surcharges.filter((rule) => {
+    if (!matchesCondition(answers, rule.when)) return false;
+    if (!rule.group) return true;
+    if (usedGroups.has(rule.group)) return false;
+    usedGroups.add(rule.group);
+    return true;
+  });
 }
 
 /** All cost items the visitor's answers imply (independent of package). */
@@ -42,13 +68,19 @@ export function collectAnswerItems(answers: Answers, config: PricingConfig): Can
     }
   }
 
-  const productCount = answers.shop_count;
-  if (answers.shop_productUpload === "us" && typeof productCount === "string") {
-    const hours = config.productUpload.hoursByCount[productCount];
-    if (hours) {
-      const { label, category, essential } = config.productUpload;
-      items.push({ label, category, essential, hours, id: "shop_productUpload.us", source: "answer" });
-    }
+  for (const rule of matchingSurcharges(answers, config)) {
+    if (rule.price <= 0) continue;
+    items.push({
+      id: rule.id,
+      label: rule.label,
+      description: rule.description,
+      category: "development",
+      essential: true,
+      hours: 0,
+      fixedPrice: rule.price,
+      review: rule.review,
+      source: "answer",
+    });
   }
 
   const extraLanguages = config.languages.extraByAnswer[String(answers.languages ?? "1")] ?? 0;
@@ -66,13 +98,21 @@ export function collectAnswerItems(answers: Answers, config: PricingConfig): Can
   return items;
 }
 
-function resolveDesign(answers: Answers, packageId: PackageId, config: PricingConfig): DesignLevel {
-  const chosen: DesignLevel =
-    answers.design === "tailored" || answers.design === "custom" ? answers.design : "template";
+function chosenDesign(answers: Answers, config: PricingConfig): DesignLevel {
+  for (const [questionId, map] of Object.entries(config.design.answerMap ?? {})) {
+    const value = answers[questionId];
+    if (typeof value === "string" && map[value]) return map[value];
+  }
+  return answers.design === "tailored" || answers.design === "custom" ? answers.design : "template";
+}
+
+function resolveDesign(answers: Answers, packageId: PackageId, projectType: ResolvedProjectType, config: PricingConfig): DesignLevel {
+  const chosen = chosenDesign(answers, config);
   if (packageId === "basic") return config.design.basic;
   if (packageId === "premium") {
     const order: DesignLevel[] = ["template", "tailored", "custom"];
-    return order.indexOf(chosen) > order.indexOf(config.design.premium) ? chosen : config.design.premium;
+    const floor = config.design.premiumByType?.[projectType] ?? config.design.premium;
+    return order.indexOf(chosen) > order.indexOf(floor) ? chosen : floor;
   }
   return chosen;
 }
@@ -136,6 +176,7 @@ function estimateMaintenance(projectType: ResolvedProjectType, packageId: Packag
   const monthlyTotal = hostingMonthly + support.monthly;
   return {
     hostingMonthly,
+    hostingLabel: config.maintenance.hostingLabels?.[projectType] ?? "Tárhely, üzemeltetés",
     supportMonthly: support.monthly,
     supportLabel: support.label,
     domainYearly: config.maintenance.domainYearly,
@@ -153,11 +194,42 @@ function buildPackage(
   config: PricingConfig,
   quickPercent: number,
 ): PackageQuote {
-  const designLevel = resolveDesign(answers, packageId, config);
-  const designMultiplier = config.design.multipliers[designLevel];
+  const designLevel = resolveDesign(answers, packageId, projectType, config);
+  // Some project types price design as a fixed surcharge per level instead of a multiplier.
+  const fixedDesign = config.design.fixedByType?.[projectType];
+  const designMultiplier = fixedDesign ? 1 : config.design.multipliers[designLevel];
   const urgency = config.urgency[resolveUrgency(answers)];
 
-  const items: LineItem[] = itemsForPackage(packageId, projectType, answerItems, config).map((item) => {
+  const candidates = itemsForPackage(packageId, projectType, answerItems, config);
+  const designSurcharge = fixedDesign?.[designLevel];
+  if (designSurcharge && designSurcharge.price > 0) {
+    candidates.push({
+      id: `design.${designLevel}`,
+      label: designSurcharge.label,
+      description: designSurcharge.description,
+      category: "design",
+      essential: true,
+      hours: 0,
+      fixedPrice: designSurcharge.price,
+      source: "answer",
+    });
+  }
+
+  const items: LineItem[] = candidates.map((item) => {
+    if (item.fixedPrice !== undefined) {
+      return {
+        id: item.id,
+        label: item.label,
+        description: item.description,
+        category: item.category,
+        source: item.source,
+        // Effective hours for scheduling only.
+        hours: roundHalf(item.fixedPrice / config.hourlyRate),
+        price: item.fixedPrice,
+        group: "surcharge",
+        review: item.review,
+      };
+    }
     const hours = item.hours * categoryMultiplier(item.category, designMultiplier, languageMultiplier) * config.productivityFactor;
     return {
       id: item.id,
@@ -168,6 +240,7 @@ function buildPackage(
       hours: roundHalf(hours),
       // Every visible amount is a round number; tiny items still cost at least one step.
       price: Math.max(config.roundTo, roundTo(hours * config.hourlyRate, config.roundTo)),
+      group: "base",
     };
   });
 
@@ -192,7 +265,7 @@ function buildPackage(
   return {
     id: packageId,
     ...config.packages[packageId],
-    design: { level: designLevel, label: config.design.labels[designLevel], multiplier: designMultiplier },
+    design: { level: designLevel, label: (config.design.labelsByType?.[projectType] ?? config.design.labels)[designLevel], multiplier: designMultiplier },
     items,
     subtotal,
     urgencyAdjustment,
@@ -268,6 +341,9 @@ export function calculateQuote(rawAnswers: Answers, config: PricingConfig = pric
     config,
   );
 
+  const reasons = [...new Set(ordered.flatMap((pkg) => pkg.items.map((item) => item.review).filter((reason): reason is string => Boolean(reason))))];
+  const notes = config.offerNotes.filter((note) => matchesCondition(answers, note.when));
+
   const budgetAnswer = typeof answers.budget === "string" ? answers.budget : undefined;
   const budgetCeiling = budgetAnswer === undefined ? undefined : config.budgetCeilings[budgetAnswer];
   const budgetMax = budgetCeiling === null ? Number.POSITIVE_INFINITY : budgetCeiling;
@@ -285,5 +361,8 @@ export function calculateQuote(rawAnswers: Answers, config: PricingConfig = pric
         ? null
         : { max: Number.isFinite(budgetMax) ? budgetMax : null, withinBasic: ordered[0].finalPrice <= budgetMax },
     packages: Object.fromEntries(ordered.map((pkg) => [pkg.id, pkg])) as Record<PackageId, PackageQuote>,
+    review: { required: reasons.length > 0, reasons },
+    requirements: notes.filter((note) => note.kind === "requirement").map((note) => note.text),
+    exclusions: notes.filter((note) => note.kind === "exclusion").map((note) => note.text),
   };
 }

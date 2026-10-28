@@ -32,6 +32,7 @@ import { offerAgeMinutesFrom, useNow, useOfferClock } from "../useOfferClock";
 import { DISCOUNTS_ID, DiscountsPanel, totalSavings } from "./DiscountsPanel";
 import { OfferCodeBadge } from "./OfferCodeBadge";
 import { OfferDetails } from "./OfferDetails";
+import { REVIEW_ID, ReviewNotice } from "./ReviewNotice";
 import { PricingCards } from "./PricingCards";
 import { StickyCta } from "./StickyCta";
 import { SubmittedPanel } from "./SubmittedPanel";
@@ -165,7 +166,19 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
                     </Typography>
                     <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: { xs: 40, md: 52 }, letterSpacing: "-0.03em", lineHeight: 1.05 }}>
                       {formatRon(pkg.finalPrice)}
+                      {offer.quote.review.required && <Box component="span" sx={{ fontSize: "0.5em", ml: 0.5 }}>-tól</Box>}
                     </Typography>
+                    {offer.quote.review.required && (
+                      <Box
+                        component="button"
+                        type="button"
+                        onClick={() => scrollToId(REVIEW_ID)}
+                        className="no-print"
+                        sx={{ display: "inline-flex", mt: 1.25, mr: 1, minHeight: 36, px: 1.5, py: 0.5, borderRadius: 1.5, border: "1.5px solid #fff", background: "transparent", color: "#fff", font: "inherit", fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+                      >
+                        Technikai egyeztetés szükséges ↓
+                      </Box>
+                    )}
                     {totalSavings(pkg) > 0 && (
                       <Box
                         component="button"
@@ -239,6 +252,9 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
             </Typography>
           )}
         </Box>
+
+        {/* Custom / risky requests: the price is a starting estimate – say so before anything else. */}
+        {pricesReady && <ReviewNotice quote={offer.quote} />}
 
         {/* 2 – All discounts in one place (only while the request is still open). */}
         {!submission && pricesReady && (
@@ -320,7 +336,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
 
       {!submission && (
         <>
-          <StickyCta targetId={CONTACT_ID} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} hideWhileVisible={["hero-cta", DISCOUNTS_ID]} />
+          <StickyCta targetId={CONTACT_ID} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} hideWhileVisible={["hero-cta", DISCOUNTS_ID]} fromPrice={offer.quote.review.required} />
         </>
       )}
     </Frame>
