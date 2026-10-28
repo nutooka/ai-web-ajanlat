@@ -531,7 +531,16 @@ export const pricingConfig: PricingConfig = {
   // Extrák: a fromPackage: "standard" tételek már a Standardban is benne vannak, a többi csak Premiumban.
   premiumExtras: [
     { id: "premium.seo", label: "Kiemelt SEO-csomag", hours: 12, category: "content", essential: false, skipIfSelected: ["company_seo.advanced"] },
-    { id: "premium.analytics", label: "Analitika és konverziómérés (GA4)", hours: 6, fromPackage: "standard", category: "integration", essential: false, skipIfSelected: ["landing_analytics.yes"] },
+    {
+      id: "premium.analytics",
+      label: "Google Analytics beállítása (látogatók és vásárlások mérése)",
+      description: "Beállítás és tesztelés; az adatok elemzése nem része.",
+      hours: 6,
+      fromPackage: "standard",
+      category: "integration",
+      essential: false,
+      skipIfSelected: ["landing_analytics.yes"],
+    },
     { id: "premium.performance", label: "Teljesítmény-finomhangolás (Core Web Vitals)", hours: 6, fromPackage: "standard", category: "quality", essential: false, skipIfSelected: ["redesign_problems.slow"] },
     { id: "premium.qa", label: "Bővített tesztelés (eszközök, akadálymentesség)", hours: 6, category: "quality", essential: false },
     { id: "premium.support", label: "3 hónap kiemelt támogatás és apró módosítások", hours: 10, category: "quality", essential: false },

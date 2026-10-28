@@ -139,6 +139,7 @@ function itemsForPackage(
     .map((extra) => ({
       id: extra.id,
       label: extra.label,
+      description: extra.description,
       hours: roundHalf(extra.hours * config.premiumExtrasScale[projectType]),
       category: extra.category,
       essential: extra.essential,
