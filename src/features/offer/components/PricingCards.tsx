@@ -14,7 +14,6 @@ import { PACKAGE_IDS, type PackageId, type Quote } from "@/features/pricing/type
 import { formatRon, formatWeeks } from "@/lib/format";
 import { ease, packageThemes, palette, shadow } from "@/theme/tokens";
 
-const MAX_ROWS = 6;
 const priceFormatter = new Intl.NumberFormat("hu-HU", { maximumFractionDigits: 0, useGrouping: "always" });
 
 interface PricingCardsProps {
@@ -30,14 +29,23 @@ interface PricingCardsProps {
   detailsHref?: string;
 }
 
-/** The rows we compare: what the visitor asked for (essentials first), then the Premium extras. */
+/**
+ * Every item of every package, split in two:
+ * - differences: what is not in all three packages (Standard additions first, then Premium-only)
+ * - common: what all three packages include
+ * Rows keep the same order in every card, so the cards line up row by row.
+ */
 function comparisonRows(quote: Quote) {
-  const premium = quote.packages.premium.items;
-  const basicIds = new Set(quote.packages.basic.items.map((item) => item.id));
-  const answer = premium.filter((item) => item.source === "answer");
-  const extras = premium.filter((item) => item.source === "premium");
-  const essentialFirst = [...answer].sort((a, b) => Number(basicIds.has(b.id)) - Number(basicIds.has(a.id)));
-  return [...essentialFirst, ...extras];
+  const { basic, standard, premium } = quote.packages;
+  const ids = (pkg: typeof basic) => new Set(pkg.items.map((item) => item.id));
+  const [inBasic, inStandard] = [ids(basic), ids(standard)];
+  const all = new Map<string, { id: string; label: string }>();
+  for (const pkg of [premium, standard, basic]) for (const item of pkg.items) if (!all.has(item.id)) all.set(item.id, { id: item.id, label: item.label });
+
+  const rows = [...all.values()];
+  const differences = rows.filter((row) => !inBasic.has(row.id)).sort((a, b) => Number(inStandard.has(b.id)) - Number(inStandard.has(a.id)));
+  const common = rows.filter((row) => inBasic.has(row.id));
+  return { differences, common };
 }
 
 /** Decorative wave + bubbles at the bottom of the gradient header. */
@@ -55,9 +63,7 @@ function HeaderDecor({ bubble }: { bubble: string }) {
 }
 
 export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#reszletek" }: PricingCardsProps) {
-  const rows = comparisonRows(quote);
-  const visibleRows = rows.slice(0, MAX_ROWS);
-  const hiddenRows = rows.length - visibleRows.length;
+  const { differences, common } = comparisonRows(quote);
   const selectable = mode === "offer" && Boolean(onSelect);
   // Mobile shows one card at a time; on the home page the visitor browses locally.
   const [browsing, setBrowsing] = useState<PackageId>("standard");
@@ -190,8 +196,9 @@ export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#
                   <Box sx={{ px: 3, pt: 1, pb: 3, display: "flex", flexDirection: "column", flex: 1 }}>
                     <Typography sx={{ textAlign: "center", color: palette.inkMuted, fontSize: 14, mb: 2 }}>{pkg.tagline}</Typography>
                     <Stack component="ul" sx={{ listStyle: "none", p: 0, m: 0, flex: 1 }}>
+                      <GroupLabel>Ebben különböznek</GroupLabel>
                       <Row included label={pkg.design.label} />
-                      {visibleRows.map((row) => (
+                      {differences.map((row) => (
                         <Row
                           key={row.id}
                           included={pkg.items.some((item) => item.id === row.id)}
@@ -199,15 +206,18 @@ export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#
                           availableIn={PACKAGE_IDS.map((pid) => quote.packages[pid]).find((other) => other.items.some((item) => item.id === row.id))?.name}
                         />
                       ))}
-                      {hiddenRows > 0 && (
-                        <Box component="li" sx={{ pt: 1.25 }}>
-                          {mode === "offer" ? (
-                            <Box component="a" href={detailsHref} sx={{ color: "#fff", fontSize: 14, textUnderlineOffset: 3, display: "inline-flex", minHeight: 44, alignItems: "center" }}>
-                              +{hiddenRows} további tétel – lásd: Részletek / Kalkuláció
-                            </Box>
-                          ) : (
-                            <Typography sx={{ fontSize: 14, color: palette.inkMuted }}>+{hiddenRows} további tétel</Typography>
-                          )}
+                      {common.length > 0 && <GroupLabel>Mindhárom csomagban benne van</GroupLabel>}
+                      {mode === "offer" ? (
+                        common.map((row) => <Row key={row.id} included label={row.label} />)
+                      ) : (
+                        // Home page sample: keep the cards short – the shared base is one line.
+                        <Row included label={`${common.length} közös alaptétel: tervezés, fejlesztés, tesztelés, élesítés`} />
+                      )}
+                      {mode === "offer" && (
+                        <Box component="li" sx={{ pt: 1 }}>
+                          <Box component="a" href={detailsHref} sx={{ color: "#fff", fontSize: 14, textUnderlineOffset: 3, display: "inline-flex", minHeight: 44, alignItems: "center" }}>
+                            Tételes árak: Részletek / Kalkuláció
+                          </Box>
                         </Box>
                       )}
                     </Stack>
@@ -269,6 +279,14 @@ export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#
           );
         })}
       </Box>
+    </Box>
+  );
+}
+
+function GroupLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <Box component="li" aria-hidden={false} sx={{ pt: 2, pb: 0.5, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: palette.inkMuted, listStyle: "none" }}>
+      {children}
     </Box>
   );
 }
