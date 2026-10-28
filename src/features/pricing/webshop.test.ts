@@ -242,3 +242,36 @@ describe("webshop summary", () => {
     expect(text).not.toMatch(/ – megoldással| megoldással,/);
   });
 });
+
+describe("Shopify limits shown as conditions", () => {
+  it("over 50 product descriptions needs a technical talk", () => {
+    const answers: Answers = { ...base, shop_productUpload: "us", shop_productData: "collect", shop_count: "51-200" };
+    expect(priceOf(answers, "productData.")).toEqual([1200]);
+    expect(quote(answers).review.reasons.join(" ")).toMatch(/50 termékleírás/);
+    expect(quote({ ...answers, shop_count: "11-50" }).review.required).toBe(false);
+  });
+
+  it("warns that Shopify Payments is not available in Romania", () => {
+    expect(quote(base).requirements.join(" ")).toMatch(/Shopify Payments/);
+    expect(quote({ ...base, shop_payments: ["cod"] }).requirements.join(" ")).not.toMatch(/Shopify Payments/);
+  });
+
+  it("lists the extra Shopify costs for courier rates, lockers, migration and apps", () => {
+    const q = quote({
+      ...base,
+      shop_shippingFee: "carrier",
+      shop_delivery: ["home", "locker"],
+      shop_current: "migrate",
+      shop_migrateData: ["customers", "orders"],
+      shop_wholesale: "yes",
+      shop_accounts: "required",
+      shop_promotions: ["loyalty"],
+    });
+    const notes = [...q.requirements, ...q.exclusions].join(" ");
+    for (const text of [/magasabb Shopify-előfizetés/, /csomagautomata/, /jelszavai/, /Matrixify/, /viszonteladói/, /zárt bolthoz/, /hűségpont/]) {
+      expect(notes).toMatch(text);
+    }
+    const plain = [...quote(base).requirements, ...quote(base).exclusions].join(" ");
+    expect(plain).not.toMatch(/Matrixify|jelszavai|hűségpont|zárt bolthoz/);
+  });
+});
