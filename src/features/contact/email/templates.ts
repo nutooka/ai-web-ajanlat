@@ -87,6 +87,8 @@ export interface SubmissionMeta {
   offerAgeMinutes: number;
   /** Repeat-request check against the per-contact store. */
   lock?: { status: "off" | "error" } | { status: "first" | "repeat"; firstSeenAt: number };
+  /** Link to the stored offer (all answers), if the share store is configured. */
+  shareUrl?: string | null;
 }
 
 const dateTime = new Intl.DateTimeFormat("hu-HU", { timeZone: "Europe/Bucharest", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
@@ -141,6 +143,7 @@ function timingRows(offer: Offer, meta: SubmissionMeta): [string, string][] {
     ["Ennyi idő után kért egyeztetést", meta.offerOpenedAt === null ? "–" : formatDuration(meta.offerAgeMinutes)],
     ["Gyors döntés kedvezmény", quick.percent > 0 ? `−${quick.percent}% (rögzítve)` : "nem járt (lejárt az idő)"],
     ["Ismételt kérés?", lockLabel(meta)],
+    ...(meta.shareUrl ? ([["Teljes ajánlat online", meta.shareUrl]] as [string, string][]) : []),
   ];
 }
 

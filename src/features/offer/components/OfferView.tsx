@@ -30,6 +30,7 @@ import { ease, palette } from "@/theme/tokens";
 import { buildOffer } from "../buildOffer";
 import { offerAgeMinutesFrom, useNow, useOfferClock } from "../useOfferClock";
 import { DISCOUNTS_ID, DiscountsPanel, totalSavings } from "./DiscountsPanel";
+import { OfferCodeBadge } from "./OfferCodeBadge";
 import { OfferDetails } from "./OfferDetails";
 import { PricingCards } from "./PricingCards";
 import { StickyCta } from "./StickyCta";
@@ -194,6 +195,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
                     <Typography sx={{ fontWeight: 700 }}>{formatRon(pkg.maintenance.monthlyTotal)}/hó</Typography>
                   </Box>
                 </Stack>
+                <OfferCodeBadge answers={answers} packageId={packageId} />
                 <Box sx={{ mt: 3 }} className="no-print">
                   {submission ? (
                     <Button

@@ -1,5 +1,7 @@
 import { buildOffer } from "@/features/offer/buildOffer";
 import { isComplete, pruneAnswers } from "@/features/questionnaire/engine";
+import type { PackageId } from "@/features/pricing/types";
+import type { Answers } from "@/features/questionnaire/types";
 import { contactKeys, type FirstSeenStore } from "./contactLock";
 import { customerEmail, ownerEmail, type EmailContent, type SubmissionMeta } from "./email/templates";
 import { submissionSchema } from "./schema";
@@ -29,6 +31,8 @@ export interface SubmitDeps {
   firstSeen?: FirstSeenStore | null;
   /** Secret used to hash contacts for the store. */
   lockSecret?: string;
+  /** Stores the offer and returns its public link (offer code); null/undefined when unavailable. */
+  shareLink?: (answers: Answers, packageId: PackageId) => Promise<string | null>;
 }
 
 /**
@@ -80,7 +84,8 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
   }
 
   try {
-    const meta: SubmissionMeta = { submittedAt: now, offerOpenedAt: effectiveOpenedAt, offerAgeMinutes, lock };
+    const shareUrl = deps.shareLink ? await deps.shareLink(answers, packageId).catch(() => null) : null;
+    const meta: SubmissionMeta = { submittedAt: now, offerOpenedAt: effectiveOpenedAt, offerAgeMinutes, lock, shareUrl };
     await deps.send({ ...ownerEmail(offer, packageId, contact, meta), to: deps.ownerEmail, replyTo: contact.email });
   } catch (error) {
     console.error("[offer] owner e-mail failed", error);

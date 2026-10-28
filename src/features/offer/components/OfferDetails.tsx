@@ -19,6 +19,7 @@ const TABS = [
   { id: "kalkulacio", label: "Kalkuláció" },
   { id: "tartalom", label: "Mit tartalmaz" },
   { id: "tech", label: "Technológia és fenntartás" },
+  { id: "valaszok", label: "Válaszaid" },
 ] as const;
 
 function List({ items, included }: { items: string[]; included: boolean }) {
@@ -147,6 +148,29 @@ export function OfferDetails({ offer, packageId }: { offer: Offer; packageId: Pa
               <Typography variant="body2" color="text.secondary">
                 Évente kb. {formatRon(pkg.maintenance.yearlyTotal)} · a karbantartás opcionális
               </Typography>
+            </Box>
+          </Box>
+        )}
+
+        {(
+          <Box role="tabpanel" id="panel-valaszok" aria-labelledby="tab-valaszok" className="print-panel" sx={{ display: tab === "valaszok" ? "block" : "none", "@media print": { display: "block" } }}>
+            <Typography variant="h5" component="h3" sx={{ mb: 0.5 }}>
+              A válaszaid
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Ezeket is megkapjuk, amikor egyeztetést kérsz – nem kell külön elküldened.
+            </Typography>
+            <Box component="dl" sx={{ m: 0 }}>
+              {offer.answerRows.map((row) => (
+                <Box key={row.questionId} className="print-row" sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: { xs: 0.25, sm: 3 }, py: 1.25, borderBottom: 1, borderColor: "divider" }}>
+                  <Typography component="dt" variant="body2" color="text.secondary">
+                    {row.question}
+                  </Typography>
+                  <Typography component="dd" variant="body2" sx={{ m: 0, fontWeight: 600, whiteSpace: "pre-wrap" }}>
+                    {row.answer}
+                  </Typography>
+                </Box>
+              ))}
             </Box>
           </Box>
         )}

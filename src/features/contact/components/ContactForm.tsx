@@ -134,6 +134,9 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
           <Typography color="text.secondary">
             Hagyd meg a telefonszámod vagy az e-mail-címed, és jelentkezünk a <b>{packageName}</b> csomag ajánlatával. Nincs kötelezettség, előre nem kell fizetni semmit.
           </Typography>
+          <Typography variant="body2" sx={{ mt: 2, p: 1.5, borderRadius: 2, background: palette.limeTint, color: palette.ink }}>
+            <b>Minden válaszodat és az ajánlatot is megkapjuk</b> – nem kell képernyőképet küldened. Ha inkább üzenetben írnál, elég az ajánlat-kódot vagy a linket elküldened.
+          </Typography>
         </Box>
 
         <Box component="form" noValidate onSubmit={(event) => void handleSubmit(onSubmit)(event)} aria-label="Egyeztetés kérése">

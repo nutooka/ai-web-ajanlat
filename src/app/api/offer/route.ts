@@ -2,6 +2,8 @@ import { createResendSender } from "@/features/contact/resendSender";
 import { createRateLimiter } from "@/features/contact/spam";
 import { createUpstashFirstSeenStore } from "@/features/contact/contactLock";
 import { submitOffer } from "@/features/contact/submitOffer";
+import { saveSharedOffer } from "@/features/offer/share";
+import { siteUrl } from "@/config/site";
 import { OFFER_CLOCK_COOKIE, offerAgeMinutes, offerClockSecret, readCookie, verifyOfferClock } from "@/features/offer/offerClock";
 
 const MAX_BODY_BYTES = 64 * 1024;
@@ -37,6 +39,10 @@ export async function POST(request: Request) {
     offerOpenedAt: issuedAt,
     firstSeen: createUpstashFirstSeenStore(),
     lockSecret: offerClockSecret(),
+    shareLink: async (answers, packageId) => {
+      const code = await saveSharedOffer(answers, packageId, offerClockSecret());
+      return code ? `${siteUrl}/a/${code}` : null;
+    },
   });
   return Response.json(result.body, { status: result.status });
 }
