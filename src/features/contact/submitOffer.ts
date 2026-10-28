@@ -32,7 +32,7 @@ export interface SubmitDeps {
   /** Secret used to hash contacts for the store. */
   lockSecret?: string;
   /** Stores the offer and returns its public link (offer code); null/undefined when unavailable. */
-  shareLink?: (answers: Answers, packageId: PackageId) => Promise<string | null>;
+  shareLink?: (answers: Answers, packageId: PackageId, offerAgeMinutes: number) => Promise<string | null>;
 }
 
 /**
@@ -84,7 +84,7 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
   }
 
   try {
-    const shareUrl = deps.shareLink ? await deps.shareLink(answers, packageId).catch(() => null) : null;
+    const shareUrl = deps.shareLink ? await deps.shareLink(answers, packageId, offerAgeMinutes).catch(() => null) : null;
     const meta: SubmissionMeta = { submittedAt: now, offerOpenedAt: effectiveOpenedAt, offerAgeMinutes, lock, shareUrl };
     await deps.send({ ...ownerEmail(offer, packageId, contact, meta), to: deps.ownerEmail, replyTo: contact.email });
   } catch (error) {

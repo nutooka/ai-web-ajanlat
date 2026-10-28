@@ -39,8 +39,8 @@ export async function POST(request: Request) {
     offerOpenedAt: issuedAt,
     firstSeen: createUpstashFirstSeenStore(),
     lockSecret: offerClockSecret(),
-    shareLink: async (answers, packageId) => {
-      const code = await saveSharedOffer(answers, packageId, offerClockSecret());
+    shareLink: async (answers, packageId, ageMinutes) => {
+      const code = await saveSharedOffer(answers, packageId, offerClockSecret(), { ageMinutes });
       return code ? `${siteUrl}/a/${code}` : null;
     },
   });

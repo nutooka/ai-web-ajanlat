@@ -31,6 +31,7 @@ import { buildOffer } from "../buildOffer";
 import { offerAgeMinutesFrom, useNow, useOfferClock } from "../useOfferClock";
 import { DISCOUNTS_ID, DiscountsPanel, totalSavings } from "./DiscountsPanel";
 import { OfferCodeBadge } from "./OfferCodeBadge";
+import { LoadSharedOfferButton } from "./LoadSharedOfferButton";
 import { OfferDetails } from "./OfferDetails";
 import { REVIEW_ID, ReviewNotice } from "./ReviewNotice";
 import { PricingCards } from "./PricingCards";
@@ -102,35 +103,54 @@ function tierLabel(tierIndex: number): string {
   return `−${pricingConfig.discounts.quickDecision.tiers[tierIndex]?.percent ?? 0}%`;
 }
 
-function OfferContent({ answers, packageId, submission }: { answers: Answers; packageId: PackageId; submission: Submission | null }) {
+/** A shared offer, frozen at the moment it was shown: same discounts, deadline and package. */
+export interface FrozenOffer {
+  code: string;
+  /** Offer age then (minutes); null for old links without it → shown without the quick-decision discount. */
+  ageMinutes: number | null;
+  savedAt: number;
+}
+
+const savedFormat = new Intl.DateTimeFormat("hu-HU", { timeZone: "Europe/Bucharest", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
+
+/** Read-only view of a shared offer link (/a/KÓD). */
+export function SharedOfferView({ answers, packageId, frozen }: { answers: Answers; packageId: PackageId; frozen: FrozenOffer }) {
+  return <OfferContent answers={answers} packageId={packageId} submission={null} frozen={frozen} />;
+}
+
+function OfferContent({ answers, packageId, submission, frozen }: { answers: Answers; packageId: PackageId; submission: Submission | null; frozen?: FrozenOffer }) {
   const quickConfig = pricingConfig.discounts.quickDecision;
-  const clockState = useOfferClock();
+  const clockState = useOfferClock(!frozen);
   // Coarse tick for prices (tier changes); the banner has its own per-second countdown.
   const now = useNow(15_000);
-  const ageMinutes = offerAgeMinutesFrom(clockState.clock, now);
+  const frozenAge = frozen ? (frozen.ageMinutes ?? Number.MAX_SAFE_INTEGER) : undefined;
+  const ageMinutes = frozen ? frozenAge : offerAgeMinutesFrom(clockState.clock, now);
   const tierIndex = resolveQuickDecision(quickConfig, ageMinutes).tierIndex;
   const tierAtLoad = clockState.clock ? resolveQuickDecision(quickConfig, clockState.clock.ageAtLoad).tierIndex : tierIndex;
-  const tierChanged = clockState.status === "ready" && tierIndex !== tierAtLoad;
-  const pricesReady = clockState.status !== "loading";
+  const tierChanged = !frozen && clockState.status === "ready" && tierIndex !== tierAtLoad;
+  const pricesReady = Boolean(frozen) || clockState.status !== "loading";
 
   const offer = useMemo(() => buildOffer(answers, { offerAgeMinutes: tierAge(tierIndex) }), [answers, tierIndex]);
   if (!offer) return null;
 
   const pkg = offer.quote.packages[packageId];
-  const selectPackage = (id: PackageId) => wizardStore.update({ packageId: id });
+  // A shared snapshot never writes into the viewer's own saved questionnaire.
+  const selectPackage = (id: PackageId) => {
+    if (!frozen) wizardStore.update({ packageId: id });
+  };
 
   const header = (
     <SiteHeader
       action={
         <Stack direction="row" spacing={1} className="no-print">
-          <Button component={Link} href="/tervezo" startIcon={<EditNoteOutlined />} sx={{ color: "#fff" }}>
+          {!frozen && <Button component={Link} href="/tervezo" startIcon={<EditNoteOutlined />} sx={{ color: "#fff" }}>
             <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
               Válaszok módosítása
             </Box>
             <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
               Módosítás
             </Box>
-          </Button>
+          </Button>}
           <Button startIcon={<PrintOutlined />} onClick={() => window.print()} sx={{ color: "#fff", display: { xs: "none", sm: "inline-flex" } }}>
             Nyomtatás / PDF
           </Button>
@@ -140,7 +160,18 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
   );
 
   return (
-    <Frame header={header} stickyBar={!submission}>
+    <Frame header={header} stickyBar={!submission && !frozen}>
+      {frozen && (
+        <Box sx={{ background: palette.lime, color: palette.ink }} className="no-print">
+          <Container maxWidth="lg" sx={{ py: 1.5, display: "flex", flexWrap: "wrap", gap: 1, alignItems: "center", justifyContent: "space-between" }}>
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              Megosztott ajánlat <b>{frozen.code}</b> · így látta a kitöltő ekkor: {savedFormat.format(frozen.savedAt)}
+              {frozen.ageMinutes === null ? " (kedvezmények nélkül)" : ""}
+            </Typography>
+            <LoadSharedOfferButton answers={answers} packageId={packageId} />
+          </Container>
+        </Box>
+      )}
       {/* 1 – Hero: what it is, what it costs, the one action. */}
       <Box component="section" aria-labelledby="offer-title" className="offer-hero" sx={{ background: palette.ink, color: "#fff", position: "relative", overflow: "hidden", "@media print": { background: "#fff", color: palette.ink } }}>
         <Box sx={{ display: { xs: "none", lg: "block" } }} className="no-print">
@@ -208,8 +239,8 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
                     <Typography sx={{ fontWeight: 700 }}>{formatRon(pkg.maintenance.monthlyTotal)}/hó</Typography>
                   </Box>
                 </Stack>
-                <OfferCodeBadge answers={answers} packageId={packageId} />
-                <Box sx={{ mt: 3 }} className="no-print">
+                <OfferCodeBadge answers={answers} packageId={packageId} tier={tierIndex} fixedCode={frozen?.code} />
+                <Box sx={{ mt: 3, display: frozen ? "none" : "block" }} className="no-print">
                   {submission ? (
                     <Button
                       variant="outlined"
@@ -265,6 +296,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
               onDeadlineChange={(weeks) => wizardStore.update({ answers: { ...answers, deadlineWeeks: String(weeks) } })}
               onSelectPackage={selectPackage}
               onCta={() => scrollToId(CONTACT_ID)}
+              frozenAgeMinutes={frozen ? (frozen.ageMinutes ?? Number.MAX_SAFE_INTEGER) : undefined}
             />
           </Box>
         )}
@@ -289,6 +321,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
               quote={offer.quote}
               mode="offer"
               selected={packageId}
+              readOnly={Boolean(frozen)}
               onSelect={(id) => {
                 selectPackage(id);
                 if (!submission) window.setTimeout(() => scrollToId(CONTACT_ID), 150);
@@ -301,7 +334,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
         </Box>
 
         {/* 4 – The request (or its confirmation). */}
-        <Box id={CONTACT_ID} component="section" className="no-print" sx={{ mt: { xs: 6, md: 8 }, scrollMarginTop: 24 }}>
+        <Box id={CONTACT_ID} component="section" className="no-print" sx={{ mt: { xs: 6, md: 8 }, scrollMarginTop: 24, display: frozen ? "none" : "block" }}>
           {submission ? (
             <SubmittedPanel submission={submission} packageName={pkg.name} nextSteps={offer.nextSteps} />
           ) : (
@@ -334,7 +367,7 @@ function OfferContent({ answers, packageId, submission }: { answers: Answers; pa
         </Box>
       </Container>
 
-      {!submission && (
+      {!submission && !frozen && (
         <>
           <StickyCta targetId={CONTACT_ID} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} hideWhileVisible={["hero-cta", DISCOUNTS_ID]} fromPrice={offer.quote.review.required} />
         </>

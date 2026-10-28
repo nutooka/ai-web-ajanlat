@@ -1,12 +1,14 @@
 import { createHmac } from "node:crypto";
+import { pricingConfig } from "@/config/pricing";
+import { resolveQuickDecision } from "@/features/pricing/quickDecision";
 import { PACKAGE_IDS, type PackageId } from "@/features/pricing/types";
 import { isComplete, pruneAnswers } from "@/features/questionnaire/engine";
 import type { Answers } from "@/features/questionnaire/types";
 
 /**
- * Offer code: a short, stable id for one set of answers + package (same answers → same code).
- * The answers (no contact data) are kept for 180 days so a screenshot or a link always
- * leads back to the full offer.
+ * Offer code: a short id for exactly what the visitor saw – answers (incl. the deadline slider),
+ * package and the quick-decision discount tier at that moment. Any change gives a new code,
+ * so a screenshot's code always opens the same prices. Kept for 180 days, without contact data.
  */
 export const SHARE_TTL_SECONDS = 180 * 24 * 60 * 60;
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O, 1/I
@@ -15,16 +17,24 @@ export const CODE_PATTERN = /^[A-HJ-NP-Z2-9]{6}$/;
 export interface SharedOffer {
   answers: Answers;
   packageId: PackageId;
+  /** When this exact screen was last shown. */
   createdAt: number;
+  /** Server-verified offer age (minutes) at that moment – freezes the discounts and countdown. null = unknown (old links). */
+  ageMinutes: number | null;
 }
 
-function canonical(answers: Answers, packageId: PackageId): string {
+/** Discount tier the visitor saw: part of the code, so a different tier is a different snapshot. */
+function quickPercentAt(ageMinutes: number | null): number {
+  return resolveQuickDecision(pricingConfig.discounts.quickDecision, ageMinutes ?? undefined).percent;
+}
+
+function canonical(answers: Answers, packageId: PackageId, quickPercent: number): string {
   const sorted = Object.fromEntries(Object.entries(answers).sort(([a], [b]) => a.localeCompare(b)));
-  return JSON.stringify({ a: sorted, p: packageId });
+  return JSON.stringify({ a: sorted, p: packageId, q: quickPercent });
 }
 
-export function offerCode(answers: Answers, packageId: PackageId, secret: string): string {
-  const digest = createHmac("sha256", secret).update(canonical(answers, packageId)).digest();
+export function offerCode(answers: Answers, packageId: PackageId, secret: string, quickPercent = 0): string {
+  const digest = createHmac("sha256", secret).update(canonical(answers, packageId, quickPercent)).digest();
   return Array.from(digest.subarray(0, 6), (byte) => ALPHABET[byte % ALPHABET.length]).join("");
 }
 
@@ -75,15 +85,19 @@ export async function saveSharedOffer(
   answers: Answers,
   packageId: PackageId,
   secret: string,
-  { env = process.env, fetchImpl = fetch, now = Date.now() }: { env?: NodeJS.ProcessEnv; fetchImpl?: typeof fetch; now?: number } = {},
+  {
+    env = process.env,
+    fetchImpl = fetch,
+    now = Date.now(),
+    ageMinutes = null,
+  }: { env?: NodeJS.ProcessEnv; fetchImpl?: typeof fetch; now?: number; ageMinutes?: number | null } = {},
 ): Promise<string | null> {
   const kv = kvFromEnv(env);
   if (!kv) return null;
-  const code = offerCode(answers, packageId, secret);
-  const value: SharedOffer = { answers, packageId, createdAt: now };
-  // NX keeps the first createdAt; EX is refreshed below so an offer in use does not expire.
-  await kvCommand(kv, ["SET", `offer-share:${code}`, JSON.stringify(value), "NX", "EX", String(SHARE_TTL_SECONDS)], fetchImpl);
-  await kvCommand(kv, ["EXPIRE", `offer-share:${code}`, String(SHARE_TTL_SECONDS)], fetchImpl);
+  const code = offerCode(answers, packageId, secret, quickPercentAt(ageMinutes));
+  // The latest moment wins (same code = same prices; only the countdown moves within the tier).
+  const value: SharedOffer = { answers, packageId, createdAt: now, ageMinutes };
+  await kvCommand(kv, ["SET", `offer-share:${code}`, JSON.stringify(value), "EX", String(SHARE_TTL_SECONDS)], fetchImpl);
   return code;
 }
 
@@ -99,7 +113,8 @@ export async function loadSharedOffer(
   try {
     const parsed = JSON.parse(raw) as SharedOffer;
     const valid = parseShareInput(parsed);
-    return valid ? { ...valid, createdAt: Number(parsed.createdAt) || 0 } : null;
+    const age = typeof parsed.ageMinutes === "number" && Number.isFinite(parsed.ageMinutes) ? parsed.ageMinutes : null;
+    return valid ? { ...valid, createdAt: Number(parsed.createdAt) || 0, ageMinutes: age } : null;
   } catch {
     return null;
   }

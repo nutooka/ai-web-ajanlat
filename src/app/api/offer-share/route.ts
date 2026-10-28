@@ -1,4 +1,4 @@
-import { offerClockSecret } from "@/features/offer/offerClock";
+import { OFFER_CLOCK_COOKIE, offerAgeMinutes, offerClockSecret, readCookie, verifyOfferClock } from "@/features/offer/offerClock";
 import { parseShareInput, saveSharedOffer } from "@/features/offer/share";
 
 const MAX_BODY_BYTES = 32 * 1024;
@@ -16,7 +16,13 @@ export async function POST(request: Request) {
   const parsed = parseShareInput(input);
   if (!parsed) return Response.json({ ok: false }, { status: 400 });
   try {
-    const code = await saveSharedOffer(parsed.answers, parsed.packageId, offerClockSecret());
+    // The visitor's own signed clock decides which discount the snapshot shows.
+    const now = Date.now();
+    const issuedAt = verifyOfferClock(readCookie(request.headers.get("cookie"), OFFER_CLOCK_COOKIE), offerClockSecret(), now);
+    const code = await saveSharedOffer(parsed.answers, parsed.packageId, offerClockSecret(), {
+      now,
+      ageMinutes: issuedAt === null ? null : offerAgeMinutes(issuedAt, now),
+    });
     if (!code) return Response.json({ ok: false }, { status: 503 });
     return Response.json({ ok: true, code }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {

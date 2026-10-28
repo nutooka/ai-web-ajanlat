@@ -25,6 +25,8 @@ interface PricingCardsProps {
   mode: "home" | "offer";
   selected?: PackageId;
   onSelect?: (id: PackageId) => void;
+  /** Shared snapshot: the chosen package stays marked, but cannot be changed. */
+  readOnly?: boolean;
   /** Where the "+N további tétel" link points on the offer page. */
   detailsHref?: string;
 }
@@ -62,15 +64,15 @@ function HeaderDecor({ bubble }: { bubble: string }) {
   );
 }
 
-export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#reszletek" }: PricingCardsProps) {
+export function PricingCards({ quote, mode, selected, onSelect, readOnly = false, detailsHref = "#reszletek" }: PricingCardsProps) {
   const { differences, common } = comparisonRows(quote);
   const selectable = mode === "offer" && Boolean(onSelect);
-  // Mobile shows one card at a time; on the home page the visitor browses locally.
-  const [browsing, setBrowsing] = useState<PackageId>("standard");
-  const mobileActive: PackageId = selectable && selected ? selected : browsing;
+  // Mobile shows one card at a time; on the home page (and in a read-only snapshot) the visitor browses locally.
+  const [browsing, setBrowsing] = useState<PackageId>(readOnly && selected ? selected : "standard");
+  const mobileActive: PackageId = selectable && selected && !readOnly ? selected : browsing;
 
   const choose = (id: PackageId) => {
-    if (selectable) onSelect?.(id);
+    if (selectable && !readOnly) onSelect?.(id);
     else setBrowsing(id);
   };
 
@@ -164,7 +166,7 @@ export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#
                       <Box sx={{ minHeight: 26, mb: 0.5 }}>
                         {selectable && isSelected ? (
                           <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, px: 1.25, py: 0.25, borderRadius: 999, background: palette.lime, color: palette.ink, border: `1.5px solid ${palette.ink}`, fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                            <Check sx={{ fontSize: 14 }} /> A te választásod
+                            <Check sx={{ fontSize: 14 }} /> {readOnly ? "Ezt választotta" : "A te választásod"}
                           </Box>
                         ) : badge && (
                           <Box component="span" sx={{ display: "inline-block", px: 1.25, py: 0.25, borderRadius: 999, background: palette.ink, color: "#fff", fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
@@ -223,7 +225,13 @@ export function PricingCards({ quote, mode, selected, onSelect, detailsHref = "#
                     </Stack>
 
                     <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
-                      {selectable ? (
+                      {readOnly ? (
+                        isSelected && (
+                          <Box sx={{ display: "inline-flex", alignItems: "center", gap: 1, minHeight: 48, px: 3, borderRadius: 999, background: palette.lime, color: palette.ink, fontWeight: 700, fontSize: 15 }}>
+                            Ezt választotta <Check sx={{ fontSize: 18 }} />
+                          </Box>
+                        )
+                      ) : selectable ? (
                         <ButtonBase
                           onClick={() => onSelect?.(id)}
                           aria-pressed={isSelected}

@@ -16,10 +16,12 @@ interface DeadlineSliderControlProps {
   labelledBy: string;
   /** The questionnaire shows only the percentage – prices appear at the end. */
   showAmount: boolean;
+  /** Read-only (shared offer snapshot). */
+  disabled?: boolean;
 }
 
 /** Readout + slider. Shared by the questionnaire step and the offer page. */
-export function DeadlineSliderControl({ pkg, onChange, labelledBy, showAmount }: DeadlineSliderControlProps) {
+export function DeadlineSliderControl({ pkg, onChange, labelledBy, showAmount, disabled = false }: DeadlineSliderControlProps) {
   const { fastestWeeks, normalWeeks, latestWeeks, chosenWeeks, multiplier } = pkg.schedule;
   const value = Math.min(latestWeeks, Math.max(fastestWeeks, chosenWeeks ?? pkg.timeline.minWeeks));
   const percent = Math.round((multiplier - 1) * 100);
@@ -67,6 +69,7 @@ export function DeadlineSliderControl({ pkg, onChange, labelledBy, showAmount }:
         max={latestWeeks}
         step={1}
         marks={marks}
+        disabled={disabled}
         onChange={(_, next) => onChange(Array.isArray(next) ? next[0] : next)}
         getAriaValueText={(weeks) => `${weeks} hét`}
         aria-labelledby={labelledBy}

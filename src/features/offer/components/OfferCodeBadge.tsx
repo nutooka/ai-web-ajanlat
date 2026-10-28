@@ -15,8 +15,10 @@ import { offerLink, useOfferCode } from "../useOfferCode";
  * "Ajánlat-kód: K7M3QX · nutooka.tech/a/K7M3QX" – sits next to the price, so even a screenshot
  * sent on Messenger leads back to every answer.
  */
-export function OfferCodeBadge({ answers, packageId }: { answers: Answers; packageId: PackageId }) {
-  const code = useOfferCode(answers, packageId);
+export function OfferCodeBadge({ answers, packageId, tier, fixedCode }: { answers: Answers; packageId: PackageId; tier: number; fixedCode?: string }) {
+  // A shared (frozen) offer already has its code – never create a new one from the viewer's clock.
+  const liveCode = useOfferCode(answers, packageId, tier, !fixedCode);
+  const code = fixedCode ?? liveCode;
   const [copied, setCopied] = useState(false);
   if (!code) return <Box sx={{ minHeight: 32, mt: 2 }} />;
 

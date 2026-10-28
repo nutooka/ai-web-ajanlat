@@ -16,10 +16,12 @@ export type OfferClockState =
   | { status: "error"; clock: null };
 
 /** Starts or loads the server-signed offer clock (see /api/offer-clock). */
-export function useOfferClock(): OfferClockState {
+export function useOfferClock(enabled = true): OfferClockState {
   const [state, setState] = useState<OfferClockState>({ status: "loading", clock: null });
 
   useEffect(() => {
+    // Disabled for shared snapshots: viewing someone's offer must not start your own clock.
+    if (!enabled) return;
     let cancelled = false;
     fetch("/api/offer-clock", { method: "POST" })
       .then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
@@ -37,7 +39,7 @@ export function useOfferClock(): OfferClockState {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [enabled]);
 
   return state;
 }

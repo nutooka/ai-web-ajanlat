@@ -54,14 +54,35 @@ describe("offer code", () => {
     expect(parseShareInput({ answers: complete, packageId: "gold" })).toBeNull();
   });
 
-  it("round-trips through the store and keeps the first creation time", async () => {
+  it("round-trips the exact moment: answers, package and offer age", async () => {
     const kv = fakeKv();
     const parsed = parseShareInput({ answers: complete, packageId: "basic" })!;
-    const code = await saveSharedOffer(parsed.answers, "basic", "s", { env: kv.env, fetchImpl: kv.fetchImpl, now: 1000 });
-    await saveSharedOffer(parsed.answers, "basic", "s", { env: kv.env, fetchImpl: kv.fetchImpl, now: 5000 });
+    const code = await saveSharedOffer(parsed.answers, "basic", "s", { env: kv.env, fetchImpl: kv.fetchImpl, now: 1000, ageMinutes: 12 });
     const loaded = await loadSharedOffer(code!.toLowerCase(), { env: kv.env, fetchImpl: kv.fetchImpl });
-    expect(loaded).toMatchObject({ packageId: "basic", createdAt: 1000, answers: parsed.answers });
+    expect(loaded).toMatchObject({ packageId: "basic", createdAt: 1000, ageMinutes: 12, answers: parsed.answers });
     expect(await loadSharedOffer("AAAAAA", { env: kv.env, fetchImpl: kv.fetchImpl })).toBeNull();
+  });
+
+  it("a different discount tier or deadline is a different code (a screenshot always matches its link)", async () => {
+    const kv = fakeKv();
+    const opts = (ageMinutes: number | null) => ({ env: kv.env, fetchImpl: kv.fetchImpl, ageMinutes });
+    const firstHour = await saveSharedOffer(complete, "standard", "s", opts(5));
+    const sameTier = await saveSharedOffer(complete, "standard", "s", opts(40));
+    const secondHour = await saveSharedOffer(complete, "standard", "s", opts(70));
+    const expired = await saveSharedOffer(complete, "standard", "s", opts(200));
+    expect(sameTier).toBe(firstHour);
+    expect(new Set([firstHour, secondHour, expired]).size).toBe(3);
+    const slider = await saveSharedOffer({ ...complete, deadlineWeeks: "9" }, "standard", "s", opts(5));
+    expect(slider).not.toBe(firstHour);
+    // Within a tier the latest moment wins (the countdown keeps moving, the prices do not).
+    expect((await loadSharedOffer(firstHour!, { env: kv.env, fetchImpl: kv.fetchImpl }))?.ageMinutes).toBe(40);
+  });
+
+  it("old links without an age load as 'no quick-decision discount'", async () => {
+    const kv = fakeKv();
+    const code = offerCode(complete, "basic", "s");
+    kv.data.set(`offer-share:${code}`, JSON.stringify({ answers: complete, packageId: "basic", createdAt: 5 }));
+    expect((await loadSharedOffer(code, { env: kv.env, fetchImpl: kv.fetchImpl }))?.ageMinutes).toBeNull();
   });
 
   it("does nothing without a store", async () => {
