@@ -14,6 +14,11 @@ export const siteConfig = {
     /** EUID (European Unique Identifier) – a cégjegyzékszámot is tartalmazza. */
     registrationNumber: "ROONRC.J2023000539198",
     taxId: "49185840",
+    /**
+     * ÁFA: a cég jelenleg NEM ÁFA-kötelezett (ANAF, 2026. október) – az ajánlott ár a végső ár.
+     * Ha ÁFA-kötelezett lesz: registered: true, és mindenhol "+ ÁFA" jelenik meg.
+     */
+    vat: { registered: false, rate: 21 },
     /** Strukturált cím a keresőknek (schema.org PostalAddress). */
     postalAddress: {
       streetAddress: "Strada II Rákóczi Ferenc Nr. 84, Spațiul-birou Nr. 2S",
@@ -28,6 +33,8 @@ export const siteConfig = {
     email: "info@nutooka.tech",
     phone: "",
   },
+  /** Ennyi napig érvényes az ajánlatban rögzített (kedvezményes) ár az egyeztetés kérése után. */
+  offerValidityDays: 30,
   privacy: {
     lastUpdated: "2026. október 27.",
     retentionMonths: 24,

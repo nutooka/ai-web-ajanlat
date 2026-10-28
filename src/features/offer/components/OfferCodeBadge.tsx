@@ -52,6 +52,9 @@ export function OfferCodeBadge({ answers, packageId, tier, fixedCode }: { answer
         {copied ? <CheckOutlined sx={{ fontSize: 16 }} /> : <ContentCopyOutlined sx={{ fontSize: 16 }} />}
         {copied ? "Másolva" : "Link másolása"}
       </ButtonBase>
+      <Typography component="span" className="no-print" sx={{ flexBasis: "100%", fontSize: 12, color: palette.inkMuted }}>
+        A kód a beállításaiddal együtt változik – mindig pontosan a most látott árat mutatja.
+      </Typography>
     </Box>
   );
 }

@@ -121,7 +121,8 @@ describe("submitOffer", () => {
   it("shows hours to the owner only", async () => {
     const { sent, deps } = setup();
     await submitOffer(submission(), deps);
-    const hours = /\d\s?óra/;
+    // Billed hours appear as "(12 óra)" next to items and as "Számlázott munkaórák" – owner only.
+    const hours = /\(\d+(,\d+)?\s?óra\)|Számlázott munkaórák/;
     expect(sent[0].text).toMatch(hours);
     expect(sent[1].text).not.toMatch(hours);
     expect(sent[1].html).not.toMatch(hours);

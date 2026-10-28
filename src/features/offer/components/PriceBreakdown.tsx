@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import { AnimatePresence, motion } from "motion/react";
 import type { PackageQuote } from "@/features/pricing/types";
 import { formatRon } from "@/lib/format";
+import { vatNote } from "@/lib/priceNotes";
 import { palette } from "@/theme/tokens";
 
 function Row({ label, detail, value, strong, accent }: { label: string; detail?: string; value: string; strong?: boolean; accent?: boolean }) {
@@ -85,7 +86,7 @@ export function PriceBreakdown({ pkg }: { pkg: PackageQuote }) {
               </Typography>
             </Box>
             <Typography variant="body2" color="text.secondary" sx={{ textAlign: "right" }}>
-              nettó, ÁFA nélkül
+              {vatNote()}
             </Typography>
           </Box>
         </motion.div>

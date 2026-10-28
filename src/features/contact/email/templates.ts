@@ -3,6 +3,7 @@ import type { Offer } from "@/features/offer/buildOffer";
 import type { PackageId } from "@/features/pricing/types";
 import { formatHours, formatRon, formatWeeks } from "@/lib/format";
 import { CALLBACK_LABELS, type ContactData } from "../schema";
+import { validityNote, vatNote } from "@/lib/priceNotes";
 
 export interface EmailContent {
   subject: string;
@@ -50,7 +51,8 @@ function quoteSection(offer: Offer, packageId: PackageId, internal: boolean): { 
   itemRows.push([pkg.schedule.label, pkg.urgencyAdjustment === 0 ? "0 RON" : formatRon(pkg.urgencyAdjustment)]);
   itemRows.push(["Listaár", formatRon(pkg.listPrice)]);
   for (const discount of pkg.discounts) itemRows.push([`${discount.label} (−${discount.percent}%)`, `−${formatRon(discount.amount)}`]);
-  itemRows.push([review.required ? "Becsült projektár (nettó, kiinduló)" : "Becsült projektár (nettó)", `${formatRon(pkg.finalPrice)}${review.required ? "-tól" : ""}`]);
+  itemRows.push([review.required ? "Becsült projektár (kiinduló)" : "Becsült projektár", `${formatRon(pkg.finalPrice)}${review.required ? "-tól" : ""}`]);
+  itemRows.push(["ÁFA", vatNote()]);
 
   const meta: [string, string][] = [
     ["Csomag", pkg.name],
@@ -59,7 +61,9 @@ function quoteSection(offer: Offer, packageId: PackageId, internal: boolean): { 
       ? ([[`${offer.quote.packages[packageId].discounts.find((d) => d.id === "quick")?.label ?? "Gyors döntés kedvezmény"} (rögzítve)`, `−${offer.quote.quickDecision.percent}%`]] as [string, string][])
       : []),
     ["Becsült átfutás", formatWeeks(pkg.timeline.minWeeks, pkg.timeline.maxWeeks)],
-    ["Fenntartás (havonta)", formatRon(pkg.maintenance.monthlyTotal)],
+    [`${pkg.maintenance.hostingLabel} (havonta)`, formatRon(pkg.maintenance.hostingMonthly)],
+    [`${pkg.maintenance.supportLabel} – nem kötelező (havonta)`, formatRon(pkg.maintenance.supportMonthly)],
+    ["Ár érvényessége", validityNote()],
     ["Fenntartás (évente, domainnel)", formatRon(pkg.maintenance.yearlyTotal)],
   ];
 

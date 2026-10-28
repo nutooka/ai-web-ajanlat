@@ -91,6 +91,11 @@ export function OfferView() {
   return <OfferContent answers={snapshot.answers} packageId={snapshot.packageId} submission={snapshot.submission} />;
 }
 
+/** "Shopify-előfizetés (kb., …)" → "Shopify, kb." for the compact hero line. */
+function quoteHostingShort(label: string): string {
+  return label.startsWith("Shopify") ? "Shopify-díj, kb." : "tárhely";
+}
+
 /** A representative age inside a tier, so prices only recompute when the tier changes. */
 function tierAge(tierIndex: number): number | undefined {
   const tiers = pricingConfig.discounts.quickDecision.tiers;
@@ -235,8 +240,16 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
                     <Typography sx={{ fontWeight: 700 }}>{formatWeeks(pkg.timeline.minWeeks, pkg.timeline.maxWeeks)}</Typography>
                   </Box>
                   <Box>
-                    <Typography sx={{ color: palette.inkMuted, fontSize: 13 }}>Fenntartás</Typography>
-                    <Typography sx={{ fontWeight: 700 }}>{formatRon(pkg.maintenance.monthlyTotal)}/hó</Typography>
+                    <Typography sx={{ color: palette.inkMuted, fontSize: 13 }}>Havi költség</Typography>
+                    <Typography sx={{ fontWeight: 700 }}>
+                      {formatRon(pkg.maintenance.hostingMonthly)}/hó{" "}
+                      <Box component="span" sx={{ fontWeight: 400, fontSize: 13, color: palette.inkMuted }}>
+                        {quoteHostingShort(pkg.maintenance.hostingLabel)}
+                      </Box>
+                    </Typography>
+                    <Typography sx={{ fontSize: 13, color: palette.inkMuted }}>
+                      + karbantartás {formatRon(pkg.maintenance.supportMonthly)}/hó, nem kötelező
+                    </Typography>
                   </Box>
                 </Stack>
                 <OfferCodeBadge answers={answers} packageId={packageId} tier={tierIndex} fixedCode={frozen?.code} />

@@ -142,11 +142,13 @@ export function OfferDetails({ offer, packageId }: { offer: Offer; packageId: Pa
                 Fenntartás
               </Typography>
               <Row label={pkg.maintenance.hostingLabel} value={`${formatRon(pkg.maintenance.hostingMonthly)}/hó`} />
-              <Row label={pkg.maintenance.supportLabel} value={`${formatRon(pkg.maintenance.supportMonthly)}/hó`} />
+              <Row label={`${pkg.maintenance.supportLabel} – nem kötelező`} value={`${formatRon(pkg.maintenance.supportMonthly)}/hó`} />
               <Row label="Domain" value={`${formatRon(pkg.maintenance.domainYearly)}/év`} />
-              <Typography sx={{ fontWeight: 700, mt: 1.5 }}>{formatRon(pkg.maintenance.monthlyTotal)} / hó</Typography>
+              <Typography sx={{ fontWeight: 700, mt: 1.5 }}>
+                {formatRon(pkg.maintenance.hostingMonthly)}/hó kötelező + {formatRon(pkg.maintenance.supportMonthly)}/hó, ha kéred a karbantartást
+              </Typography>
               <Typography variant="body2" color="text.secondary">
-                Évente kb. {formatRon(pkg.maintenance.yearlyTotal)} · a karbantartás opcionális
+                Karbantartással együtt évente kb. {formatRon(pkg.maintenance.yearlyTotal)} (domainnel)
               </Typography>
             </Box>
           </Box>

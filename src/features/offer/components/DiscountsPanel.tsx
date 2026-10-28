@@ -20,6 +20,7 @@ import {
   type OfferClockState,
 } from "../useOfferClock";
 import { DeadlineSliderControl } from "./DeadlineSlider";
+import { validityNote } from "@/lib/priceNotes";
 import { Blob } from "@/components/Blob";
 
 export const DISCOUNTS_ID = "kedvezmenyek";
@@ -267,6 +268,7 @@ export function DiscountsPanel({
                       {quick.nextPercent > 0
                         ? `Utána már csak −${quick.nextPercent}%.`
                         : "Utána teljes ár."}{" "}
+                      {validityNote()}{" "}
                       {!frozen && (
                         <Box
                           component="button"
