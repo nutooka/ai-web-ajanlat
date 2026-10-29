@@ -62,8 +62,9 @@ export const theme = createTheme({
         "@keyframes enter-fade": { from: { opacity: 0, transform: "translateY(24px)" }, to: { opacity: 1, transform: "none" } },
         "@keyframes enter-marker": { from: { transform: "scaleX(0)" }, to: { transform: "scaleX(1)" } },
         "@keyframes reveal-up": {
-          from: { opacity: 0, transform: "translateY(28px)" },
-          to: { opacity: 1, transform: "none" },
+          // Transform only: fading text reads as low contrast to Google's accessibility test.
+          from: { transform: "translateY(28px)" },
+          to: { transform: "none" },
         },
         ".print-only": { display: "none" },
         "@page": { size: "A4", margin: "14mm 12mm" },

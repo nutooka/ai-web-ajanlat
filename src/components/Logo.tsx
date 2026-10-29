@@ -11,8 +11,7 @@ export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
     <Box
       component={Link}
       href="/"
-      aria-label={`${siteConfig.name} – kezdőlap`}
-      sx={{ display: "inline-flex", alignItems: "center", gap: 1.25, minHeight: 44, color: onDark ? "#fff" : palette.ink, textDecoration: "none" }}
+      sx={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 1.25, minHeight: 44, color: onDark ? "#fff" : palette.ink, textDecoration: "none" }}
     >
       <Box
         aria-hidden
@@ -37,6 +36,10 @@ export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
         <Box component="span" sx={{ color: onDark ? palette.inkMuted : palette.muted, fontWeight: 500 }}>
           {" "}
           / tervező
+        </Box>
+        {/* Visible text stays part of the link name (WCAG 2.5.3). */}
+        <Box component="span" sx={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap" }}>
+          {` – ${siteConfig.name} kezdőlap`}
         </Box>
       </Box>
     </Box>

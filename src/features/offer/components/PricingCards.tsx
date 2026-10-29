@@ -786,7 +786,7 @@ function Comparison({
     md: "minmax(0,1fr) 140px 140px 140px",
   };
   const cell = (pid: PackageId, rowId: string) => (
-    <Box key={pid} sx={{ display: "grid", placeItems: "center" }}>
+    <Box key={pid} role="cell" sx={{ display: "grid", placeItems: "center" }}>
       {has(pid, rowId) ? (
         <Box
           component="span"
@@ -839,7 +839,9 @@ function Comparison({
         color: palette.inkMuted,
       }}
     >
-      {text}
+      <Box component="span" role="rowheader" aria-colspan={4}>
+        {text}
+      </Box>
     </Box>
   );
 
@@ -928,6 +930,7 @@ function Comparison({
           {PACKAGE_IDS.map((pid) => (
             <Typography
               key={pid}
+              role="cell"
               sx={{
                 fontSize: { xs: 10.5, md: 13 },
                 lineHeight: 1.35,

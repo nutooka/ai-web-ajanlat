@@ -1,3 +1,5 @@
+import type { Inspection } from "./checks";
+
 /**
  * Free website check: Google PageSpeed Insights (Lighthouse, mobile) → a short Hungarian verdict.
  * Pure parsing + a thin fetch wrapper, so it is testable without the network.
@@ -19,6 +21,14 @@ export interface AuditResult {
   scores: Record<AuditCategory, number>;
   metrics: { lcp: string; cls: string; tbt: string; fcp: string };
   issues: AuditIssue[];
+  /** Main content time on mobile, ms (for the business-impact line). */
+  lcpMs?: number;
+  /** Total download size, e.g. "3,1 MiB". */
+  pageWeight?: string;
+  /** Mobile screenshot as a data: URI (from the Google test). */
+  screenshot?: string;
+  /** Our own checks on the HTML; null when the page could not be fetched by us. */
+  inspection?: Inspection | null;
 }
 
 export const CATEGORY_LABELS: Record<AuditCategory, string> = {
@@ -96,12 +106,32 @@ export function parsePageSpeed(url: string, response: unknown, checkedAt: number
       fcp: display("first-contentful-paint"),
     },
     issues,
+    lcpMs: audits["largest-contentful-paint"]?.numericValue,
+    pageWeight: audits["total-byte-weight"]?.displayValue,
+    screenshot: typeof audits["final-screenshot"]?.details?.data === "string" && audits["final-screenshot"].details.data.startsWith("data:image/") ? audits["final-screenshot"].details.data : undefined,
+  };
+}
+
+/**
+ * What slowness costs, in plain words. Figures: Google / SOASTA mobile benchmark research (2017):
+ * as load time goes from 1 s to 3 / 5 / 6 / 10 s, the probability of a bounce rises by 32 / 90 / 106 / 123%.
+ */
+export function slownessImpact(lcpMs: number | undefined): { tone: "good" | "bad"; text: string } | null {
+  if (lcpMs === undefined) return null;
+  const seconds = (lcpMs / 1000).toLocaleString("hu-HU", { maximumFractionDigits: 1 });
+  if (lcpMs <= 2500) return { tone: "good", text: `Telefonon ${seconds} mp alatt megjelenik a fő tartalom – ez gyors, a látogatók nem morzsolódnak le a várakozás miatt.` };
+  const [from, rise] = lcpMs <= 4000 ? [3, 32] : lcpMs <= 5500 ? [5, 90] : lcpMs <= 8000 ? [6, 106] : [10, 123];
+  return {
+    tone: "bad",
+    text: `Telefonon ${seconds} mp, mire a fő tartalom megjelenik. A Google kutatása szerint ha egy oldal 1 helyett ${from} másodperc alatt tölt be, ${rise}%-kal nő az esélye, hogy a látogató visszalép – vagyis ennyivel kevesebben jutnak el a telefonszámodig.`,
   };
 }
 
 interface LhAudit {
   score: number | null;
   displayValue?: string;
+  numericValue?: number;
+  details?: { data?: string };
 }
 
 /** Accepts "pelda.ro", "www.pelda.ro/rolunk", "https://…"; rejects anything that is not a public web address. */
@@ -157,7 +187,7 @@ function kv(env: NodeJS.ProcessEnv) {
   return url && token ? { url, token } : null;
 }
 
-export const cacheKey = (url: string) => `audit:${url.toLowerCase()}`;
+export const cacheKey = (url: string) => `audit:v2:${url.toLowerCase()}`;
 
 export async function readCachedAudit(url: string, { env = process.env, fetchImpl = fetch } = {}): Promise<AuditResult | null> {
   const store = kv(env);

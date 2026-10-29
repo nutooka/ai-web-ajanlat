@@ -1,11 +1,13 @@
 "use client";
 
+import Add from "@mui/icons-material/Add";
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import MailOutline from "@mui/icons-material/MailOutlined";
 import Search from "@mui/icons-material/Search";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import ButtonBase from "@mui/material/ButtonBase";
 import Checkbox from "@mui/material/Checkbox";
 import CircularProgress from "@mui/material/CircularProgress";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -20,24 +22,32 @@ import { useEffect, useRef, useState } from "react";
 import { startPlanner } from "@/components/home/startPlanner";
 import { trackStep } from "@/features/funnel/track";
 import { packageThemes, palette } from "@/theme/tokens";
-import { CATEGORY_LABELS, verdict, type AuditCategory, type AuditResult } from "./audit";
+import type { AuditResult } from "./audit";
+import { Checklist, Comparison, ImpactBox, Previews, ScoreCards } from "./AuditReport";
 
-const ORDER: AuditCategory[] = ["performance", "seo", "accessibility", "bestPractices"];
-const TONE_COLOR = { good: packageThemes.premium.solid, ok: packageThemes.standard.solid, bad: "#E5484D" } as const;
-const WAIT_STEPS = ["Megnyitjuk az oldalt telefonos nézetben…", "Mérjük a betöltési sebességet…", "Ellenőrizzük a Google-megjelenést…", "Összeállítjuk az eredményt…"];
+const WAIT_STEPS = [
+  "Megnyitjuk az oldalt telefonos nézetben…",
+  "Mérjük a betöltési sebességet…",
+  "Ellenőrizzük az elérhetőséget és a jogi minimumot…",
+  "Megnézzük, hogyan látja a Google és a Facebook…",
+  "Összeállítjuk az eredményt…",
+];
 
-type State = { kind: "idle" } | { kind: "running"; url: string } | { kind: "done"; result: AuditResult } | { kind: "error"; message: string };
+type Done = { kind: "done"; result: AuditResult; competitor: AuditResult | null; competitorError: string | null };
+type State = { kind: "idle" } | { kind: "running" } | Done | { kind: "error"; message: string };
 
-/** Free website check: address → Google mobile test → Hungarian verdict → full report by e-mail → renovation offer. */
+/** Free website check: Google mobile test + our own checklist → Hungarian report → e-mail → renovation offer. */
 export function AuditTool() {
   const router = useRouter();
   const [input, setInput] = useState("");
+  const [rival, setRival] = useState("");
+  const [compare, setCompare] = useState(false);
   const [state, setState] = useState<State>({ kind: "idle" });
   const [waitStep, setWaitStep] = useState(0);
 
   useEffect(() => {
     if (state.kind !== "running") return;
-    const timer = window.setInterval(() => setWaitStep((step) => Math.min(step + 1, WAIT_STEPS.length - 1)), 7000);
+    const timer = window.setInterval(() => setWaitStep((step) => Math.min(step + 1, WAIT_STEPS.length - 1)), 6000);
     return () => window.clearInterval(timer);
   }, [state.kind]);
 
@@ -45,37 +55,62 @@ export function AuditTool() {
     event.preventDefault();
     if (!input.trim()) return;
     setWaitStep(0);
-    setState({ kind: "running", url: input.trim() });
+    setState({ kind: "running" });
     trackStep("audit_run");
     try {
-      const response = await fetch("/api/audit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: input }) });
-      const body = (await response.json().catch(() => null)) as { ok: true; result: AuditResult } | { ok: false; error: string } | null;
-      if (body?.ok) setState({ kind: "done", result: body.result });
+      const response = await fetch("/api/audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: input, competitor: compare ? rival : "" }),
+      });
+      const body = (await response.json().catch(() => null)) as
+        | { ok: true; result: AuditResult; competitor: AuditResult | null; competitorError: string | null }
+        | { ok: false; error: string }
+        | null;
+      if (body?.ok) setState({ kind: "done", result: body.result, competitor: body.competitor, competitorError: body.competitorError });
       else setState({ kind: "error", message: body?.error ?? "A mérés nem sikerült. Próbáld újra." });
     } catch {
       setState({ kind: "error", message: "Nem sikerült kapcsolódni. Ellenőrizd az internetet, és próbáld újra." });
     }
   };
 
+  const running = state.kind === "running";
   return (
     <Box>
-      <Box component="form" onSubmit={run} sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 1.5, maxWidth: 640 }}>
-        <TextField
-          label="A weboldalad címe"
-          placeholder="pl. pelda.ro"
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          disabled={state.kind === "running"}
-          slotProps={{ htmlInput: { inputMode: "url", autoCapitalize: "none", autoCorrect: "off", spellCheck: false, maxLength: 300 } }}
-          sx={{ flex: 1, "& .MuiOutlinedInput-root": { background: palette.surface } }}
-        />
-        <Button type="submit" variant="contained" size="large" disabled={state.kind === "running" || !input.trim()} startIcon={<Search />} sx={{ minHeight: 56, whiteSpace: "nowrap" }}>
-          Átvilágítom
-        </Button>
+      <Box component="form" onSubmit={run} sx={{ maxWidth: 680 }}>
+        <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 1.5 }}>
+          <TextField
+            label="A weboldalad címe"
+            placeholder="pl. pelda.ro"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            disabled={running}
+            slotProps={{ htmlInput: { inputMode: "url", autoCapitalize: "none", autoCorrect: "off", spellCheck: false, maxLength: 300 } }}
+            sx={{ flex: 1, "& .MuiOutlinedInput-root": { background: palette.surface } }}
+          />
+          <Button type="submit" variant="contained" size="large" disabled={running || !input.trim()} startIcon={<Search />} sx={{ minHeight: 56, whiteSpace: "nowrap" }}>
+            Átvilágítom
+          </Button>
+        </Box>
+        {compare ? (
+          <TextField
+            label="Versenytárs weboldala (nem kötelező)"
+            placeholder="pl. konkurencia.ro"
+            value={rival}
+            onChange={(event) => setRival(event.target.value)}
+            disabled={running}
+            slotProps={{ htmlInput: { inputMode: "url", autoCapitalize: "none", autoCorrect: "off", spellCheck: false, maxLength: 300 } }}
+            sx={{ mt: 1.5, "& .MuiOutlinedInput-root": { background: palette.surface } }}
+          />
+        ) : (
+          <ButtonBase onClick={() => setCompare(true)} sx={{ mt: 1, minHeight: 40, gap: 0.5, fontWeight: 650, color: palette.ink }}>
+            <Add sx={{ fontSize: 18 }} /> Hasonlítsd össze egy versenytárssal
+          </ButtonBase>
+        )}
       </Box>
 
-      {state.kind === "running" && (
-        <Box role="status" aria-live="polite" sx={{ mt: 4, maxWidth: 640 }}>
+      {running && (
+        <Box role="status" aria-live="polite" sx={{ mt: 4, maxWidth: 680 }}>
           <Typography sx={{ fontWeight: 650, mb: 1 }}>{WAIT_STEPS[waitStep]}</Typography>
           <LinearProgress sx={{ "& .MuiLinearProgress-bar": { backgroundImage: packageThemes.standard.gradient } }} />
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
@@ -85,57 +120,65 @@ export function AuditTool() {
       )}
 
       {state.kind === "error" && (
-        <Alert severity="error" sx={{ mt: 3, maxWidth: 640 }}>
+        <Alert severity="error" sx={{ mt: 3, maxWidth: 680 }}>
           {state.message}
         </Alert>
       )}
 
-      {state.kind === "done" && <AuditReport result={state.result} onRenovate={() => startPlanner("redesign", router.push)} />}
+      {state.kind === "done" && <Report state={state} onRenovate={() => startPlanner("redesign", router.push)} />}
     </Box>
   );
 }
 
-function AuditReport({ result, onRenovate }: { result: AuditResult; onRenovate: () => void }) {
+function Report({ state, onRenovate }: { state: Done; onRenovate: () => void }) {
+  const { result, competitor, competitorError } = state;
   const host = new URL(result.url).hostname;
+  const facts = result.inspection?.facts;
   return (
-    <Box sx={{ mt: 5 }}>
-      <Typography variant="h3" component="h2" sx={{ fontSize: { xs: "1.5rem", md: "2rem" }, mb: 0.5 }}>
-        {host} – eredmény
-      </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Telefonos mérés a Google PageSpeed alapján. A fő tartalom <b>{result.metrics.lcp}</b> alatt jelenik meg.
-      </Typography>
-
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: 1.5 }}>
-        {ORDER.map((key) => {
-          const score = result.scores[key];
-          const { label, tone } = verdict(score);
-          return (
-            <Box key={key} sx={{ p: 2, borderRadius: 3, background: palette.surface, border: 1, borderColor: "divider" }}>
-              <Typography variant="body2" color="text.secondary" sx={{ minHeight: 40 }}>
-                {CATEGORY_LABELS[key]}
-              </Typography>
-              <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 36, lineHeight: 1.1 }}>{score}</Typography>
-              <Typography sx={{ fontWeight: 700, color: TONE_COLOR[tone] }}>{label}</Typography>
-            </Box>
-          );
-        })}
+    <Stack spacing={5} sx={{ mt: 5 }}>
+      <Box>
+        <Typography variant="h3" component="h2" sx={{ fontSize: { xs: "1.6rem", md: "2.1rem" }, mb: 0.5 }}>
+          {host} – eredmény
+        </Typography>
+        <Typography color="text.secondary" sx={{ mb: 3 }}>
+          Telefonos mérés (Google PageSpeed) + saját ellenőrzés.
+          {facts?.platform ? ` Rendszer: ${facts.platform}.` : ""}
+          {result.pageWeight ? ` Oldalméret: ${result.pageWeight}.` : ""}
+        </Typography>
+        <ScoreCards result={result} />
       </Box>
 
-      <Typography variant="h4" component="h3" sx={{ mt: 4, mb: 1.5 }}>
-        {result.issues.length > 0 ? "A 3 legfontosabb javítanivaló" : "Komoly hibát nem találtunk"}
-      </Typography>
-      <Stack component="ol" spacing={1.5} sx={{ pl: 2.5, m: 0 }}>
-        {result.issues.slice(0, 3).map((issue) => (
-          <Box component="li" key={issue.id}>
-            <Typography sx={{ fontWeight: 650 }}>{issue.title}</Typography>
-            <Typography color="text.secondary">{issue.why}</Typography>
-          </Box>
-        ))}
-      </Stack>
+      <ImpactBox result={result} />
 
-      <Box sx={{ mt: 4, display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2 }}>
-        <ReportByEmail url={result.url} more={Math.max(0, result.issues.length - 3)} />
+      {(result.screenshot || result.inspection) && <Previews result={result} />}
+
+      {result.inspection ? (
+        <Checklist checks={result.inspection.checks} />
+      ) : (
+        <Alert severity="info">Az oldal letiltotta a részletes ellenőrzést – a sebességmérés eredménye így is érvényes.</Alert>
+      )}
+
+      {result.issues.length > 0 && (
+        <Box>
+          <Typography variant="h3" sx={{ fontSize: { xs: "1.25rem", md: "1.5rem" }, mb: 1.5 }}>
+            Sebesség – a legfontosabb javítanivalók
+          </Typography>
+          <Stack component="ol" spacing={1.5} sx={{ pl: 2.5, m: 0 }}>
+            {result.issues.slice(0, 4).map((issue) => (
+              <Box component="li" key={issue.id}>
+                <Typography sx={{ fontWeight: 650 }}>{issue.title}</Typography>
+                <Typography color="text.secondary">{issue.why}</Typography>
+              </Box>
+            ))}
+          </Stack>
+        </Box>
+      )}
+
+      {competitor && <Comparison own={result} rival={competitor} />}
+      {competitorError && <Alert severity="warning">{competitorError}</Alert>}
+
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2 }}>
+        <ReportByEmail url={result.url} />
         <Box sx={{ p: { xs: 3, md: 4 }, borderRadius: 4, background: palette.ink, color: "#fff" }}>
           <Typography variant="h4" component="h3" sx={{ mb: 1 }}>
             Mennyibe kerülne a javítás?
@@ -146,11 +189,11 @@ function AuditReport({ result, onRenovate }: { result: AuditResult; onRenovate: 
           </Button>
         </Box>
       </Box>
-    </Box>
+    </Stack>
   );
 }
 
-function ReportByEmail({ url, more }: { url: string; more: number }) {
+function ReportByEmail({ url }: { url: string }) {
   const shownAt = useRef(0);
   const honeypot = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
@@ -186,7 +229,7 @@ function ReportByEmail({ url, more }: { url: string; more: number }) {
         Kérd a teljes jelentést
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 2 }}>
-        Elküldjük e-mailben{more > 0 ? ` mind a ${more + 3} javítanivalóval` : ""}, és személyesen is írok pár sort arról, mit javítanék elsőként.
+        Elküldjük e-mailben a teljes listával, és személyesen is írok pár sort arról, mit javítanék elsőként.
       </Typography>
       {status.kind === "sent" ? (
         <Alert severity="success" icon={<MailOutline />}>

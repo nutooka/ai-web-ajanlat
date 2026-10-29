@@ -6,13 +6,29 @@ import Check from "@mui/icons-material/Check";
 import ButtonBase from "@mui/material/ButtonBase";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { animate, m, useMotionValue, useReducedMotion, useTransform } from "motion/react";
+import {
+  animate,
+  m,
+  useMotionValue,
+  useReducedMotion,
+  useTransform,
+} from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { PACKAGE_IDS, type PackageId, type Quote } from "@/features/pricing/types";
+import {
+  PACKAGE_IDS,
+  type PackageId,
+  type Quote,
+} from "@/features/pricing/types";
 import { formatWeeks } from "@/lib/format";
 import { FluidBlobs } from "./FluidBlobs";
-import { gradients, ease, packageThemes, palette, shadow } from "@/theme/tokens";
+import {
+  gradients,
+  ease,
+  packageThemes,
+  palette,
+  shadow,
+} from "@/theme/tokens";
 
 const TOUR: PackageId[] = ["premium", "basic", "standard"];
 const CYCLE_MS = 3200;
@@ -58,8 +74,14 @@ export function OfferPreview({ quote }: { quote: Quote }) {
 
   // Same rows for every package – only the ticks change, so switching shows what differs.
   const basicIds = new Set(quote.packages.basic.items.map((item) => item.id));
-  const differences = PACKAGE_IDS.flatMap((pid) => quote.packages[pid].items.filter((item) => !basicIds.has(item.id)).map((item) => ({ ...item, from: pid })))
-    .filter((item, index, all) => all.findIndex((other) => other.id === item.id) === index);
+  const differences = PACKAGE_IDS.flatMap((pid) =>
+    quote.packages[pid].items
+      .filter((item) => !basicIds.has(item.id))
+      .map((item) => ({ ...item, from: pid })),
+  ).filter(
+    (item, index, all) =>
+      all.findIndex((other) => other.id === item.id) === index,
+  );
   const has = (id: string) => pkg.items.some((item) => item.id === id);
 
   return (
@@ -192,20 +214,31 @@ export function OfferPreview({ quote }: { quote: Quote }) {
               id="preview-panel"
               role="tabpanel"
               aria-labelledby={`preview-tab-${active}`}
-              component="ul"
-              sx={{ listStyle: "none", p: 0, m: 0 }}
             >
-              <PreviewRow included color={packageThemes[active].solid} label={`Alapfunkciók (${quote.packages.basic.items.length} tétel)`} strong />
-              <PreviewRow included color={packageThemes[active].solid} label={pkg.design.label} />
-              {differences.map((item) => (
+              <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0 }}>
                 <PreviewRow
-                  key={item.id}
-                  included={has(item.id)}
+                  included
                   color={packageThemes[active].solid}
-                  label={item.label}
-                  tag={has(item.id) ? undefined : quote.packages[item.from].name}
+                  label={`Alapfunkciók (${quote.packages.basic.items.length} tétel)`}
+                  strong
                 />
-              ))}
+                <PreviewRow
+                  included
+                  color={packageThemes[active].solid}
+                  label={pkg.design.label}
+                />
+                {differences.map((item) => (
+                  <PreviewRow
+                    key={item.id}
+                    included={has(item.id)}
+                    color={packageThemes[active].solid}
+                    label={item.label}
+                    tag={
+                      has(item.id) ? undefined : quote.packages[item.from].name
+                    }
+                  />
+                ))}
+              </Box>
             </Box>
 
             <Stack
@@ -269,7 +302,16 @@ export function OfferPreview({ quote }: { quote: Quote }) {
           >
             <span>
               Kérem a{" "}
-              <Box component="span" sx={{ backgroundImage: gradients.brand, backgroundSize: "100% 3px", backgroundPosition: "0 100%", backgroundRepeat: "no-repeat", pb: "2px" }}>
+              <Box
+                component="span"
+                sx={{
+                  backgroundImage: gradients.brand,
+                  backgroundSize: "100% 3px",
+                  backgroundPosition: "0 100%",
+                  backgroundRepeat: "no-repeat",
+                  pb: "2px",
+                }}
+              >
                 saját
               </Box>{" "}
               ajánlatom – kérdőív, kb. 3 perc
@@ -283,18 +325,71 @@ export function OfferPreview({ quote }: { quote: Quote }) {
 }
 
 /** One line of the sample: tick in the package colour, or a quiet dash with where it is included. */
-function PreviewRow({ included, color, label, tag, strong = false }: { included: boolean; color: string; label: string; tag?: string; strong?: boolean }) {
+function PreviewRow({
+  included,
+  color,
+  label,
+  tag,
+  strong = false,
+}: {
+  included: boolean;
+  color: string;
+  label: string;
+  tag?: string;
+  strong?: boolean;
+}) {
   return (
-    <Box component="li" sx={{ display: "flex", alignItems: "center", gap: 1.25, py: "7px", borderBottom: `1px solid ${palette.line}`, fontSize: 14 }}>
-      <Box aria-hidden sx={{ flexShrink: 0, width: 20, display: "grid", placeItems: "center", color: included ? color : palette.line, transition: "color .3s ease" }}>
+    <Box
+      component="li"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1.25,
+        py: "7px",
+        borderBottom: `1px solid ${palette.line}`,
+        fontSize: 14,
+      }}
+    >
+      <Box
+        aria-hidden
+        sx={{
+          flexShrink: 0,
+          width: 20,
+          display: "grid",
+          placeItems: "center",
+          color: included ? color : palette.line,
+          transition: "color .3s ease",
+        }}
+      >
         {included ? <Check sx={{ fontSize: 18 }} /> : "–"}
       </Box>
-      <Box component="span" sx={{ flex: 1, fontWeight: strong ? 650 : 400, color: included ? palette.ink : palette.muted, transition: "color .3s ease" }}>
-        <Box component="span" sx={visuallyHidden}>{included ? "Benne van: " : "Nincs benne: "}</Box>
+      <Box
+        component="span"
+        sx={{
+          flex: 1,
+          fontWeight: strong ? 650 : 400,
+          color: included ? palette.ink : palette.muted,
+          transition: "color .3s ease",
+        }}
+      >
+        <Box component="span" sx={visuallyHidden}>
+          {included ? "Benne van: " : "Nincs benne: "}
+        </Box>
         {label}
       </Box>
       {tag && (
-        <Box component="span" sx={{ fontSize: 12, fontWeight: 600, color: palette.muted, border: `1px solid ${palette.line}`, borderRadius: 1, px: 0.75, whiteSpace: "nowrap" }}>
+        <Box
+          component="span"
+          sx={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: palette.muted,
+            border: `1px solid ${palette.line}`,
+            borderRadius: 1,
+            px: 0.75,
+            whiteSpace: "nowrap",
+          }}
+        >
           {tag}
         </Box>
       )}
@@ -302,4 +397,10 @@ function PreviewRow({ included, color, label, tag, strong = false }: { included:
   );
 }
 
-const visuallyHidden = { position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0 0 0 0)" } as const;
+const visuallyHidden = {
+  position: "absolute",
+  width: "1px",
+  height: "1px",
+  overflow: "hidden",
+  clip: "rect(0 0 0 0)",
+} as const;
