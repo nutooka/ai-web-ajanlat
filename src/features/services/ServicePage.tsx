@@ -8,6 +8,7 @@ import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { SectionBlob } from "@/components/SectionBlob";
 import { SiteFooter } from "@/components/SiteFooter";
+import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WaveDivider } from "@/components/WaveDivider";
 import { pricingConfig } from "@/config/pricing";
@@ -196,6 +197,7 @@ export function ServicePage({ type }: { type: ResolvedProjectType }) {
           </Box>
         </Container>
       </Box>
+      <WhatsAppFab context={service.name} />
       <SiteFooter />
     </Box>
   );

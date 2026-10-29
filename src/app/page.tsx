@@ -19,6 +19,7 @@ import { ProjectTypeGrid } from "@/components/home/ProjectTypeGrid";
 import { LinkButton } from "@/components/LinkButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { WaveDivider } from "@/components/WaveDivider";
 import { JsonLd } from "@/components/JsonLd";
 import { services } from "@/config/services";
@@ -284,6 +285,7 @@ export default function HomePage() {
       </Box>
 
       <WaveDivider from={palette.ink} to={palette.paper} />
+      <WhatsAppFab />
       <SiteFooter />
     </Box>
   );
