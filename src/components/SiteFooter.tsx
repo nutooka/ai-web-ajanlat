@@ -5,6 +5,7 @@ import Container from "@mui/material/Container";
 import MuiLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
+import { services } from "@/config/services";
 import { siteConfig } from "@/config/site";
 
 /** Height reserved under the footer when a sticky bar is pinned to the bottom of the screen. */
@@ -28,6 +29,14 @@ export function SiteFooter({ reserveStickyBar = false }: { reserveStickyBar?: bo
         mt: 8,
       }}
     >
+      {/* Service pages linked from every page (crawlable internal links). */}
+      <Container maxWidth="lg" component="nav" aria-label="Szolgáltatások" sx={{ display: "flex", flexWrap: "wrap", columnGap: 2.5, rowGap: 0.5, pb: 1.5 }}>
+        {services.map((service) => (
+          <MuiLink key={service.slug} component={Link} href={`/${service.slug}`} variant="body2" color="text.secondary" sx={{ display: "inline-flex", alignItems: "center", minHeight: 44 }}>
+            {service.name}
+          </MuiLink>
+        ))}
+      </Container>
       <Container maxWidth="lg" sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, alignItems: { xs: "flex-start", sm: "center" }, gap: { xs: 0.5, sm: 2 }, justifyContent: "space-between" }}>
         <MuiLink component={Link} href="/adatkezeles" variant="body2" color="text.secondary" sx={{ display: "inline-flex", alignItems: "center", minHeight: 44 }}>
           Adatkezelési tájékoztató
