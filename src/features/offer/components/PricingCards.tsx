@@ -2,7 +2,7 @@
 
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import Check from "@mui/icons-material/Check";
-import Remove from "@mui/icons-material/Remove";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Stack from "@mui/material/Stack";
@@ -44,30 +44,53 @@ interface PricingCardsProps {
   detailsHref?: string;
 }
 
-/**
- * Every item of every package, split in two:
- * - differences: what is not in all three packages (Standard additions first, then Premium-only)
- * - common: what all three packages include
- * Rows keep the same order in every card, so the cards line up row by row.
- */
-function comparisonRows(quote: Quote) {
-  const { basic, standard, premium } = quote.packages;
-  const ids = (pkg: typeof basic) => new Set(pkg.items.map((item) => item.id));
-  const [inBasic, inStandard] = [ids(basic), ids(standard)];
-  const all = new Map<string, { id: string; label: string }>();
-  for (const pkg of [premium, standard, basic])
-    for (const item of pkg.items)
-      if (!all.has(item.id))
-        all.set(item.id, { id: item.id, label: item.label });
+type ContentRow = { id: string; label: string };
 
-  const rows = [...all.values()];
-  const differences = rows
-    .filter((row) => !inBasic.has(row.id))
-    .sort(
-      (a, b) => Number(inStandard.has(b.id)) - Number(inStandard.has(a.id)),
-    );
-  const common = rows.filter((row) => inBasic.has(row.id));
-  return { differences, common };
+/**
+ * "Everything in the previous package, plus …": each card lists only what it adds.
+ * - base: what the card inherits (Basic: the shared base; Standard: all of Basic; Premium: all of Standard)
+ * - additions: what is new in this package (a better design level comes first)
+ */
+function tierContents(quote: Quote) {
+  const contents = {} as Record<
+    PackageId,
+    { base: ContentRow[]; additions: ContentRow[] }
+  >;
+  let previous: Quote["packages"][PackageId] | null = null;
+  for (const id of PACKAGE_IDS) {
+    const pkg = quote.packages[id];
+    const designRow = {
+      id: `design.${pkg.design.level}`,
+      label: pkg.design.label,
+    };
+    if (!previous) {
+      contents[id] = {
+        base: pkg.items.map(({ id: rowId, label }) => ({ id: rowId, label })),
+        additions: [designRow],
+      };
+    } else {
+      const had = new Set(previous.items.map((item) => item.id));
+      const added = pkg.items
+        .filter((item) => !had.has(item.id))
+        .map(({ id: rowId, label }) => ({ id: rowId, label }));
+      const designChanged = pkg.design.label !== previous.design.label;
+      contents[id] = {
+        base: [
+          ...previous.items.map(({ id: rowId, label }) => ({
+            id: rowId,
+            label,
+          })),
+          {
+            id: `design.${previous.design.level}`,
+            label: previous.design.label,
+          },
+        ],
+        additions: designChanged ? [designRow, ...added] : added,
+      };
+    }
+    previous = pkg;
+  }
+  return contents;
 }
 
 /** One line under the tagline: why this package is (or is not) the one for the visitor. */
@@ -79,8 +102,14 @@ function coverageNote(
   if (missing.length > 0) {
     const names = missing.slice(0, 2).join(", ");
     const more = missing.length > 2 ? ` és még ${missing.length - 2}` : "";
+    const covering = PACKAGE_IDS.find(
+      (other) => quote.requested.missing[other].length === 0,
+    );
+    const where = covering
+      ? ` – ${missing.length > 1 ? "ezek" : "ez"} a ${quote.packages[covering].name} csomagban benne ${missing.length > 1 ? "vannak" : "van"}`
+      : "";
     return {
-      text: `A kéréseidből ${missing.length} nincs benne: ${names}${more}.`,
+      text: `Nincs benne, amit kértél: ${names}${more}${where}.`,
       strong: false,
     };
   }
@@ -165,7 +194,7 @@ export function PricingCards({
   readOnly = false,
   detailsHref = "#reszletek",
 }: PricingCardsProps) {
-  const { differences, common } = comparisonRows(quote);
+  const contents = tierContents(quote);
   const requested = new Set(mode === "offer" ? quote.requested.ids : []);
   const selectable = mode === "offer" && Boolean(onSelect);
   // Mobile shows one card at a time; on the home page (and in a read-only snapshot) the visitor browses locally.
@@ -487,23 +516,27 @@ export function PricingCards({
                       component="ul"
                       sx={{ listStyle: "none", p: 0, m: 0, flex: 1 }}
                     >
-                      <GroupLabel>Ebben különböznek</GroupLabel>
-                      <Row theme={theme} included label={pkg.design.label} />
-                      {differences.map((row) => (
+                      <BaseRow
+                        theme={theme}
+                        label={
+                          index === 0
+                            ? `Az alap: ${contents[id].base.length} tétel`
+                            : `Minden, ami a ${quote.packages[PACKAGE_IDS[index - 1]].name} csomagban`
+                        }
+                        rows={contents[id].base}
+                        requested={requested}
+                        defaultOpen={index === 0}
+                      />
+                      {contents[id].additions.length > 0 && index > 0 && (
+                        <GroupLabel>Plusz:</GroupLabel>
+                      )}
+                      {contents[id].additions.map((row) => (
                         <Row
-                          theme={theme}
                           key={row.id}
-                          included={pkg.items.some(
-                            (item) => item.id === row.id,
-                          )}
+                          theme={theme}
+                          included
                           label={row.label}
                           requested={requested.has(row.id)}
-                          availableIn={
-                            PACKAGE_IDS.map((pid) => quote.packages[pid]).find(
-                              (other) =>
-                                other.items.some((item) => item.id === row.id),
-                            )?.name
-                          }
                         />
                       ))}
                       {mode === "offer" && (
@@ -616,44 +649,6 @@ export function PricingCards({
           );
         })}
       </Box>
-
-      {/* What all three share: listed once under the cards, not repeated in each. */}
-      {common.length > 0 && (
-        <Box
-          sx={{
-            mt: { xs: 3, md: 2.5 },
-            borderRadius: 4,
-            background: palette.inkSoft,
-            color: "#fff",
-            px: { xs: 3, md: 4 },
-            pt: 1,
-            pb: 2.5,
-            boxShadow: shadow.raisedOnDark,
-          }}
-        >
-          <Box
-            component="ul"
-            sx={{
-              listStyle: "none",
-              p: 0,
-              m: 0,
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
-              columnGap: 4,
-            }}
-          >
-            <GroupLabel fullRow>Mindhárom csomagban benne van</GroupLabel>
-            {common.map((row) => (
-              <Row
-                key={row.id}
-                included
-                label={row.label}
-                requested={requested.has(row.id)}
-              />
-            ))}
-          </Box>
-        </Box>
-      )}
     </Box>
   );
 }
@@ -691,18 +686,14 @@ type PackageTheme = (typeof packageThemes)[PackageId];
 
 function Row({
   theme,
-  included,
   label,
-  availableIn,
   requested = false,
 }: {
   theme?: PackageTheme;
-  included: boolean;
+  included?: true;
   label: string;
-  availableIn?: string;
   requested?: boolean;
 }) {
-  const Icon = included ? Check : Remove;
   return (
     <Stack
       component="li"
@@ -714,79 +705,123 @@ function Row({
         borderBottom: `1px solid ${palette.inkLine}`,
       }}
     >
-      <Box
-        aria-hidden
-        sx={{
-          flexShrink: 0,
-          width: 24,
-          height: 24,
-          borderRadius: "50%",
-          display: "grid",
-          placeItems: "center",
-          // Included: quiet white ring, the tick in the card's own package colour.
-          border: `1.5px solid ${included ? "rgba(255,255,255,.35)" : palette.inkLine}`,
-          color: included ? (theme?.solid ?? "#fff") : palette.inkMuted,
-        }}
-      >
-        <Icon sx={{ fontSize: 15 }} />
-      </Box>
-      <Typography
-        sx={{ fontSize: 14, color: included ? "#fff" : palette.inkMuted }}
-      >
-        <Box
-          component="span"
-          sx={{
-            position: "absolute",
-            width: "1px",
-            height: "1px",
-            overflow: "hidden",
-            clip: "rect(0 0 0 0)",
-          }}
-        >
-          {included ? "Tartalmazza: " : "Nem tartalmazza: "}
-        </Box>
+      <Tick theme={theme} />
+      <Typography sx={{ fontSize: 14, color: "#fff" }}>
         {label}
-        {requested && (
-          <Box
-            component="span"
-            sx={{
-              ml: 0.75,
-              px: 0.75,
-              py: 0.1,
-              borderRadius: 1,
-              fontSize: 11,
-              fontWeight: 700,
-              whiteSpace: "nowrap",
-              border: included
-                ? "1px solid transparent"
-                : "1px dashed rgba(255,255,255,.5)",
-              color: included ? palette.ink : "#fff",
-              background: included
-                ? (theme?.gradient ?? gradients.brand)
-                : "transparent",
-            }}
-          >
-            {included || !availableIn ? "Kérted" : `Kérted · ${availableIn}tól`}
-          </Box>
-        )}
-        {!requested && !included && availableIn && (
-          <Box
-            component="span"
-            sx={{
-              ml: 0.75,
-              px: 0.75,
-              py: 0.1,
-              borderRadius: 1,
-              border: `1px solid ${palette.inkLine}`,
-              fontSize: 11,
-              fontWeight: 600,
-              whiteSpace: "nowrap",
-            }}
-          >
-            {availableIn}ban
-          </Box>
-        )}
+        {requested && <RequestedTag theme={theme} />}
       </Typography>
     </Stack>
+  );
+}
+
+/** Quiet white ring, the tick in the card's own package colour. */
+function Tick({ theme }: { theme?: PackageTheme }) {
+  return (
+    <Box
+      aria-hidden
+      sx={{
+        flexShrink: 0,
+        width: 24,
+        height: 24,
+        borderRadius: "50%",
+        display: "grid",
+        placeItems: "center",
+        border: "1.5px solid rgba(255,255,255,.35)",
+        color: theme?.solid ?? "#fff",
+      }}
+    >
+      <Check sx={{ fontSize: 15 }} />
+    </Box>
+  );
+}
+
+function RequestedTag({ theme }: { theme?: PackageTheme }) {
+  return (
+    <Box
+      component="span"
+      sx={{
+        ml: 0.75,
+        px: 0.75,
+        py: 0.1,
+        borderRadius: 1,
+        fontSize: 11,
+        fontWeight: 700,
+        whiteSpace: "nowrap",
+        color: palette.ink,
+        background: theme?.gradient ?? gradients.brand,
+      }}
+    >
+      Kérted
+    </Box>
+  );
+}
+
+/** "Az alap: 8 tétel" / "Minden, ami a Basic csomagban" – opens to the full list it stands for. */
+function BaseRow({
+  theme,
+  label,
+  rows,
+  requested,
+  defaultOpen,
+}: {
+  theme: PackageTheme;
+  label: string;
+  rows: ContentRow[];
+  requested: Set<string>;
+  defaultOpen: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <Box
+      component="li"
+      sx={{ borderBottom: `1px solid ${palette.inkLine}`, listStyle: "none" }}
+    >
+      <ButtonBase
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        sx={{
+          width: "100%",
+          justifyContent: "flex-start",
+          gap: 1.5,
+          py: 1.1,
+          minHeight: 44,
+          textAlign: "left",
+          "&.Mui-focusVisible": { outline: "2px solid #fff", outlineOffset: 2 },
+        }}
+      >
+        <Tick theme={theme} />
+        <Typography
+          component="span"
+          sx={{ fontSize: 14, fontWeight: 650, color: "#fff", flex: 1 }}
+        >
+          {label}
+        </Typography>
+        <ExpandMore
+          sx={{
+            fontSize: 20,
+            color: palette.inkMuted,
+            transition: "transform .2s ease",
+            transform: open ? "rotate(180deg)" : "none",
+          }}
+        />
+      </ButtonBase>
+      {open && (
+        <Box
+          component="ul"
+          sx={{ listStyle: "none", p: 0, m: 0, pl: 4.5, pb: 1 }}
+        >
+          {rows.map((row) => (
+            <Typography
+              key={row.id}
+              component="li"
+              sx={{ fontSize: 13.5, color: palette.inkMuted, py: 0.4 }}
+            >
+              • {row.label}
+              {requested.has(row.id) && <RequestedTag theme={theme} />}
+            </Typography>
+          ))}
+        </Box>
+      )}
+    </Box>
   );
 }
