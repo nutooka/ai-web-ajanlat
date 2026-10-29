@@ -31,7 +31,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await runPageSpeed(url, { apiKey: process.env.PAGESPEED_API_KEY });
+    // Trim: a key piped in from the clipboard may carry a trailing newline.
+    const result = await runPageSpeed(url, { apiKey: process.env.PAGESPEED_API_KEY?.trim() || undefined });
     await writeCachedAudit(result).catch(() => undefined);
     return Response.json({ ok: true, result });
   } catch (error) {
