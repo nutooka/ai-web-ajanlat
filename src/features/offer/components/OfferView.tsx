@@ -28,7 +28,7 @@ import { isComplete } from "@/features/questionnaire/engine";
 import type { Answers } from "@/features/questionnaire/types";
 import { formatRon, formatWeeks } from "@/lib/format";
 import { useWizardSnapshot, wizardStore, type Submission } from "@/lib/storage";
-import { gradients, ease, palette } from "@/theme/tokens";
+import { gradients, ease, packageButtonSx, palette } from "@/theme/tokens";
 import { buildOffer } from "../buildOffer";
 import { offerAgeMinutesFrom, useNow, useOfferClock } from "../useOfferClock";
 import { useOfferCode } from "../useOfferCode";
@@ -274,7 +274,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
                       Kérésed elküldve
                     </Button>
                   ) : (
-                    <Button id="hero-cta" variant="contained" color="primary" size="large" endIcon={<ArrowDownward />} onClick={() => scrollToId(CONTACT_ID)}>
+                    <Button id="hero-cta" variant="contained" color="primary" size="large" endIcon={<ArrowDownward />} onClick={() => scrollToId(CONTACT_ID)} sx={packageButtonSx(packageId)}>
                       Ingyenes egyeztetést kérek
                     </Button>
                   )}
@@ -387,7 +387,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
 
       {!submission && !frozen && (
         <>
-          <StickyCta targetId={CONTACT_ID} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} hideWhileVisible={["hero-cta", DISCOUNTS_ID]} fromPrice={offer.quote.review.required} />
+          <StickyCta targetId={CONTACT_ID} packageId={packageId} price={pkg.finalPrice} packageName={pkg.name} clockState={clockState} pricesReady={pricesReady} hideWhileVisible={["hero-cta", DISCOUNTS_ID]} fromPrice={offer.quote.review.required} />
         </>
       )}
     </Frame>

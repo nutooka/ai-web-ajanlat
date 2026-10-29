@@ -13,11 +13,13 @@ import { pricingConfig } from "@/config/pricing";
 import { resolveQuickDecision } from "@/features/pricing/quickDecision";
 import { formatRon } from "@/lib/format";
 import { formatCountdown, offerAgeMinutesFrom, useNow, type OfferClockState } from "../useOfferClock";
-import { gradients, ease, palette } from "@/theme/tokens";
+import { gradients, ease, packageButtonSx, palette } from "@/theme/tokens";
+import type { PackageId } from "@/features/pricing/types";
 
 /** Always-reachable "request a call" bar; hides itself once the contact form is on screen. */
 export function StickyCta({
   targetId,
+  packageId,
   price,
   packageName,
   clockState,
@@ -26,6 +28,7 @@ export function StickyCta({
   fromPrice = false,
 }: {
   targetId: string;
+  packageId: PackageId;
   price: number;
   packageName: string;
   clockState: OfferClockState;
@@ -95,7 +98,7 @@ export function StickyCta({
                 color="primary"
                 size="large"
                 endIcon={<ArrowDownward />}
-                sx={{ whiteSpace: "nowrap", flexShrink: 0, px: { xs: 2, sm: 3.5 } }}
+                sx={{ whiteSpace: "nowrap", flexShrink: 0, px: { xs: 2, sm: 3.5 }, ...packageButtonSx(packageId) }}
                 onClick={() => document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "start" })}
               >
                 <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>

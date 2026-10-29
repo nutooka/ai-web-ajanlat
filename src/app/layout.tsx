@@ -22,7 +22,8 @@ export const viewport: Viewport = { themeColor: "#0E0F12" };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="hu" className={`${display.variable} ${body.variable}`}>
-      <body>
+      {/* Browser extensions (e.g. ColorZilla) add attributes to <body> before React loads. */}
+      <body suppressHydrationWarning>
         <AppRouterCacheProvider>
           <ThemeRegistry>{children}</ThemeRegistry>
         </AppRouterCacheProvider>

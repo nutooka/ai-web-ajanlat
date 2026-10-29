@@ -46,6 +46,11 @@ export const packageThemes = {
   premium: { gradient: "linear-gradient(135deg, #5BE38A 0%, #10A37F 100%)", solid: "#2FC487", bubble: "#3BCB8A", headerText: "#0E0F12" },
 } as const;
 
+/** On the offer page the main button wears the chosen package's gradient (instead of the brand coral). */
+export function packageButtonSx(id: keyof typeof packageThemes) {
+  return { backgroundImage: packageThemes[id].gradient, backgroundColor: packageThemes[id].solid } as const;
+}
+
 export const ease = {
   out: [0.22, 1, 0.36, 1] as const,
 };

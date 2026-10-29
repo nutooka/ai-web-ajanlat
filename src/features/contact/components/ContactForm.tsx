@@ -25,7 +25,7 @@ import type { PackageId } from "@/features/pricing/types";
 import type { Answers } from "@/features/questionnaire/types";
 import { Blob } from "@/components/Blob";
 import { validityNote } from "@/lib/priceNotes";
-import { gradients, palette } from "@/theme/tokens";
+import { gradients, packageButtonSx, palette } from "@/theme/tokens";
 import { CALLBACK_LABELS, CALLBACK_TIMES, isEmailLike, quickContactSchema, toContact, type QuickContactValues } from "../schema";
 
 interface ContactFormProps {
@@ -279,7 +279,7 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
               size="large"
               disabled={isSubmitting}
               endIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : <SendOutlined />}
-              sx={{ alignSelf: { sm: "flex-start" } }}
+              sx={{ alignSelf: { sm: "flex-start" }, ...packageButtonSx(packageId) }}
             >
               {isSubmitting ? "Küldés…" : `Egyeztetést kérek – ${packageName}`}
             </Button>
