@@ -56,36 +56,27 @@ function tierContents(quote: Quote) {
     PackageId,
     { base: ContentRow[]; additions: ContentRow[] }
   >;
-  let previous: Quote["packages"][PackageId] | null = null;
+  type Pkg = Quote["packages"][PackageId];
+  const toRows = (pkg: Pkg) =>
+    pkg.items.map(({ id: rowId, label }) => ({ id: rowId, label }));
+  // The design level as its own row – unless a design surcharge item already says it (webshop).
+  const designRow = (pkg: Pkg): ContentRow[] =>
+    pkg.items.some((item) => item.id === `design.${pkg.design.level}`)
+      ? []
+      : [{ id: `package-design.${pkg.design.level}`, label: pkg.design.label }];
+
+  let previous: Pkg | null = null;
   for (const id of PACKAGE_IDS) {
     const pkg = quote.packages[id];
-    const designRow = {
-      id: `design.${pkg.design.level}`,
-      label: pkg.design.label,
-    };
     if (!previous) {
-      contents[id] = {
-        base: pkg.items.map(({ id: rowId, label }) => ({ id: rowId, label })),
-        additions: [designRow],
-      };
+      contents[id] = { base: toRows(pkg), additions: designRow(pkg) };
     } else {
       const had = new Set(previous.items.map((item) => item.id));
-      const added = pkg.items
-        .filter((item) => !had.has(item.id))
-        .map(({ id: rowId, label }) => ({ id: rowId, label }));
+      const added = toRows(pkg).filter((row) => !had.has(row.id));
       const designChanged = pkg.design.label !== previous.design.label;
       contents[id] = {
-        base: [
-          ...previous.items.map(({ id: rowId, label }) => ({
-            id: rowId,
-            label,
-          })),
-          {
-            id: `design.${previous.design.level}`,
-            label: previous.design.label,
-          },
-        ],
-        additions: designChanged ? [designRow, ...added] : added,
+        base: [...toRows(previous), ...designRow(previous)],
+        additions: designChanged ? [...designRow(pkg), ...added] : added,
       };
     }
     previous = pkg;
