@@ -194,21 +194,10 @@ describe("deadline slider (time vs money)", () => {
   });
 });
 
-describe("budget-based recommendation", () => {
-  it("recommends Standard without a budget answer", () => {
+describe("recommendation", () => {
+  it("always recommends Standard (no budget question)", () => {
     expect(calculateQuote(fixtures.company)!.recommended).toBe("standard");
-    expect(calculateQuote({ ...fixtures.company, budget: "unsure" })!.recommended).toBe("standard");
-    expect(calculateQuote({ ...fixtures.company, budget: "unsure" })!.budget).toBeNull();
-  });
-
-  it("recommends the richest package that fits the budget", () => {
-    const unlimited = calculateQuote({ ...fixtures.company, budget: "40k+" })!;
-    expect(unlimited.recommended).toBe("premium");
-    expect(unlimited.budget).toEqual({ max: null, withinBasic: true });
-
-    const tight = calculateQuote({ ...fixtures.webapp, budget: "under5k" })!;
-    expect(tight.recommended).toBe("basic");
-    expect(tight.budget?.withinBasic).toBe(false);
+    expect(calculateQuote({ ...fixtures.webapp, budget: "under5k" })!.recommended).toBe("standard");
   });
 });
 

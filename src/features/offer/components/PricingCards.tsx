@@ -208,7 +208,7 @@ export function PricingCards({ quote, mode, selected, onSelect, readOnly = false
                           availableIn={PACKAGE_IDS.map((pid) => quote.packages[pid]).find((other) => other.items.some((item) => item.id === row.id))?.name}
                         />
                       ))}
-                      {common.length > 0 && <GroupLabel>Mindhárom csomagban benne van</GroupLabel>}
+                      {common.length > 0 && <GroupLabel spaced>Mindhárom csomagban benne van</GroupLabel>}
                       {mode === "offer" ? (
                         common.map((row) => <Row key={row.id} included label={row.label} />)
                       ) : (
@@ -291,9 +291,9 @@ export function PricingCards({ quote, mode, selected, onSelect, readOnly = false
   );
 }
 
-function GroupLabel({ children }: { children: React.ReactNode }) {
+function GroupLabel({ children, spaced = false }: { children: React.ReactNode; spaced?: boolean }) {
   return (
-    <Box component="li" aria-hidden={false} sx={{ pt: 2, pb: 0.5, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: palette.inkMuted, listStyle: "none" }}>
+    <Box component="li" aria-hidden={false} sx={{ pt: spaced ? 3.5 : 2, pb: 0.5, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: palette.inkMuted, listStyle: "none" }}>
       {children}
     </Box>
   );

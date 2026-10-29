@@ -87,21 +87,6 @@ export const commonQuestions: Question[] = [
     ],
   },
   {
-    id: "budget",
-    kind: "single",
-    required: true,
-    title: "Mekkora keretben gondolkodsz?",
-    hint: "Nem a kereted alapján árazunk – csak segít a megfelelő csomagot ajánlani.",
-    options: [
-      { id: "under5k", label: "5 000 RON alatt", icon: "cash" },
-      { id: "5-10k", label: "5 000 – 10 000 RON", icon: "cash" },
-      { id: "10-20k", label: "10 000 – 20 000 RON", icon: "payments" },
-      { id: "20-40k", label: "20 000 – 40 000 RON", icon: "payments" },
-      { id: "40k+", label: "40 000 RON felett", icon: "trend" },
-      { id: "unsure", label: "Még nem tudom", icon: "question" },
-    ],
-  },
-  {
     id: "notes",
     kind: "text",
     required: false,

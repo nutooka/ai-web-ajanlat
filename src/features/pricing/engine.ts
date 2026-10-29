@@ -308,16 +308,6 @@ function enforceTierOrder(packages: PackageQuote[], config: PricingConfig): Pack
 }
 
 /**
- * Recommend the richest package that fits the visitor's budget.
- * Without a budget answer we recommend Standard.
- */
-function recommendPackage(packages: PackageQuote[], budgetMax: number | undefined): PackageId {
-  if (budgetMax === undefined) return "standard";
-  const fitting = packages.filter((pkg) => pkg.finalPrice <= budgetMax);
-  return fitting.at(-1)?.id ?? "basic";
-}
-
-/**
  * Pure and deterministic: the same answers + config always give the same quote.
  * Returns null until the project type is known.
  */
@@ -345,22 +335,14 @@ export function calculateQuote(rawAnswers: Answers, config: PricingConfig = pric
   const reasons = [...new Set(ordered.flatMap((pkg) => pkg.items.map((item) => item.review).filter((reason): reason is string => Boolean(reason))))];
   const notes = config.offerNotes.filter((note) => matchesCondition(answers, note.when));
 
-  const budgetAnswer = typeof answers.budget === "string" ? answers.budget : undefined;
-  const budgetCeiling = budgetAnswer === undefined ? undefined : config.budgetCeilings[budgetAnswer];
-  const budgetMax = budgetCeiling === null ? Number.POSITIVE_INFINITY : budgetCeiling;
-
   return {
     projectType,
     currency: config.currency,
     hourlyRate: config.hourlyRate,
     urgency: { level: urgencyLevel, label: config.urgency[urgencyLevel].label, priceMultiplier: config.urgency[urgencyLevel].priceMultiplier },
     languageMultiplier,
-    recommended: recommendPackage(ordered, budgetMax),
+    recommended: "standard",
     quickDecision,
-    budget:
-      budgetMax === undefined
-        ? null
-        : { max: Number.isFinite(budgetMax) ? budgetMax : null, withinBasic: ordered[0].finalPrice <= budgetMax },
     packages: Object.fromEntries(ordered.map((pkg) => [pkg.id, pkg])) as Record<PackageId, PackageQuote>,
     review: { required: reasons.length > 0, reasons },
     requirements: notes.filter((note) => note.kind === "requirement").map((note) => note.text),

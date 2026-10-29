@@ -322,13 +322,6 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
           <Typography variant="subtitle1" sx={{ mb: 3 }}>
             Mindhárom a te válaszaidból épül fel – a különbség a terjedelemben és a szolgáltatásokban van.
           </Typography>
-          {offer.quote.budget && (
-            <Typography variant="body2" sx={{ mb: 3, px: 2, py: 1.25, borderRadius: 2, display: "inline-block", background: palette.surface, border: 1, borderColor: "divider" }}>
-              {offer.quote.budget.withinBasic
-                ? `A megadott kereted alapján a(z) ${offer.quote.packages[offer.quote.recommended].name} csomagot ajánljuk.`
-                : "Már a Basic csomag is meghaladja a megadott keretet. Egyeztetéskor megnézzük, hogyan lehet szakaszolni vagy egyszerűsíteni a projektet."}
-            </Typography>
-          )}
           {pricesReady ? (
             <PricingCards
               quote={offer.quote}

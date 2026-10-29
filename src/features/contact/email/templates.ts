@@ -201,18 +201,13 @@ export function ownerEmail(offer: Offer, packageId: PackageId, contact: ContactD
   const who = contact.company ?? contact.name ?? contact.phone ?? contact.email ?? "Új érdeklődő";
   const when = contact.callbackTime ? ` · hívás: ${CALLBACK_LABELS[contact.callbackTime].toLowerCase()}` : "";
   const subject = `Új ajánlatkérés: ${offer.projectTypeLabel} – ${who} (${formatRon(pkg.finalPrice)})${when}`;
-  const budget = offer.quote.budget
-    ? offer.quote.budget.withinBasic
-      ? `belefér, ajánlott: ${offer.quote.packages[offer.quote.recommended].name}`
-      : "a Basic csomag is meghaladja"
-    : "nem adott meg keretet";
 
   const sections: { title: string; rows?: [string, string][]; list?: string[]; text?: string }[] = [
     { title: "Időzítés", rows: timingRows(offer, meta) },
     { title: "Kapcsolat", rows: contactRows(contact) },
     { title: "Összefoglaló", text: offer.summary },
     { title: "Határidő", rows: scheduleRows(offer, packageId) },
-    { title: "Mindhárom csomag", rows: [...packagesRows(offer, packageId), ["Keret", budget]] },
+    { title: "Mindhárom csomag", rows: packagesRows(offer, packageId) },
     { title: "Választott funkciók", list: offer.selectedFeatures.length ? offer.selectedFeatures : ["–"] },
     { title: `Mit tartalmaz (${pkg.name})`, list: offer.includes[packageId] },
     { title: `Mit nem tartalmaz (${pkg.name})`, list: offer.excludes[packageId] },

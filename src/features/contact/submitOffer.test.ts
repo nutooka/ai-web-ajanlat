@@ -18,7 +18,6 @@ const answers: Answers = {
   design: "template",
   contentUpload: "self",
   deadline: "normal",
-  budget: "10-20k",
   notes: "<b>hello</b>",
 };
 
@@ -89,7 +88,7 @@ describe("submitOffer", () => {
     expect(text).toMatch(/Választott határidő: \d+ hét \(csúszkán\)/);
     // All packages, details, every answer, contact fields.
     for (const name of ["Basic", "Standard", "Premium"]) expect(text).toContain(name);
-    for (const part of ["Keret:", "VÁLASZTOTT FUNKCIÓK", "MIT TARTALMAZ", "MIT NEM TARTALMAZ", "JAVASOLT TECHNOLÓGIA", "FENNTARTÁS", "Elek Kft", "Hívjatok", "<b>hello</b>"]) {
+    for (const part of ["VÁLASZTOTT FUNKCIÓK", "MIT TARTALMAZ", "MIT NEM TARTALMAZ", "JAVASOLT TECHNOLÓGIA", "FENNTARTÁS", "Elek Kft", "Hívjatok", "<b>hello</b>"]) {
       expect(text).toContain(part);
     }
   });

@@ -1,10 +1,14 @@
 "use client";
 
 import Check from "@mui/icons-material/Check";
+import ForumOutlined from "@mui/icons-material/ForumOutlined";
+import ReceiptLongOutlined from "@mui/icons-material/ReceiptLongOutlined";
+import TrendingUp from "@mui/icons-material/TrendingUp";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import { OPTION_ICONS } from "@/components/icons";
+import { OPTION_IMPACT_LABELS, type OptionImpact } from "@/features/pricing/optionImpact";
 import { palette, shadow } from "@/theme/tokens";
 import type { QuestionOption } from "../types";
 
@@ -14,10 +18,56 @@ interface OptionCardProps {
   multiple: boolean;
   shortcut?: number;
   recommended?: boolean;
+  /** What this choice does to the price (badges). */
+  impacts?: OptionImpact[];
   onSelect: () => void;
 }
 
-export function OptionCard({ option, selected, multiple, shortcut, recommended, onSelect }: OptionCardProps) {
+const IMPACT_ICONS: Record<OptionImpact, typeof TrendingUp> = {
+  price: TrendingUp,
+  majorPrice: TrendingUp,
+  review: ForumOutlined,
+  extraCost: ReceiptLongOutlined,
+};
+
+/** Small tags under the option: what makes the project more complex, and so more expensive. */
+function ImpactBadges({ impacts }: { impacts: OptionImpact[] }) {
+  return (
+    <Box component="span" sx={{ display: "flex", flexWrap: "wrap", gap: 0.75, mt: 1 }}>
+      {impacts.map((impact) => {
+        const Icon = IMPACT_ICONS[impact];
+        const strong = impact === "majorPrice";
+        return (
+          <Box
+            key={impact}
+            component="span"
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 0.5,
+              px: 0.875,
+              py: 0.25,
+              borderRadius: 999,
+              fontSize: 12,
+              fontWeight: 600,
+              lineHeight: 1.4,
+              border: "1px solid",
+              borderStyle: impact === "review" ? "dashed" : "solid",
+              borderColor: strong ? palette.ink : palette.line,
+              background: strong ? palette.ink : palette.paper,
+              color: strong ? palette.surface : palette.ink,
+            }}
+          >
+            <Icon sx={{ fontSize: 14 }} />
+            {OPTION_IMPACT_LABELS[impact]}
+          </Box>
+        );
+      })}
+    </Box>
+  );
+}
+
+export function OptionCard({ option, selected, multiple, shortcut, recommended, impacts = [], onSelect }: OptionCardProps) {
   const Icon = option.icon ? OPTION_ICONS[option.icon] : null;
 
   return (
@@ -77,6 +127,7 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
             {option.description}
           </Typography>
         )}
+        {impacts.length > 0 && <ImpactBadges impacts={impacts} />}
         {recommended && (
           <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 999, background: palette.lime, color: palette.ink, fontSize: 12, fontWeight: 700 }}>
             Neked ajánljuk

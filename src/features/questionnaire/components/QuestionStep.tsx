@@ -6,6 +6,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { forwardRef } from "react";
+import { optionImpacts } from "@/features/pricing/optionImpact";
 import { toggleMultiOption } from "../engine";
 import type { AnswerValue, Question } from "../types";
 import { OptionCard } from "./OptionCard";
@@ -77,6 +78,7 @@ export const QuestionStep = forwardRef<HTMLHeadingElement, QuestionStepProps>(fu
                 multiple={question.kind === "multi"}
                 shortcut={index < 9 ? index + 1 : undefined}
                 recommended={recommended === option.id}
+                impacts={optionImpacts(question.id, option.id)}
                 onSelect={() => {
                   if (question.kind === "multi") {
                     const next = toggleMultiOption(question, Array.isArray(value) ? value : [], option.id);

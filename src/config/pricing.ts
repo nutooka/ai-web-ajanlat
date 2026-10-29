@@ -1169,6 +1169,7 @@ export const pricingConfig: PricingConfig = {
     },
     {
       id: "shipping.carrier_plan",
+      extraCost: true,
       kind: "requirement",
       when: { shop_courier: ["yes"], shop_shippingFee: ["carrier"] },
       text: "Az automatikus futárdíj-számításhoz magasabb Shopify-előfizetés vagy havidíjas app kell – ez havi többletköltség a Shopify felé.",
@@ -1187,30 +1188,35 @@ export const pricingConfig: PricingConfig = {
     },
     {
       id: "migration.orders_app",
+      extraCost: true,
       kind: "exclusion",
       when: { shop_current: ["migrate"], shop_migrateData: ["orders"] },
       text: "A rendelések átviteléhez szükséges importáló app (pl. Matrixify) díja",
     },
     {
       id: "wholesale.app",
+      extraCost: true,
       kind: "exclusion",
       when: { shop_wholesale: ["yes"] },
       text: "A viszonteladói árakhoz szükséges Shopify-app havidíja",
     },
     {
       id: "accounts.locked_app",
+      extraCost: true,
       kind: "exclusion",
       when: { shop_accounts: ["required"] },
       text: "A zárt bolthoz (kötelező fiók) szükséges Shopify-app havidíja",
     },
     {
       id: "loyalty.app",
+      extraCost: true,
       kind: "exclusion",
       when: { shop_promotions: ["loyalty"] },
       text: "A hűségpont-rendszer appjának havidíja",
     },
     {
       id: "translations",
+      extraCost: true,
       kind: "exclusion",
       when: { shop_translations: ["partial", "full"] },
       text: "A fordítás (a nyelvek technikai beállítása benne van, a fordítást külön ajánljuk)",
@@ -1359,14 +1365,6 @@ export const pricingConfig: PricingConfig = {
     redesign: 0.7,
     webshop: 1,
     webapp: 1.2,
-  },
-
-  budgetCeilings: {
-    under5k: 5000,
-    "5-10k": 10000,
-    "10-20k": 20000,
-    "20-40k": 40000,
-    "40k+": null,
   },
 
   discounts: {

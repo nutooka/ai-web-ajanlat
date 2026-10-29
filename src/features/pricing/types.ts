@@ -57,6 +57,8 @@ export interface OfferNoteRule {
   when: AnswerCondition;
   kind: "requirement" | "exclusion";
   text: string;
+  /** Costs money outside our price (app fee, subscription, translation): shown as a "Külön díj" badge in the questionnaire. */
+  extraCost?: boolean;
 }
 export type UrgencyLevel = "flexible" | "normal" | "fast" | "urgent";
 
@@ -110,7 +112,6 @@ export interface PricingConfig {
   /** Premium extras are scaled to the project size (a landing page needs less SEO work than a webshop). */
   premiumExtrasScale: Record<ResolvedProjectType, number>;
   /** Budget answer → upper limit in RON (null = no limit). Only used to recommend a package. */
-  budgetCeilings: Record<string, number | null>;
   discounts: {
     /** Time-limited discount: the sooner the visitor requests a call, the bigger it is. */
     quickDecision: QuickDecisionConfig;
@@ -197,8 +198,6 @@ export interface Quote {
   languageMultiplier: number;
   recommended: PackageId;
   quickDecision: QuickDecisionState;
-  /** null when the visitor gave no budget or answered "not sure". */
-  budget: { max: number | null; withinBasic: boolean } | null;
   /** Risky or custom requests: the price is a starting estimate, a technical review comes first. */
   review: { required: boolean; reasons: string[] };
   /** What the customer needs to provide or arrange (contracts, accounts, content). */

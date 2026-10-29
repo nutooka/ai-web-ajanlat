@@ -275,3 +275,18 @@ describe("Shopify limits shown as conditions", () => {
     expect(plain).not.toMatch(/Matrixify|jelszavai|hűségpont|zárt bolthoz/);
   });
 });
+
+describe("option badges in the questionnaire", () => {
+  it("flags the options that raise the price, need a talk or cost extra", async () => {
+    const { optionImpacts } = await import("./optionImpact");
+    expect(optionImpacts("shop_courier", "yes")).toEqual(["price"]);
+    expect(optionImpacts("shop_courier", "no")).toEqual([]);
+    expect(optionImpacts("shop_shippingFee", "carrier")).toEqual(["majorPrice", "review", "extraCost"]);
+    expect(optionImpacts("shop_variants", "complex")).toEqual(["majorPrice", "review"]);
+    expect(optionImpacts("shop_wholesale", "yes")).toEqual(["price", "extraCost"]);
+    expect(optionImpacts("shop_design", "theme")).toEqual([]);
+    expect(optionImpacts("shop_design", "custom")).toEqual(["majorPrice"]);
+    // Small items stay quiet so the badges keep meaning something.
+    expect(optionImpacts("company_features", "faq")).toEqual([]);
+  });
+});
