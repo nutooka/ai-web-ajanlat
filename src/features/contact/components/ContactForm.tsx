@@ -25,7 +25,7 @@ import type { PackageId } from "@/features/pricing/types";
 import type { Answers } from "@/features/questionnaire/types";
 import { Blob } from "@/components/Blob";
 import { validityNote } from "@/lib/priceNotes";
-import { palette } from "@/theme/tokens";
+import { gradients, palette } from "@/theme/tokens";
 import { CALLBACK_LABELS, CALLBACK_TIMES, isEmailLike, quickContactSchema, toContact, type QuickContactValues } from "../schema";
 
 interface ContactFormProps {
@@ -137,7 +137,7 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
           <Typography color="text.secondary">
             Hagyd meg a telefonszámod vagy az e-mail-címed, és jelentkezünk a <b>{packageName}</b> csomag ajánlatával. Nincs kötelezettség, előre nem kell fizetni semmit.
           </Typography>
-          <Typography variant="body2" sx={{ mt: 2, p: 1.5, borderRadius: 2, background: palette.limeTint, color: palette.ink }}>
+          <Typography variant="body2" sx={{ mt: 2, p: 1.5, borderRadius: 2, background: palette.brandTint, color: palette.ink }}>
             <b>Minden válaszodat és az ajánlatot is megkapjuk</b> – nem kell képernyőképet küldened. Ha inkább üzenetben írnál, elég az ajánlat-kódot vagy a linket elküldened. {validityNote()}
           </Typography>
         </Box>
@@ -178,8 +178,8 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
                             fontWeight: 600,
                             fontSize: 14,
                             border: "1.5px solid",
-                            borderColor: active ? palette.ink : palette.line,
-                            background: active ? palette.lime : palette.surface,
+                            borderColor: active ? "transparent" : palette.line,
+                            background: active ? `linear-gradient(${palette.brandTint}, ${palette.brandTint}) padding-box, ${gradients.brand} border-box` : palette.surface,
                             color: palette.ink,
                             transition: "background .15s ease, border-color .15s ease",
                             "&:hover": { borderColor: palette.ink },

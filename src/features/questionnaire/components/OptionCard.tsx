@@ -9,7 +9,7 @@ import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import { OPTION_ICONS } from "@/components/icons";
 import { OPTION_IMPACT_LABELS, type OptionImpact } from "@/features/pricing/optionImpact";
-import { palette, shadow } from "@/theme/tokens";
+import { gradients, palette, shadow } from "@/theme/tokens";
 import type { QuestionOption } from "../types";
 
 interface OptionCardProps {
@@ -82,20 +82,21 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
         p: 2.25,
         pr: 5,
         borderRadius: 3,
-        border: "1.5px solid",
-        borderColor: selected ? palette.ink : palette.line,
-        background: selected ? palette.limeTint : palette.surface,
+        // Selected: 2px brand-gradient border (padding-box tint over a border-box gradient).
+        border: "2px solid",
+        borderColor: selected ? "transparent" : palette.line,
+        background: selected ? `linear-gradient(${palette.brandTint}, ${palette.brandTint}) padding-box, ${gradients.brand} border-box` : palette.surface,
         display: "flex",
         alignItems: "flex-start",
         justifyContent: "flex-start",
         textAlign: "left",
         gap: 1.75,
         transition: "border-color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease",
-        boxShadow: selected ? `inset 0 0 0 1px ${palette.ink}` : "none",
+        boxShadow: "none",
         "&:hover": {
-          borderColor: palette.ink,
+          borderColor: selected ? "transparent" : palette.ink,
           transform: "translateY(-1px)",
-          boxShadow: selected ? `inset 0 0 0 1px ${palette.ink}` : shadow.raised,
+          boxShadow: shadow.raised,
         },
         "&:active": { transform: "scale(0.99)" },
         "&.Mui-focusVisible": { outline: `2px solid ${palette.ink}`, outlineOffset: 3 },
@@ -110,7 +111,7 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
             borderRadius: 2,
             display: "grid",
             placeItems: "center",
-            background: selected ? palette.lime : palette.paper,
+            background: selected ? gradients.brand : palette.paper,
             color: palette.ink,
             transition: "all .18s ease",
           }}
@@ -129,7 +130,7 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
         )}
         {impacts.length > 0 && <ImpactBadges impacts={impacts} />}
         {recommended && (
-          <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 999, background: palette.lime, color: palette.ink, fontSize: 12, fontWeight: 700 }}>
+          <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 999, background: gradients.brand, color: palette.ink, fontSize: 12, fontWeight: 700 }}>
             Neked ajánljuk
           </Box>
         )}
@@ -137,7 +138,7 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
 
       <Box sx={{ position: "absolute", top: 14, right: 14 }}>
         {selected ? (
-          <Box sx={{ width: 22, height: 22, borderRadius: multiple ? "7px" : "50%", background: palette.ink, color: palette.lime, display: "grid", placeItems: "center" }}>
+          <Box sx={{ width: 22, height: 22, borderRadius: multiple ? "7px" : "50%", background: gradients.brand, color: palette.ink, display: "grid", placeItems: "center" }}>
             <Check sx={{ fontSize: 15 }} />
           </Box>
         ) : (

@@ -3,9 +3,9 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { motion } from "motion/react";
-import { ease, palette } from "@/theme/tokens";
+import { gradients, ease, palette } from "@/theme/tokens";
 
-/** Headline with a lime "marker" sweeping behind the key word – the page's signature motion. */
+/** Headline with a brand-gradient "marker" sweeping behind the key word – the page's signature motion. */
 export function HeroTitle() {
   return (
     <Typography variant="h1" sx={{ color: "#fff", maxWidth: 640 }}>
@@ -29,7 +29,7 @@ export function HeroTitle() {
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ duration: 0.7, delay: 0.55, ease: ease.out }}
-            style={{ position: "absolute", inset: "0.08em 0 0.02em", background: palette.lime, borderRadius: 6, transformOrigin: "left", zIndex: 0 }}
+            style={{ position: "absolute", inset: "0.08em 0 0.02em", background: gradients.brand, borderRadius: 6, transformOrigin: "left", zIndex: 0 }}
           />
           <motion.span
             initial={{ color: "#FFFFFF" }}

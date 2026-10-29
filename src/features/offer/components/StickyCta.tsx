@@ -13,7 +13,7 @@ import { pricingConfig } from "@/config/pricing";
 import { resolveQuickDecision } from "@/features/pricing/quickDecision";
 import { formatRon } from "@/lib/format";
 import { formatCountdown, offerAgeMinutesFrom, useNow, type OfferClockState } from "../useOfferClock";
-import { ease, palette } from "@/theme/tokens";
+import { gradients, ease, palette } from "@/theme/tokens";
 
 /** Always-reachable "request a call" bar; hides itself once the contact form is on screen. */
 export function StickyCta({
@@ -83,7 +83,7 @@ export function StickyCta({
                   {!quick.expired && quick.minutesLeft !== null && (
                     <Stack direction="row" spacing={0.75} sx={{ alignItems: "center" }}>
                     <Blob tone="discount" size={14} duration={10} />
-                    <Box sx={{ px: 1, py: 0.25, borderRadius: 1.5, background: palette.amber, color: palette.ink, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
+                    <Box sx={{ px: 1, py: 0.25, borderRadius: 1.5, background: gradients.discount, color: palette.ink, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                       −{quick.percent}% · {formatCountdown(quick.minutesLeft)}
                     </Box>
                     </Stack>

@@ -12,7 +12,7 @@ import { pricingConfig } from "@/config/pricing";
 import { resolveQuickDecision } from "@/features/pricing/quickDecision";
 import type { PackageId, PackageQuote } from "@/features/pricing/types";
 import { formatRon } from "@/lib/format";
-import { ease, palette } from "@/theme/tokens";
+import { gradients, ease, palette } from "@/theme/tokens";
 import {
   formatCountdown,
   offerAgeMinutesFrom,
@@ -75,7 +75,7 @@ function Section({
             borderRadius: 2.5,
             display: "grid",
             placeItems: "center",
-            background: active ? palette.amber : palette.paper,
+            background: active ? gradients.discount : palette.paper,
             color: palette.ink,
           }}
         >
@@ -141,7 +141,7 @@ export function DiscountsPanel({
     },
   ];
   const activeStep = quick.expired ? steps.length - 1 : quick.tierIndex;
-  // Share of the whole quick-decision window still left (1 → 0): the amber shape shrinks with it.
+  // Share of the whole quick-decision window still left (1 → 0): the discount shape shrinks with it.
   const windowMinutes = quickConfig.tiers.at(-1)?.withinMinutes ?? 1;
   const ageMinutes = age;
   const timeLeft = quick.expired
@@ -164,8 +164,8 @@ export function DiscountsPanel({
           mt: 3,
           scrollMarginTop: 24,
           borderRadius: 4,
-          border: `2px solid ${palette.amber}`,
-          background: palette.surface,
+          border: "2px solid transparent",
+          background: `linear-gradient(${palette.surface}, ${palette.surface}) padding-box, ${gradients.discount} border-box`,
           overflow: "hidden",
         }}
       >
@@ -252,7 +252,7 @@ export function DiscountsPanel({
                               px: 0.75,
                               py: 0.25,
                               borderRadius: 1,
-                              background: palette.amber,
+                              background: gradients.discount,
                               fontWeight: 800,
                               fontVariantNumeric: "tabular-nums",
                             }}
@@ -320,7 +320,7 @@ export function DiscountsPanel({
                           textAlign: "center",
                           border: `1.5px solid ${isActive ? palette.ink : palette.line}`,
                           background: isActive
-                            ? palette.amber
+                            ? gradients.discount
                             : palette.surface,
                           color: past ? "text.secondary" : palette.ink,
                           textDecoration: past ? "line-through" : "none",

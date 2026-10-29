@@ -9,6 +9,8 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import type { Metadata } from "next";
+import { Blob, type BlobTone } from "@/components/Blob";
+import { SectionBlob } from "@/components/SectionBlob";
 import { HeroActions } from "@/components/home/HeroActions";
 import { HomePricing } from "@/components/home/HomePricing";
 import { HeroTitle } from "@/components/home/HeroTitle";
@@ -26,7 +28,9 @@ import { pricingConfig } from "@/config/pricing";
 import { startingPrice } from "@/features/pricing/startingPrice";
 import { RESOLVED_PROJECT_TYPES } from "@/features/questionnaire/types";
 import { formatRon } from "@/lib/format";
-import { palette } from "@/theme/tokens";
+import { gradients, palette } from "@/theme/tokens";
+
+const STEP_TONES: BlobTone[] = ["basic", "standard", "premium"];
 
 const steps = [
   { title: "Válaszolj pár kérdésre", text: "Egyszerre egy kérdés, szakszavak nélkül. Bármikor abbahagyhatod, a válaszaid megmaradnak." },
@@ -128,7 +132,9 @@ export default function HomePage() {
 
       <Box component="main" sx={{ flex: 1 }}>
         {/* How it works */}
-        <Container maxWidth="lg" component="section" sx={{ py: { xs: 9, md: 13 } }}>
+        <Box sx={{ position: "relative", overflow: "hidden" }}>
+        <SectionBlob position={{ top: "38%", right: -170 }} />
+        <Container maxWidth="lg" component="section" sx={{ position: "relative", zIndex: 1, py: { xs: 9, md: 13 } }}>
           <Typography variant="h2" className="reveal" sx={{ mb: { xs: 5, md: 7 }, maxWidth: 680 }}>
             Mintha egy tanácsadóval ülnél le – csak gyorsabb.
           </Typography>
@@ -136,12 +142,15 @@ export default function HomePage() {
             {steps.map((step, index) => (
               <Box component="li" key={step.title} className="reveal" sx={{ position: "relative", pt: 3, borderTop: 1, borderColor: "divider" }}>
                 <Box aria-hidden sx={{ position: "absolute", top: -1, left: 0, width: 48, height: 3, background: palette.ink }} />
-                <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 56, lineHeight: 1, letterSpacing: "-0.04em", mb: 2 }}>
-                  {index + 1}
-                  <Box component="span" sx={{ color: palette.lime, WebkitTextStroke: `1.5px ${palette.ink}` }}>
-                    .
+                {/* Three steps, three colours: the same blue → orange → emerald as the packages. */}
+                <Box sx={{ position: "relative", display: "inline-block", isolation: "isolate", mb: 2 }}>
+                  <Box aria-hidden sx={{ position: "absolute", left: -14, top: -10, zIndex: -1 }}>
+                    <Blob tone={STEP_TONES[index]} size={64} morph={false} />
                   </Box>
-                </Typography>
+                  <Typography sx={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 56, lineHeight: 1, letterSpacing: "-0.04em" }}>
+                    {index + 1}.
+                  </Typography>
+                </Box>
                 <Typography variant="h4" component="h3" sx={{ mb: 1 }}>
                   {step.title}
                 </Typography>
@@ -150,6 +159,7 @@ export default function HomePage() {
             ))}
           </Box>
         </Container>
+        </Box>
 
         <WaveDivider from={palette.paper} to={palette.ink} flip line={false} />
         {/* Packages */}
@@ -185,15 +195,16 @@ export default function HomePage() {
 
         <WaveDivider from={palette.surface} to={palette.ink} flip line={false} />
         {/* Promises */}
-        <Box component="section" sx={{ background: palette.ink, color: "#fff" }}>
-          <Container maxWidth="lg" sx={{ py: { xs: 9, md: 13 }, display: "grid", gridTemplateColumns: { xs: "1fr", md: "0.9fr 1.1fr" }, gap: { xs: 5, md: 10 } }}>
+        <Box component="section" sx={{ position: "relative", overflow: "hidden", background: palette.ink, color: "#fff" }}>
+          <SectionBlob size={420} position={{ bottom: -210, left: -170 }} />
+          <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1, py: { xs: 9, md: 13 }, display: "grid", gridTemplateColumns: { xs: "1fr", md: "0.9fr 1.1fr" }, gap: { xs: 5, md: 10 } }}>
             <Typography variant="h2" className="reveal">
               Prémium minőség, kisvállalkozói áron.
             </Typography>
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, columnGap: 5, rowGap: 4 }}>
               {promises.map((promise) => (
                 <Box key={promise.title} className="reveal">
-                  <Box sx={{ width: 28, height: 28, borderRadius: "8px", background: palette.lime, color: palette.ink, display: "grid", placeItems: "center", mb: 2 }}>
+                  <Box sx={{ width: 28, height: 28, borderRadius: "8px", background: gradients.brand, color: palette.ink, display: "grid", placeItems: "center", mb: 2 }}>
                     <Check sx={{ fontSize: 18 }} />
                   </Box>
                   <Typography variant="h5" component="h3" sx={{ mb: 0.75 }}>
@@ -248,7 +259,7 @@ export default function HomePage() {
                 {bestPercent > 0 && (
                   <>
                     {" "}
-                    <Box component="span" sx={{ color: palette.amber, fontWeight: 600 }}>
+                    <Box component="span" sx={{ px: 0.75, borderRadius: 1, background: gradients.discount, color: palette.ink, fontWeight: 650 }}>
                       −{bestPercent}% kedvezmény, ha az ajánlatod elkészülte után 1 órán belül egyeztetést kérsz.
                     </Box>
                   </>

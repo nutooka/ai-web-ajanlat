@@ -287,7 +287,6 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
               size="large"
               endIcon={<ArrowForward />}
               aria-disabled={needsChoice}
-              sx={needsChoice ? { opacity: 0.55 } : undefined}
             >
               {nextLabel}
             </Button>

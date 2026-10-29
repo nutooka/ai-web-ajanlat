@@ -37,7 +37,7 @@ export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; a
             <Stack component="ul" spacing={1} sx={{ listStyle: "none", p: 0, m: 0, mt: 3, pt: 2.5, borderTop: "1px solid rgba(255,255,255,.12)" }}>
               {features.slice(0, MAX_FEATURES).map((feature) => (
                 <Stack component="li" key={feature} direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
-                  <CheckCircleOutlineOutlined sx={{ fontSize: 16, mt: "3px", color: palette.lime }} />
+                  <CheckCircleOutlineOutlined sx={{ fontSize: 16, mt: "3px", color: palette.brandOnDark }} />
                   <Typography variant="body2" sx={{ opacity: 0.85 }}>
                     {feature}
                   </Typography>

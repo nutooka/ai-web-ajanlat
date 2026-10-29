@@ -1,7 +1,7 @@
 "use client";
 
 import { alpha, createTheme } from "@mui/material/styles";
-import { palette, shadow } from "./tokens";
+import { gradients, palette, shadow } from "./tokens";
 
 const display = "var(--font-display), 'Bricolage Grotesque', system-ui, sans-serif";
 const body = "var(--font-body), 'Instrument Sans', system-ui, sans-serif";
@@ -10,8 +10,8 @@ export const theme = createTheme({
   cssVariables: true,
   palette: {
     mode: "light",
-    // Lime fills with ink text; ink is the "secondary" solid.
-    primary: { main: palette.lime, dark: palette.limeHover, light: palette.limeTint, contrastText: palette.ink },
+    // The brand gradient is drawn on buttons below; this solid is its mid tone for anything MUI paints itself.
+    primary: { main: "#3A7BFF", dark: "#2F66D6", light: palette.brandTint, contrastText: palette.ink },
     secondary: { main: palette.ink, contrastText: "#FFFFFF" },
     success: { main: palette.success },
     background: { default: palette.paper, paper: palette.surface },
@@ -37,7 +37,8 @@ export const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: { WebkitFontSmoothing: "antialiased", textRendering: "optimizeLegibility" },
-        "::selection": { background: palette.lime, color: palette.ink },
+        "::selection": { background: "#CFE0FF", color: palette.ink },
+        "html": { caretColor: palette.ink, accentColor: "#3A7BFF" },
         "h1, h2, h3": { textWrap: "balance" },
         ":focus-visible": { outline: `2px solid ${palette.ink}`, outlineOffset: 3 },
         // Scroll-linked reveal: progressive enhancement, content is never hidden without support.
@@ -84,8 +85,19 @@ export const theme = createTheme({
       defaultProps: { disableElevation: true },
       variants: [
         {
+          // Brand gradient, ink text. Hover slides the gradient; disabled drops it (never looks clickable).
           props: { variant: "contained", color: "primary" },
-          style: { "&:hover": { backgroundColor: palette.limeHover, boxShadow: shadow.raised } },
+          style: {
+            color: palette.ink,
+            backgroundColor: "#3A7BFF",
+            backgroundImage: gradients.brand,
+            backgroundSize: "200% 100%",
+            backgroundPosition: "0% 50%",
+            transition: "background-position .3s cubic-bezier(.22,1,.36,1), transform .2s ease, box-shadow .2s ease",
+            "&:hover": { backgroundPosition: "100% 50%", boxShadow: shadow.raised },
+            // Real disabled, and "focusable but not ready yet" (aria-disabled, e.g. the planner's next button).
+            "&.Mui-disabled, &[aria-disabled='true']": { backgroundImage: "none", backgroundColor: palette.paper, color: palette.muted, boxShadow: "none" },
+          },
         },
       ],
       styleOverrides: {

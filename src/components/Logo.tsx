@@ -3,7 +3,7 @@
 import Box from "@mui/material/Box";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
-import { palette } from "@/theme/tokens";
+import { gradients, palette } from "@/theme/tokens";
 
 export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
   const onDark = tone === "light";
@@ -20,7 +20,7 @@ export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
           width: 32,
           height: 32,
           borderRadius: "9px",
-          background: palette.lime,
+          background: gradients.brand,
           display: "grid",
           placeItems: "center",
           color: palette.ink,

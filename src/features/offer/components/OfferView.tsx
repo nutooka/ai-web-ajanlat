@@ -28,7 +28,7 @@ import { isComplete } from "@/features/questionnaire/engine";
 import type { Answers } from "@/features/questionnaire/types";
 import { formatRon, formatWeeks } from "@/lib/format";
 import { useWizardSnapshot, wizardStore, type Submission } from "@/lib/storage";
-import { ease, palette } from "@/theme/tokens";
+import { gradients, ease, palette } from "@/theme/tokens";
 import { buildOffer } from "../buildOffer";
 import { offerAgeMinutesFrom, useNow, useOfferClock } from "../useOfferClock";
 import { useOfferCode } from "../useOfferCode";
@@ -176,7 +176,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
   return (
     <Frame header={header} stickyBar={!submission && !frozen}>
       {frozen && (
-        <Box sx={{ background: palette.lime, color: palette.ink }} className="no-print">
+        <Box sx={{ background: gradients.brand, color: palette.ink }} className="no-print">
           <Container maxWidth="lg" sx={{ py: 1.5, display: "flex", flexWrap: "wrap", gap: 1, alignItems: "center", justifyContent: "space-between" }}>
             <Typography variant="body2" sx={{ fontWeight: 600 }}>
               Megosztott ajánlat <b>{frozen.code}</b> · így látta a kitöltő ekkor: {savedFormat.format(frozen.savedAt)}
@@ -230,7 +230,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
                         type="button"
                         onClick={() => scrollToId(DISCOUNTS_ID)}
                         className="no-print"
-                        sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, mt: 1.25, minHeight: 36, px: 1.5, py: 0.5, borderRadius: 1.5, border: 0, background: palette.amber, color: palette.ink, font: "inherit", fontSize: 14, fontWeight: 800, cursor: "pointer", "&:hover": { filter: "brightness(1.05)" }, "&:focus-visible": { outline: "2px solid #fff", outlineOffset: 2 } }}
+                        sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, mt: 1.25, minHeight: 36, px: 1.5, py: 0.5, borderRadius: 1.5, border: 0, background: gradients.discount, color: palette.ink, font: "inherit", fontSize: 14, fontWeight: 800, cursor: "pointer", "&:hover": { filter: "brightness(1.05)" }, "&:focus-visible": { outline: "2px solid #fff", outlineOffset: 2 } }}
                       >
                         Kedvezményeid: −{formatRon(totalSavings(pkg))}
                         <ArrowDownward sx={{ fontSize: 16 }} />
@@ -293,7 +293,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
         {/* Price-change notice (aria-live so it is announced). */}
         <Box aria-live="polite" sx={{ mt: tierChanged || clockState.status === "error" ? 2 : 0 }}>
           {tierChanged && (
-            <Typography sx={{ p: 2, borderRadius: 2, border: `1.5px solid ${palette.amber}`, background: palette.surface, fontWeight: 600 }}>
+            <Typography sx={{ p: 2, borderRadius: 2, border: "1.5px solid transparent", background: `linear-gradient(${palette.surface}, ${palette.surface}) padding-box, ${gradients.discount} border-box`, fontWeight: 600 }}>
               {tierIndex === -1
                 ? "A gyors döntés kedvezmény lejárt – az árak már teljes áron szerepelnek."
                 : `A gyors döntés kedvezmény ${tierLabel(tierAtLoad)}-ról ${tierLabel(tierIndex)}-ra csökkent – az árakat frissítettük.`}

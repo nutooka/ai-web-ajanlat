@@ -9,7 +9,7 @@ import { wizardStore } from "@/lib/storage";
 
 /** Opens a shared offer as your own (loads its answers into this browser). */
 export function LoadSharedOfferButton({ answers, packageId }: { answers: Answers; packageId: PackageId }) {
-  // Sits on the lime "shared offer" bar, so it is ink, not lime.
+  // Sits on the brand-gradient "shared offer" bar, so it is ink.
   const router = useRouter();
   return (
     <Button

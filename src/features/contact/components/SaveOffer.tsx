@@ -16,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
+import { SectionBlob } from "@/components/SectionBlob";
 import { siteConfig } from "@/config/site";
 import { trackStep } from "@/features/funnel/track";
 import type { PackageId } from "@/features/pricing/types";
@@ -102,8 +103,9 @@ export function SaveOffer({ answers, packageId, packageName, price, code }: Save
   };
 
   return (
-    <Box sx={{ mt: 3, borderRadius: { xs: 3, md: 4 }, border: 1, borderColor: "divider", background: palette.surface, p: { xs: 3, sm: 4 } }}>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: chatLinks.length ? "1.3fr 0.7fr" : "1fr" }, gap: { xs: 4, md: 5 } }}>
+    <Box sx={{ position: "relative", overflow: "hidden", mt: 3, borderRadius: { xs: 3, md: 4 }, border: 1, borderColor: "divider", background: palette.surface, p: { xs: 3, sm: 4 } }}>
+      <SectionBlob size={180} position={{ top: -90, right: -70 }} />
+      <Box sx={{ position: "relative", zIndex: 1, display: "grid", gridTemplateColumns: { xs: "1fr", md: chatLinks.length ? "1.3fr 0.7fr" : "1fr" }, gap: { xs: 4, md: 5 } }}>
         <Box>
           <Typography variant="h4" component="h2" sx={{ mb: 0.75 }}>
             Még gondolkodsz?
@@ -135,7 +137,7 @@ export function SaveOffer({ answers, packageId, packageName, price, code }: Save
                   size="large"
                   disabled={status.kind === "sending"}
                   startIcon={status.kind === "sending" ? <CircularProgress size={16} /> : <MailOutline />}
-                  sx={{ minHeight: 56, whiteSpace: "nowrap", color: palette.ink, borderColor: palette.ink, "&:hover": { borderColor: palette.ink, background: palette.limeTint } }}
+                  sx={{ minHeight: 56, whiteSpace: "nowrap", color: palette.ink, borderColor: palette.ink, "&:hover": { borderColor: palette.ink, background: palette.brandTint } }}
                 >
                   Elküldöm magamnak
                 </Button>
@@ -184,7 +186,9 @@ export function SaveOffer({ answers, packageId, packageName, price, code }: Save
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  // Ink, not the brand gradient: the consultation button above stays the one primary action.
                   variant="contained"
+                  color="secondary"
                   size="large"
                   startIcon={<Icon />}
                   onClick={() => trackStep("chat_click")}

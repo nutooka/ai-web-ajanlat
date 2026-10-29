@@ -2,9 +2,10 @@
  * Design tokens – plain module so both Server and Client Components can import it.
  * Colour roles (see DESIGN.md):
  * - ink: structure (headers, hero, bars, selected border); inkSoft: raised surface on ink
- * - lime: the one primary action per screen + "your choice" (selection fill, check)
- * - packageThemes: package identity only (card header, package chip) + liquid shapes; always ink text
- * - amber: discount and time
+ * - gradients.brand: the one primary action per screen + "your choice" (selection border, check, progress)
+ * - packageThemes: package identity (card header, package chip) + liquid shapes; always ink text
+ * - gradients.discount: discount and time
+ * Gradients are fills only – text on them is always ink (never gradient text, never white).
  * - paper/surface/line/muted: neutral content and info notes
  */
 export const palette = {
@@ -16,14 +17,20 @@ export const palette = {
   surface: "#FFFFFF",
   line: "#E4E4DD",
   muted: "#5B5F68",
-  lime: "#D4FF3A",
-  limeHover: "#C6F22B",
-  limeTint: "#F3FBD6",
+  /** Light tint behind a selected answer card ("your choice"). */
+  brandTint: "#EEF4FF",
+  /** Small accents (icons) on ink, from the brand blue – text on ink stays white. */
+  brandOnDark: "#9CC1FF",
   success: "#127A4B",
-  /** Discount and time – never used for actions. */
-  amber: "#FFB547",
-  check: "#7BE495",
   cross: "#FF6B81",
+} as const;
+
+/** Shared gradients – fills only, always with ink text. */
+export const gradients = {
+  /** Built from the three package colours: action + "your choice". */
+  brand: "linear-gradient(120deg, #2BD2C9 0%, #3A7BFF 35%, #FF5E7E 70%, #FFB547 100%)",
+  /** Discount and time. */
+  discount: "linear-gradient(135deg, #FFD27A 0%, #FFB547 55%, #FF9447 100%)",
 } as const;
 
 /** One neutral, offset shadow for every raised surface. No coloured glows. */
@@ -36,7 +43,7 @@ export const shadow = {
 export const packageThemes = {
   basic: { gradient: "linear-gradient(135deg, #2BD2C9 0%, #3A7BFF 100%)", solid: "#3A9BFF", bubble: "#2F9BFF", headerText: "#0E0F12" },
   standard: { gradient: "linear-gradient(135deg, #FFB547 0%, #FF5E7E 100%)", solid: "#FF8A62", bubble: "#FF7A6B", headerText: "#0E0F12" },
-  premium: { gradient: "linear-gradient(135deg, #D4FF3A 0%, #2BD98A 100%)", solid: "#7BEA62", bubble: "#5BE07A", headerText: "#0E0F12" },
+  premium: { gradient: "linear-gradient(135deg, #5BE38A 0%, #10A37F 100%)", solid: "#2FC487", bubble: "#3BCB8A", headerText: "#0E0F12" },
 } as const;
 
 export const ease = {

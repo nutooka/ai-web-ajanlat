@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { PACKAGE_IDS, type PackageId, type Quote } from "@/features/pricing/types";
 import { formatRon, formatWeeks } from "@/lib/format";
-import { ease, packageThemes, palette, shadow } from "@/theme/tokens";
+import { gradients, ease, packageThemes, palette, shadow } from "@/theme/tokens";
 
 const priceFormatter = new Intl.NumberFormat("hu-HU", { maximumFractionDigits: 0, useGrouping: "always" });
 
@@ -110,7 +110,7 @@ export function PricingCards({ quote, mode, selected, onSelect, readOnly = false
                 minHeight: 56,
                 borderRadius: 2.5,
                 flexDirection: "column",
-                background: active ? palette.lime : "transparent",
+                background: active ? gradients.brand : "transparent",
                 color: active ? palette.ink : "#fff",
                 transition: "background .2s ease",
                 "&.Mui-focusVisible": { outline: `2px solid #fff`, outlineOffset: 2 },
@@ -149,7 +149,8 @@ export function PricingCards({ quote, mode, selected, onSelect, readOnly = false
                 whileInView={{ y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.6, delay: index * 0.08, ease: ease.out }}
-                style={{ height: "100%" }}
+                // The chosen card gets a 4px brand-gradient ring (a padded gradient frame – borders can't be gradients).
+                style={{ height: "100%", padding: selectable ? 4 : 0, borderRadius: 20, background: isSelected ? gradients.brand : "transparent", transition: "background .25s ease" }}
               >
                 <Box
                   role={selectable ? "radio" : undefined}
@@ -164,7 +165,7 @@ export function PricingCards({ quote, mode, selected, onSelect, readOnly = false
                     color: "#fff",
                     display: "flex",
                     flexDirection: "column",
-                    boxShadow: isSelected ? `0 0 0 4px ${palette.lime}, 0 0 48px -8px rgba(212,255,58,.55), ${shadow.raisedOnDark}` : shadow.raisedOnDark,
+                    boxShadow: shadow.raisedOnDark,
                     opacity: dimmed ? 0.72 : 1,
                     filter: dimmed ? "saturate(.75)" : "none",
                     transform: isSelected ? { md: "translateY(-8px)" } : "none",
@@ -178,7 +179,7 @@ export function PricingCards({ quote, mode, selected, onSelect, readOnly = false
                     <Box sx={{ position: "relative" }}>
                       <Box sx={{ minHeight: 26, mb: 0.5 }}>
                         {selectable && isSelected ? (
-                          <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, px: 1.25, py: 0.25, borderRadius: 999, background: palette.lime, color: palette.ink, border: `1.5px solid ${palette.ink}`, fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                          <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, px: 1.25, py: 0.25, borderRadius: 999, background: gradients.brand, color: palette.ink, border: `1.5px solid ${palette.ink}`, fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase" }}>
                             <Check sx={{ fontSize: 14 }} /> {readOnly ? "Ezt választotta" : "A te választásod"}
                           </Box>
                         ) : badge && (
@@ -223,8 +224,9 @@ export function PricingCards({ quote, mode, selected, onSelect, readOnly = false
                               fontSize: 13.5,
                               fontWeight: 600,
                               textAlign: "center",
-                              border: `1px solid ${note.strong ? palette.lime : palette.inkLine}`,
-                              color: note.strong ? palette.lime : palette.inkMuted,
+                              border: note.strong ? "1px solid transparent" : `1px solid ${palette.inkLine}`,
+                              background: note.strong ? `linear-gradient(${palette.inkSoft}, ${palette.inkSoft}) padding-box, ${gradients.brand} border-box` : "transparent",
+                              color: note.strong ? "#fff" : palette.inkMuted,
                             }}
                           >
                             {note.text}
@@ -262,7 +264,7 @@ export function PricingCards({ quote, mode, selected, onSelect, readOnly = false
                     <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
                       {readOnly ? (
                         isSelected && (
-                          <Box sx={{ display: "inline-flex", alignItems: "center", gap: 1, minHeight: 48, px: 3, borderRadius: 999, background: palette.lime, color: palette.ink, fontWeight: 700, fontSize: 15 }}>
+                          <Box sx={{ display: "inline-flex", alignItems: "center", gap: 1, minHeight: 48, px: 3, borderRadius: 999, background: gradients.brand, color: palette.ink, fontWeight: 700, fontSize: 15 }}>
                             Ezt választotta <Check sx={{ fontSize: 18 }} />
                           </Box>
                         )
@@ -278,8 +280,8 @@ export function PricingCards({ quote, mode, selected, onSelect, readOnly = false
                             fontSize: 15,
                             gap: 1,
                             color: isSelected ? palette.ink : "#fff",
-                            background: isSelected ? palette.lime : "transparent",
-                            border: isSelected ? `1.5px solid ${palette.lime}` : "1.5px solid rgba(255,255,255,.45)",
+                            background: isSelected ? gradients.brand : "transparent",
+                            border: isSelected ? "1.5px solid transparent" : "1.5px solid rgba(255,255,255,.45)",
                             transition: "transform .2s ease, background .2s ease",
                             "&:hover": { transform: "translateY(-2px)" },
                             "&.Mui-focusVisible": { outline: "2px solid #fff", outlineOffset: 3 },
@@ -348,8 +350,10 @@ function Row({ included, label, availableIn, requested = false }: { included: bo
           borderRadius: "50%",
           display: "grid",
           placeItems: "center",
-          border: `1.5px solid ${included ? palette.check : palette.inkLine}`,
-          color: included ? palette.check : palette.inkMuted,
+          // Included: a thin brand-gradient ring (fill would make every row shout).
+          border: included ? "1.5px solid transparent" : `1.5px solid ${palette.inkLine}`,
+          background: included ? `linear-gradient(${palette.inkSoft}, ${palette.inkSoft}) padding-box, ${gradients.brand} border-box` : "transparent",
+          color: included ? "#fff" : palette.inkMuted,
         }}
       >
         <Icon sx={{ fontSize: 15 }} />
@@ -370,9 +374,9 @@ function Row({ included, label, availableIn, requested = false }: { included: bo
               fontSize: 11,
               fontWeight: 700,
               whiteSpace: "nowrap",
-              border: `1px solid ${palette.lime}`,
-              color: included ? palette.ink : palette.lime,
-              background: included ? palette.lime : "transparent",
+              border: included ? "1px solid transparent" : `1px dashed ${palette.brandOnDark}`,
+              color: included ? palette.ink : palette.brandOnDark,
+              background: included ? gradients.brand : "transparent",
             }}
           >
             {included || !availableIn ? "Kérted" : `Kérted · ${availableIn}tól`}

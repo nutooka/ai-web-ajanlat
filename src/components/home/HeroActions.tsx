@@ -14,7 +14,7 @@ import { pricingConfig } from "@/config/pricing";
 import { projectTypeQuestion } from "@/features/questionnaire/config/branches";
 import { formatRon } from "@/lib/format";
 import { useWizardSnapshot, wizardStore } from "@/lib/storage";
-import { palette } from "@/theme/tokens";
+import { gradients, palette } from "@/theme/tokens";
 import { startPlanner } from "./startPlanner";
 
 /**
@@ -80,7 +80,7 @@ export function HeroActions({ startingPrices }: { startingPrices: Record<string,
                     gap: 1.25,
                     textAlign: "left",
                     transition: "background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease",
-                    "&:hover, &.Mui-focusVisible": { background: palette.lime, borderColor: palette.lime, color: palette.ink, transform: "translateY(-1px)" },
+                    "&:hover, &.Mui-focusVisible": { background: gradients.brand, borderColor: "transparent", color: palette.ink, transform: "translateY(-1px)" },
                     "&:hover .pick-price, &.Mui-focusVisible .pick-price": { color: palette.ink },
                     "&.Mui-focusVisible": { outline: "2px solid #fff", outlineOffset: 2 },
                   }}
@@ -103,7 +103,7 @@ export function HeroActions({ startingPrices }: { startingPrices: Record<string,
       <Typography variant="body2" sx={{ color: palette.inkMuted }}>
         Kb. 3 perc · ingyenes · nem kell regisztrálni
         {bestPercent > 0 && (
-          <Box component="span" sx={{ display: "block", mt: 0.75, color: palette.amber, fontWeight: 600 }}>
+          <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 1.5, background: gradients.discount, color: palette.ink, fontWeight: 650 }}>
             −{bestPercent}% kedvezmény, ha az ajánlatod elkészülte után 1 órán belül egyeztetést kérsz.
           </Box>
         )}

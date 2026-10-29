@@ -63,7 +63,7 @@ export function References() {
                 <Typography color="text.secondary">{reference.summary}</Typography>
                 <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
                   {reference.tags.map((tag) => (
-                    <Box key={tag} component="span" sx={{ px: 1.25, py: 0.5, borderRadius: 1.5, background: palette.limeTint, fontSize: 13, fontWeight: 600 }}>
+                    <Box key={tag} component="span" sx={{ px: 1.25, py: 0.5, borderRadius: 1.5, background: palette.brandTint, fontSize: 13, fontWeight: 600 }}>
                       {tag}
                     </Box>
                   ))}

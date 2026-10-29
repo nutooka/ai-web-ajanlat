@@ -6,8 +6,9 @@ import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
 import { projectTypeQuestion } from "@/features/questionnaire/config/branches";
+import { Blob } from "@/components/Blob";
 import { formatRon } from "@/lib/format";
-import { palette } from "@/theme/tokens";
+import { gradients } from "@/theme/tokens";
 import { startPlanner } from "./startPlanner";
 
 /** Typographic list of project types; each row starts the planner with that type pre-selected. */
@@ -42,7 +43,7 @@ export function ProjectTypeGrid({ startingPrices }: { startingPrices: Record<str
                   position: "absolute",
                   inset: 0,
                   zIndex: -1,
-                  background: palette.lime,
+                  background: gradients.brand,
                   transform: "scaleX(0)",
                   transformOrigin: "left",
                   transition: "transform .45s cubic-bezier(.22,1,.36,1)",
@@ -52,9 +53,9 @@ export function ProjectTypeGrid({ startingPrices }: { startingPrices: Record<str
                 "@media (prefers-reduced-motion: reduce)": { "&::before": { transition: "none" } },
               }}
             >
-              <Typography component="span" sx={{ display: { xs: "none", md: "block" }, color: "text.secondary", fontVariantNumeric: "tabular-nums", fontWeight: 600 }}>
-                {String(index + 1).padStart(2, "0")}
-              </Typography>
+              <Box component="span" aria-hidden sx={{ display: { xs: "none", md: "block" } }}>
+                <Blob tone="brand" size={26} morph={false} delay={index * 0.05} />
+              </Box>
               <Typography component="span" variant="h4" sx={{ fontSize: { xs: "1.2rem", md: "1.5rem" } }}>
                 {option.label}
               </Typography>

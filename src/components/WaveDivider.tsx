@@ -27,8 +27,9 @@ export function WaveDivider({ from, to, flip = false, line = true, height = 64 }
         <defs>
           <linearGradient id={`wave-${id}`} x1="0" x2="1" y1="0" y2="0">
             <stop offset="0%" stopColor="#2BD2C9" />
-            <stop offset="50%" stopColor="#FF8A62" />
-            <stop offset="100%" stopColor="#D4FF3A" />
+            <stop offset="35%" stopColor="#3A7BFF" />
+            <stop offset="70%" stopColor="#FF5E7E" />
+            <stop offset="100%" stopColor="#FFB547" />
           </linearGradient>
         </defs>
         <path d={`${WAVE_PATH} L400,70 L0,70 Z`} fill={to} />

@@ -3,22 +3,24 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { CSSProperties } from "react";
 import type { PackageId } from "@/features/pricing/types";
-import { ease, packageThemes } from "@/theme/tokens";
+import { ease, gradients, packageThemes } from "@/theme/tokens";
 
 /**
  * The one liquid shape of the site. Its colour always means something:
- * - basic / standard / premium: that package (blue / orange / green)
- * - discount: discount and time (amber)
+ * - basic / standard / premium: that package (blue / orange / emerald)
+ * - discount: discount and time (warm gradient)
+ * - brand: decoration – at most one per section, cropped at the edge
  * - neutral: "still taking shape" (no package yet)
  * If a shape would mean nothing in a place, it does not go there.
  */
-export type BlobTone = PackageId | "discount" | "neutral";
+export type BlobTone = PackageId | "discount" | "neutral" | "brand";
 
 export const BLOB_GRADIENTS: Record<BlobTone, string> = {
   basic: packageThemes.basic.gradient,
   standard: packageThemes.standard.gradient,
   premium: packageThemes.premium.gradient,
-  discount: "linear-gradient(135deg, #FFD27A 0%, #FFB547 55%, #FF9447 100%)",
+  discount: gradients.discount,
+  brand: gradients.brand,
   neutral: "linear-gradient(135deg, rgba(255,255,255,.22) 0%, rgba(255,255,255,.08) 100%)",
 };
 

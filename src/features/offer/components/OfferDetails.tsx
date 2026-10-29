@@ -95,7 +95,7 @@ export function OfferDetails({ offer, packageId }: { offer: Offer; packageId: Pa
                         label={included ? feature : `${feature} – nem része a csomagnak`}
                         icon={included ? <Check /> : <Close />}
                         variant={included ? "filled" : "outlined"}
-                        sx={included ? { background: palette.limeTint, color: palette.ink } : { color: "text.secondary" }}
+                        sx={included ? { background: palette.brandTint, color: palette.ink } : { color: "text.secondary" }}
                       />
                     );
                   })}

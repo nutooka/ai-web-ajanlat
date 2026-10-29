@@ -20,7 +20,7 @@ import { SAMPLE_COMPANY_ANSWERS } from "@/features/pricing/startingPrice";
 import { PACKAGE_IDS, type PackageId } from "@/features/pricing/types";
 import { formatRon, formatWeeks } from "@/lib/format";
 import { FluidBlobs } from "./FluidBlobs";
-import { ease, palette, shadow } from "@/theme/tokens";
+import { gradients, ease, palette, shadow } from "@/theme/tokens";
 
 const VISIBLE_ITEMS = 5;
 const TOUR: PackageId[] = ["premium", "basic", "standard"];
@@ -183,7 +183,7 @@ export function OfferPreview() {
                           position: "absolute",
                           inset: 0,
                           borderRadius: 6,
-                          background: palette.lime,
+                          background: gradients.brand,
                         }}
                       />
                     )}
@@ -297,19 +297,19 @@ export function OfferPreview() {
               transition: "background .15s ease",
               "&:hover": { background: palette.inkSoft },
               "&.Mui-focusVisible": {
-                outline: `2px solid ${palette.lime}`,
+                outline: "2px solid #fff",
                 outlineOffset: -4,
               },
             }}
           >
             <span>
               Kérem a{" "}
-              <Box component="span" sx={{ color: palette.lime }}>
+              <Box component="span" sx={{ backgroundImage: gradients.brand, backgroundSize: "100% 3px", backgroundPosition: "0 100%", backgroundRepeat: "no-repeat", pb: "2px" }}>
                 saját
               </Box>{" "}
               ajánlatom – kérdőív, kb. 3 perc
             </span>
-            <ArrowForward sx={{ fontSize: 20, color: palette.lime }} />
+            <ArrowForward sx={{ fontSize: 20, color: "#fff" }} />
           </ButtonBase>
         </Box>
       </motion.div>

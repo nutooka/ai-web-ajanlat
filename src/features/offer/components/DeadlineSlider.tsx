@@ -7,7 +7,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import type { PackageQuote } from "@/features/pricing/types";
 import { formatRon } from "@/lib/format";
-import { palette } from "@/theme/tokens";
+import { gradients, palette } from "@/theme/tokens";
 
 interface DeadlineSliderControlProps {
   pkg: PackageQuote;
@@ -54,8 +54,8 @@ export function DeadlineSliderControl({ pkg, onChange, labelledBy, showAmount, d
             px: percent === 0 ? 0 : 1.25,
             py: 0.25,
             borderRadius: 1.5,
-            border: percent < 0 ? `1.5px solid ${palette.amber}` : "none",
-            background: percent < 0 ? "#FFF4E0" : percent > 0 ? palette.paper : "transparent",
+            border: percent < 0 ? "1.5px solid transparent" : "none",
+            background: percent < 0 ? `linear-gradient(#FFF4E0, #FFF4E0) padding-box, ${gradients.discount} border-box` : percent > 0 ? palette.paper : "transparent",
           }}
         >
           {effect}
@@ -76,7 +76,7 @@ export function DeadlineSliderControl({ pkg, onChange, labelledBy, showAmount, d
         color="secondary"
         sx={{
           height: 6,
-          "& .MuiSlider-thumb": { width: 28, height: 28, background: palette.lime, border: `2px solid ${palette.ink}` },
+          "& .MuiSlider-thumb": { width: 28, height: 28, background: gradients.brand, border: `2px solid ${palette.ink}` },
           "& .MuiSlider-thumb.Mui-focusVisible, & .MuiSlider-thumb:hover": { boxShadow: "0 0 0 8px rgba(14,15,18,.12)" },
           "& .MuiSlider-markLabel": { fontSize: 13, color: "text.secondary" },
           "& .MuiSlider-rail": { opacity: 1, background: palette.line },
