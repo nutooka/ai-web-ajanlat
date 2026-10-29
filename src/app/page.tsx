@@ -196,7 +196,7 @@ export default function HomePage() {
         <WaveDivider from={palette.surface} to={palette.ink} flip line={false} />
         {/* Promises */}
         <Box component="section" sx={{ position: "relative", overflow: "hidden", background: palette.ink, color: "#fff" }}>
-          <SectionBlob tone="premium" size={420} position={{ bottom: -210, left: -170 }} />
+          <SectionBlob tone="premium" size={260} position={{ bottom: 56, left: -120 }} />
           <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1, py: { xs: 9, md: 13 }, display: "grid", gridTemplateColumns: { xs: "1fr", md: "0.9fr 1.1fr" }, gap: { xs: 5, md: 10 } }}>
             <Typography variant="h2" className="reveal">
               Prémium minőség, kisvállalkozói áron.
