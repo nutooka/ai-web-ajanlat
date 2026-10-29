@@ -2,6 +2,7 @@
 
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import Check from "@mui/icons-material/Check";
+import Close from "@mui/icons-material/Close";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
@@ -187,6 +188,17 @@ export function PricingCards({
 }: PricingCardsProps) {
   const contents = tierContents(quote);
   const requested = new Set(mode === "offer" ? quote.requested.ids : []);
+  // The visitor's own requests, shown first in every card (ticked, or "nincs benne").
+  const labelOf = new Map(
+    PACKAGE_IDS.flatMap((pid) =>
+      quote.packages[pid].items.map((item) => [item.id, item.label] as const),
+    ),
+  );
+  const requestedRows: ContentRow[] = [...requested].map((rid) => ({
+    id: rid,
+    label: labelOf.get(rid) ?? rid,
+  }));
+  const notRequested = (row: ContentRow) => !requested.has(row.id);
   const selectable = mode === "offer" && Boolean(onSelect);
   // Mobile shows one card at a time; on the home page (and in a read-only snapshot) the visitor browses locally.
   const [browsing, setBrowsing] = useState<PackageId>(
@@ -507,29 +519,50 @@ export function PricingCards({
                       component="ul"
                       sx={{ listStyle: "none", p: 0, m: 0, flex: 1 }}
                     >
+                      {requestedRows.length > 0 && (
+                        <>
+                          <GroupLabel>Amit kértél</GroupLabel>
+                          {requestedRows.map((row) =>
+                            pkg.items.some((item) => item.id === row.id) ? (
+                              <Row
+                                key={row.id}
+                                theme={theme}
+                                included
+                                label={row.label}
+                              />
+                            ) : (
+                              <MissingRow key={row.id} label={row.label} />
+                            ),
+                          )}
+                          {quote.requested.missing[id].includes(
+                            "A választott design",
+                          ) && <MissingRow label="A választott design" />}
+                          <GroupLabel>Ezen felül</GroupLabel>
+                        </>
+                      )}
                       <BaseRow
                         theme={theme}
                         label={
                           index === 0
-                            ? `Az alap: ${contents[id].base.length} tétel`
+                            ? `Az alap${requestedRows.length > 0 ? " többi része" : ""}: ${contents[id].base.filter(notRequested).length} tétel`
                             : `Minden, ami a ${quote.packages[PACKAGE_IDS[index - 1]].name} csomagban`
                         }
-                        rows={contents[id].base}
+                        rows={contents[id].base.filter(notRequested)}
                         requested={requested}
-                        defaultOpen={index === 0}
+                        defaultOpen={index === 0 && requestedRows.length === 0}
                       />
-                      {contents[id].additions.length > 0 && index > 0 && (
-                        <GroupLabel>Plusz:</GroupLabel>
-                      )}
-                      {contents[id].additions.map((row) => (
-                        <Row
-                          key={row.id}
-                          theme={theme}
-                          included
-                          label={row.label}
-                          requested={requested.has(row.id)}
-                        />
-                      ))}
+                      {contents[id].additions.filter(notRequested).length > 0 &&
+                        index > 0 && <GroupLabel>Plusz:</GroupLabel>}
+                      {contents[id].additions
+                        .filter(notRequested)
+                        .map((row) => (
+                          <Row
+                            key={row.id}
+                            theme={theme}
+                            included
+                            label={row.label}
+                          />
+                        ))}
                       {mode === "offer" && (
                         <Box component="li" sx={{ pt: 1 }}>
                           <Box
@@ -700,6 +733,57 @@ function Row({
       <Typography sx={{ fontSize: 14, color: "#fff" }}>
         {label}
         {requested && <RequestedTag theme={theme} />}
+      </Typography>
+    </Stack>
+  );
+}
+
+/** A request this package leaves out: dimmed, with a plain "nincs benne" tag. */
+function MissingRow({ label }: { label: string }) {
+  return (
+    <Stack
+      component="li"
+      direction="row"
+      spacing={1.5}
+      sx={{
+        alignItems: "center",
+        py: 1.1,
+        borderBottom: `1px solid ${palette.inkLine}`,
+      }}
+    >
+      <Box
+        aria-hidden
+        sx={{
+          flexShrink: 0,
+          width: 24,
+          height: 24,
+          borderRadius: "50%",
+          display: "grid",
+          placeItems: "center",
+          border: `1.5px dashed ${palette.inkLine}`,
+          color: palette.inkMuted,
+        }}
+      >
+        <Close sx={{ fontSize: 14 }} />
+      </Box>
+      <Typography sx={{ fontSize: 14, color: palette.inkMuted }}>
+        {label}
+        <Box
+          component="span"
+          sx={{
+            ml: 0.75,
+            px: 0.75,
+            py: 0.1,
+            borderRadius: 1,
+            border: `1px solid ${palette.inkLine}`,
+            fontSize: 11,
+            fontWeight: 700,
+            color: "#fff",
+            whiteSpace: "nowrap",
+          }}
+        >
+          nincs benne
+        </Box>
       </Typography>
     </Stack>
   );
