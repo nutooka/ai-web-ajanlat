@@ -37,7 +37,7 @@ export const siteConfig = {
    * Üzenetküldős kapcsolat az ajánlat oldalán. Üresen hagyva a gomb nem jelenik meg.
    * messenger: a Facebook-oldal felhasználóneve (m.me/<ez>), whatsapp: telefonszám nemzetközi formában, szóközök nélkül (pl. 40712345678).
    */
-  chat: { messenger: "", whatsapp: "" },
+  chat: { messenger: "", whatsapp: "40753968097" },
   /** Ennyi napig érvényes az ajánlatban rögzített (kedvezményes) ár az egyeztetés kérése után. */
   offerValidityDays: 30,
   privacy: {
