@@ -1,6 +1,8 @@
 import { branchQuestions, projectTypeQuestion, unsureQuestions } from "../config/branches";
 import { commonQuestions } from "../config/common";
 import {
+  OTHER_TEXT_MAX,
+  otherAnswerKey,
   RESOLVED_PROJECT_TYPES,
   type AnswerValue,
   type Answers,
@@ -125,8 +127,37 @@ const EXTRA_ANSWERS: Record<string, (value: unknown) => string | undefined> = {
   },
 };
 
+const OTHER_SUFFIX = "__other";
+
+/** The question an "Egyéb" free-text key belongs to, if that question really has an "other" option. */
+function otherBase(id: string): Question | undefined {
+  if (!id.endsWith(OTHER_SUFFIX)) return undefined;
+  const question = QUESTION_BY_ID.get(id.slice(0, -OTHER_SUFFIX.length));
+  return question && question.kind !== "text" && question.options.some((option) => option.other) ? question : undefined;
+}
+
 function sanitizeExtra(id: string, value: unknown): string | undefined {
+  if (otherBase(id)) {
+    if (typeof value !== "string") return undefined;
+    const text = value.trim().slice(0, OTHER_TEXT_MAX);
+    return text ? text : undefined;
+  }
   return EXTRA_ANSWERS[id]?.(value);
+}
+
+/** True when the visitor picked the "Egyéb" option of this question. */
+function picksOther(question: Question, value: AnswerValue | undefined): boolean {
+  if (question.kind === "text" || value === undefined) return false;
+  const picked = Array.isArray(value) ? value : [value];
+  return question.options.some((option) => option.other && picked.includes(option.id));
+}
+
+/** Free-text "Egyéb" requests, with the question they belong to (for the offer, the e-mail and pricing review). */
+export function otherRequests(answers: Answers): { questionId: string; title: string; text: string }[] {
+  return getVisibleQuestions(answers).flatMap((question) => {
+    const text = answers[otherAnswerKey(question.id)];
+    return typeof text === "string" && text && picksOther(question, answers[question.id]) ? [{ questionId: question.id, title: question.title, text }] : [];
+  });
 }
 
 /**
@@ -146,7 +177,13 @@ export function pruneAnswers(rawInput: Record<string, unknown>): Answers {
   // Visibility depends on answers, so repeat until nothing else drops out.
   for (let pass = 0; pass < 5; pass += 1) {
     const visibleIds = new Set(getVisibleQuestions(current).map((question) => question.id));
-    const next = Object.fromEntries(Object.entries(current).filter(([id]) => visibleIds.has(id) || id in EXTRA_ANSWERS));
+    const keep = ([id]: [string, AnswerValue | undefined]) => {
+      if (visibleIds.has(id) || id in EXTRA_ANSWERS) return true;
+      // "Egyéb" text survives only while its question is visible and "Egyéb" is still picked.
+      const base = otherBase(id);
+      return Boolean(base && visibleIds.has(base.id) && picksOther(base, current[base.id]));
+    };
+    const next = Object.fromEntries(Object.entries(current).filter(keep));
     if (Object.keys(next).length === Object.keys(current).length) return next;
     current = next;
   }

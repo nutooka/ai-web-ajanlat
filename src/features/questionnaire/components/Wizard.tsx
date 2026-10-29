@@ -26,7 +26,7 @@ import {
   isQuestionAnswered,
   validateAnswer,
 } from "../engine";
-import type { AnswerValue, Answers } from "../types";
+import { otherAnswerKey, type AnswerValue, type Answers } from "../types";
 import { pricingConfig } from "@/config/pricing";
 import { DeadlineSliderControl } from "@/features/offer/components/DeadlineSlider";
 import { flexibilityMultiplier } from "@/features/pricing/flexibility";
@@ -253,6 +253,8 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
               recommended={recommended}
               error={error?.questionId === question.id ? error.message : null}
               onChange={handleChange}
+              otherText={typeof answers[otherAnswerKey(question.id)] === "string" ? String(answers[otherAnswerKey(question.id)]) : undefined}
+              onOtherChange={(text) => wizardStore.update({ answers: withAnswer(answers, otherAnswerKey(question.id), text) })}
               customControl={
                 question.id === "deadline" && quote ? (
                   <DeadlineSliderControl pkg={quote.packages.standard} onChange={setDeadlineWeeks} labelledBy={`${question.id}-title`} showAmount={false} />

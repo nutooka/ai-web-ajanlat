@@ -615,6 +615,30 @@ export const pricingConfig: PricingConfig = {
       },
     },
     app_integrations: {
+      calendar_sync: {
+        label: "Naptár-szinkron (Google, Outlook)",
+        hours: 10,
+        category: "integration",
+        essential: true,
+      },
+      social_login: {
+        label: "Google / Facebook bejelentkezés",
+        hours: 8,
+        category: "integration",
+        essential: true,
+      },
+      cloud_storage: {
+        label: "Fájltárhely-integráció (Google Drive, Dropbox)",
+        hours: 8,
+        category: "integration",
+        essential: true,
+      },
+      shipping_api: {
+        label: "Futár- vagy szállítási rendszer integrációja",
+        hours: 14,
+        category: "integration",
+        essential: true,
+      },
       email_sms: {
         label: "E-mail / SMS értesítő integráció",
         hours: 8,
@@ -755,6 +779,18 @@ export const pricingConfig: PricingConfig = {
       },
     },
     landing_forms: {
+      crm: {
+        label: "Jelentkezők küldése CRM-be",
+        hours: 4,
+        category: "integration",
+        essential: true,
+      },
+      chat: {
+        label: "WhatsApp / Messenger gomb",
+        hours: 1,
+        category: "integration",
+        essential: true,
+      },
       form: {
         label: "Jelentkezési / kapcsolati űrlap",
         hours: 3,

@@ -2,7 +2,7 @@ import { calculateQuote, type QuoteOptions } from "@/features/pricing/engine";
 import { pricingConfig } from "@/config/pricing";
 import { PACKAGE_IDS, type PackageId, type Quote } from "@/features/pricing/types";
 import { getAnswerLabel, getVisibleQuestions, pruneAnswers } from "@/features/questionnaire/engine";
-import type { Answers, ResolvedProjectType } from "@/features/questionnaire/types";
+import { otherAnswerKey, type Answers, type ResolvedProjectType } from "@/features/questionnaire/types";
 import { recommendTechnology, summarizeProject } from "@/lib/ai/ruleBased";
 import type { TechRecommendation } from "@/lib/ai/types";
 
@@ -97,7 +97,11 @@ export function buildOffer(rawAnswers: Answers, options: QuoteOptions = {}): Off
 
   const answerRows: AnswerRow[] = getVisibleQuestions(answers)
     .filter((question) => answers[question.id] !== undefined)
-    .map((question) => ({ questionId: question.id, question: question.title, answer: getAnswerLabel(question, answers[question.id]) }));
+    .map((question) => {
+      const other = answers[otherAnswerKey(question.id)];
+      const label = getAnswerLabel(question, answers[question.id]);
+      return { questionId: question.id, question: question.title, answer: typeof other === "string" && other ? `${label} – ${other}` : label };
+    });
 
   return {
     projectType: quote.projectType,

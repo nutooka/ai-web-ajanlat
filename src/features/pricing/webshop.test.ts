@@ -290,3 +290,28 @@ describe("option badges in the questionnaire", () => {
     expect(optionImpacts("company_features", "faq")).toEqual([]);
   });
 });
+
+describe("\"Egyéb\" free-text answers", () => {
+  it("keeps the text while Egyéb is picked, and turns it into a technical review reason", async () => {
+    const { pruneAnswers: prune, otherRequests } = await import("@/features/questionnaire/engine");
+    const answers: Answers = { ...base, shop_marketing: ["reviews", "other"], shop_marketing__other: "  Ajándékkártya  " };
+    expect(prune(answers).shop_marketing__other).toBe("Ajándékkártya");
+    expect(otherRequests(prune(answers))).toEqual([{ questionId: "shop_marketing", title: expect.any(String), text: "Ajándékkártya" }]);
+    const q = quote(answers);
+    expect(q.review.required).toBe(true);
+    expect(q.review.reasons.join(" ")).toContain("Ajándékkártya");
+  });
+
+  it("drops the text when Egyéb is unticked or the question has no Egyéb option", async () => {
+    const { pruneAnswers: prune } = await import("@/features/questionnaire/engine");
+    expect(prune({ ...base, shop_marketing: ["reviews"], shop_marketing__other: "x" }).shop_marketing__other).toBeUndefined();
+    expect(prune({ ...base, shop_variants__other: "x" }).shop_variants__other).toBeUndefined();
+    expect(prune({ ...base, shop_marketing: ["other"], shop_marketing__other: "a".repeat(500) }).shop_marketing__other).toHaveLength(200);
+  });
+
+  it("shows the text next to the answer in the offer rows", async () => {
+    const { buildOffer } = await import("@/features/offer/buildOffer");
+    const offer = buildOffer({ ...base, shop_marketing: ["other"], shop_marketing__other: "Ajándékkártya" })!;
+    expect(offer.answerRows.find((row) => row.questionId === "shop_marketing")?.answer).toBe("Egyéb – Ajándékkártya");
+  });
+});

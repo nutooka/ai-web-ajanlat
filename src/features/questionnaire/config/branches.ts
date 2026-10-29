@@ -86,6 +86,7 @@ const companyQuestions: Question[] = [
       { id: "b2b", label: "Cégek, üzleti partnerek", icon: "business" },
       { id: "tourists", label: "Turisták, vendégek", icon: "public" },
       { id: "international", label: "Külföldi ügyfelek", icon: "language" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
     ],
   },
   {
@@ -118,6 +119,7 @@ const companyQuestions: Question[] = [
       { id: "chat", label: "WhatsApp / Messenger gomb", icon: "phone" },
       { id: "downloads", label: "Letölthető dokumentumok", icon: "download" },
       { id: "careers", label: "Állásajánlatok", icon: "group" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
     ],
   },
   {
@@ -176,6 +178,7 @@ const webshopQuestions: Question[] = [
       { id: "customers", label: "Vásárlók", description: "Fiókok, címek", icon: "people" },
       { id: "orders", label: "Korábbi rendelések", icon: "receipt" },
       { id: "redirects", label: "Régi linkek és Google-helyezés", description: "URL-átirányítások", icon: "seo" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
     ],
   },
   {
@@ -240,6 +243,7 @@ const webshopQuestions: Question[] = [
       { id: "card", label: "Bankkártyával online", icon: "payments" },
       { id: "cod", label: "Utánvéttel", description: "Fizetés átvételkor", icon: "cash" },
       { id: "transfer", label: "Banki átutalással", icon: "receipt" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
     ],
   },
   {
@@ -286,6 +290,7 @@ const webshopQuestions: Question[] = [
       { id: "locker", label: "Csomagautomatába", description: "Pl. easybox", icon: "locker" },
       { id: "pickup", label: "Személyes átvétel", description: "Nálad, az üzletben", icon: "pickup" },
       { id: "international", label: "Külföldre is", icon: "public" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
     ],
   },
   {
@@ -348,6 +353,7 @@ const webshopQuestions: Question[] = [
       { id: "coupons", label: "Kuponkódok", icon: "receipt" },
       { id: "volume", label: "Mennyiségi kedvezmény", icon: "inventory" },
       { id: "loyalty", label: "Hűségpontok", icon: "star" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
     ],
   },
   {
@@ -361,6 +367,7 @@ const webshopQuestions: Question[] = [
       { id: "newsletter", label: "Hírlevél-integráció", icon: "newsletter" },
       { id: "abandoned_cart", label: "Elhagyott kosár e-mail", description: "Emlékeztető a félbehagyott vásárlásról", icon: "mail" },
       { id: "related", label: "Kapcsolódó termékek ajánlása", icon: "layers" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
     ],
   },
   {
@@ -531,7 +538,11 @@ const webappQuestions: Question[] = [
       { id: "accounting", label: "Számlázó / könyvelő rendszer", icon: "receipt" },
       { id: "crm", label: "CRM vagy ERP", icon: "group" },
       { id: "ai", label: "AI-funkciók", icon: "auto" },
-      { id: "other_api", label: "Egyéb külső API", icon: "api" },
+      { id: "calendar_sync", label: "Naptár (Google, Outlook)", icon: "calendar" },
+      { id: "social_login", label: "Google / Facebook bejelentkezés", icon: "person" },
+      { id: "cloud_storage", label: "Fájltárhely (Google Drive, Dropbox)", icon: "file" },
+      { id: "shipping_api", label: "Futár- vagy szállítási rendszer", icon: "truck" },
+      { id: "other_api", label: "Egyéb rendszer", description: "Írd le röviden", icon: "api", other: true },
       { id: "none", label: "Nincs szükség", icon: "close", exclusive: true },
     ],
   },
@@ -548,6 +559,7 @@ const webappQuestions: Question[] = [
       { id: "reports", label: "Riportok, exportálás", icon: "chart" },
       { id: "search", label: "Keresés, szűrés", icon: "search" },
       { id: "calendar", label: "Naptár, foglalások", icon: "calendar" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
     ],
   },
   {
@@ -582,6 +594,7 @@ const webappQuestions: Question[] = [
       { id: "audit_log", label: "Tevékenységnapló", description: "Ki, mit, mikor módosított", icon: "article" },
       { id: "gdpr_export", label: "GDPR-adatexport és -törlés", icon: "shield" },
       { id: "sensitive", label: "Érzékeny adatok", description: "Egészségügyi, pénzügyi adatok", icon: "admin" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
     ],
   },
   {
@@ -645,6 +658,7 @@ const landingQuestions: Question[] = [
       { id: "illustrations", label: "Egyedi illusztrációk", icon: "brush" },
       { id: "video", label: "Videó beágyazása", icon: "event" },
       { id: "animations", label: "Görgetési animációk", icon: "auto" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
     ],
   },
   {
@@ -657,6 +671,9 @@ const landingQuestions: Question[] = [
       { id: "form", label: "Jelentkezési / kapcsolati űrlap", icon: "mail" },
       { id: "newsletter", label: "Hírlevélrendszer (pl. Mailchimp)", icon: "newsletter" },
       { id: "booking", label: "Időpontfoglalás", icon: "calendar" },
+      { id: "crm", label: "Jelentkezők küldése CRM-be", icon: "group" },
+      { id: "chat", label: "WhatsApp / Messenger gomb", icon: "phone" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
       { id: "none", label: "Egyik sem", icon: "close", exclusive: true },
     ],
   },
@@ -706,6 +723,7 @@ const redesignQuestions: Question[] = [
       { id: "not_mobile", label: "Nem jó mobilon", icon: "phone" },
       { id: "hard_to_edit", label: "Nehéz szerkeszteni", icon: "edit" },
       { id: "low_conversion", label: "Kevés megkeresést hoz", icon: "trend" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
     ],
   },
   {
@@ -731,6 +749,7 @@ const redesignQuestions: Question[] = [
       { id: "colors", label: "Színvilág", icon: "palette" },
       { id: "content", label: "Szövegek, képek", icon: "article" },
       { id: "structure", label: "Menüszerkezet", icon: "layers" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
     ],
   },
   {
@@ -771,6 +790,7 @@ const redesignQuestions: Question[] = [
       { id: "gallery", label: "Galéria / portfólió", icon: "photo" },
       { id: "booking", label: "Online időpontfoglalás", icon: "calendar" },
       { id: "newsletter", label: "Hírlevél-feliratkozás", icon: "newsletter" },
+      { id: "other", label: "Egyéb", description: "Írd le röviden", icon: "edit", other: true },
       { id: "none", label: "Nem kell új funkció", icon: "close", exclusive: true },
     ],
   },

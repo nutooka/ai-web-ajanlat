@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import { forwardRef } from "react";
 import { optionImpacts } from "@/features/pricing/optionImpact";
 import { toggleMultiOption } from "../engine";
-import type { AnswerValue, Question } from "../types";
+import { OTHER_TEXT_MAX, type AnswerValue, type Question } from "../types";
 import { OptionCard } from "./OptionCard";
 
 interface QuestionStepProps {
@@ -19,10 +19,13 @@ interface QuestionStepProps {
   onChange: (value: AnswerValue | undefined, options?: { advance?: boolean }) => void;
   /** Replaces the default answer UI (e.g. the deadline slider). */
   customControl?: React.ReactNode;
+  /** Free text of the "Egyéb" option, shown when that option is picked. */
+  otherText?: string;
+  onOtherChange?: (text: string | undefined) => void;
 }
 
 export const QuestionStep = forwardRef<HTMLHeadingElement, QuestionStepProps>(function QuestionStep(
-  { question, value, recommended, error, onChange, customControl },
+  { question, value, recommended, error, onChange, customControl, otherText, onOtherChange },
   headingRef,
 ) {
   const errorId = `${question.id}-error`;
@@ -84,7 +87,8 @@ export const QuestionStep = forwardRef<HTMLHeadingElement, QuestionStepProps>(fu
                     const next = toggleMultiOption(question, Array.isArray(value) ? value : [], option.id);
                     onChange(next.length > 0 ? next : undefined);
                   } else {
-                    onChange(option.id, { advance: true });
+                    // "Egyéb" needs a moment to type: no auto-advance.
+                    onChange(option.id, { advance: !option.other });
                   }
                 }}
               />
@@ -92,6 +96,18 @@ export const QuestionStep = forwardRef<HTMLHeadingElement, QuestionStepProps>(fu
           })}
         </Box>
       )}
+
+      {question.kind !== "text" &&
+        question.options.some((option) => option.other && (Array.isArray(value) ? value.includes(option.id) : value === option.id)) && (
+          <TextField
+            autoFocus
+            label="Mit szeretnél még? Írd le röviden."
+            value={otherText ?? ""}
+            onChange={(event) => onOtherChange?.(event.target.value === "" ? undefined : event.target.value)}
+            slotProps={{ htmlInput: { maxLength: OTHER_TEXT_MAX } }}
+            helperText="Nem kerül automatikusan az árba – az egyeztetésen beárazzuk."
+          />
+        )}
 
       {error && question.kind !== "text" && (
         <Typography id={errorId} role="alert" color="error" variant="body2">

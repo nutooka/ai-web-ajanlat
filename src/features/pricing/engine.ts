@@ -1,5 +1,5 @@
 import { pricingConfig } from "@/config/pricing";
-import { getEffectiveProjectType, pruneAnswers } from "@/features/questionnaire/engine";
+import { getEffectiveProjectType, otherRequests, pruneAnswers } from "@/features/questionnaire/engine";
 import type { Answers, ResolvedProjectType } from "@/features/questionnaire/types";
 import { flexibilityMultiplier, scheduleRange } from "./flexibility";
 import { resolveQuickDecision } from "./quickDecision";
@@ -356,7 +356,13 @@ export function calculateQuote(rawAnswers: Answers, config: PricingConfig = pric
     config,
   );
 
-  const reasons = [...new Set(ordered.flatMap((pkg) => pkg.items.map((item) => item.review).filter((reason): reason is string => Boolean(reason))))];
+  const reasons = [
+    ...new Set([
+      ...ordered.flatMap((pkg) => pkg.items.map((item) => item.review).filter((reason): reason is string => Boolean(reason))),
+      // "Egyéb" free-text requests are not priced automatically: they are agreed on the call.
+      ...otherRequests(answers).map((request) => `Egyedi kérés („${request.text}”): egyeztetés után árazzuk.`),
+    ]),
+  ];
   const notes = config.offerNotes.filter((note) => matchesCondition(answers, note.when));
 
   const { recommended, requested } = coverage(ordered, answers, config);

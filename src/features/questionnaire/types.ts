@@ -27,7 +27,13 @@ export interface QuestionOption {
   icon?: IconKey;
   /** Mutually exclusive with every other option in a multi-select question. */
   exclusive?: boolean;
+  /** "Egyéb": when chosen, a short free-text field appears (stored under `otherAnswerKey(questionId)`). */
+  other?: boolean;
 }
+
+/** Where the free text of an "Egyéb" option is stored. */
+export const otherAnswerKey = (questionId: string) => `${questionId}__other`;
+export const OTHER_TEXT_MAX = 200;
 
 interface QuestionBase {
   id: string;
