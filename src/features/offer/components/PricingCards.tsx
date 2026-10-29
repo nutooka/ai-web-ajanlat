@@ -3,7 +3,6 @@
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import Check from "@mui/icons-material/Check";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Stack from "@mui/material/Stack";
@@ -470,19 +469,28 @@ export function PricingCards({
                     )}
                     {/* What this package gives – short, the full list is in the comparison table below. */}
                     {(() => {
-                      const highlights = [...contents[id].additions];
+                      // Basic lists every base function plainly; the higher tiers say "everything in X" + what they add.
+                      const highlights =
+                        index === 0
+                          ? [...contents[id].base, ...contents[id].additions]
+                          : [...contents[id].additions];
                       const lead =
                         index === 0
-                          ? `Minden alapfunkció (${contents[id].base.length} tétel)`
+                          ? null
                           : `Minden, ami a ${quote.packages[PACKAGE_IDS[index - 1]].name} csomagban`;
-                      const shown = highlights.slice(0, MAX_HIGHLIGHTS);
+                      const shown =
+                        index === 0
+                          ? highlights
+                          : highlights.slice(0, MAX_HIGHLIGHTS);
                       const rest = highlights.length - shown.length;
                       return (
                         <Stack
                           component="ul"
                           sx={{ listStyle: "none", p: 0, m: 0, flex: 1 }}
                         >
-                          <Row theme={theme} included label={lead} strong />
+                          {lead && (
+                            <Row theme={theme} included label={lead} strong />
+                          )}
                           {shown.map((row) => (
                             <Row
                               key={row.id}
@@ -778,7 +786,6 @@ function Comparison({
   mode: "home" | "offer";
   detailsHref: string;
 }) {
-  const [baseOpen, setBaseOpen] = useState(false);
   const has = (pid: PackageId, rowId: string) =>
     quote.packages[pid].items.some((item) => item.id === rowId);
   const base = contents.basic.base.filter((row) => !requested.has(row.id));
@@ -966,53 +973,6 @@ function Comparison({
             {differences.map((row) => line(row, true))}
           </>
         )}
-
-        {heading("Mindháromban benne van")}
-        <ButtonBase
-          onClick={() => setBaseOpen((open) => !open)}
-          aria-expanded={baseOpen}
-          sx={{
-            width: "100%",
-            display: "grid",
-            gridTemplateColumns: cols,
-            alignItems: "center",
-            py: 1.1,
-            minHeight: 44,
-            textAlign: "left",
-            borderBottom: `1px solid ${palette.inkLine}`,
-            "&.Mui-focusVisible": {
-              outline: "2px solid #fff",
-              outlineOffset: 2,
-            },
-          }}
-        >
-          <Stack direction="row" spacing={0.75} sx={{ alignItems: "center" }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 650 }}>
-              Az alap: {base.length} tétel
-            </Typography>
-            <ExpandMore
-              sx={{
-                fontSize: 20,
-                color: palette.inkMuted,
-                transition: "transform .2s ease",
-                transform: baseOpen ? "rotate(180deg)" : "none",
-              }}
-            />
-          </Stack>
-          {PACKAGE_IDS.map((pid) => (
-            <Box
-              key={pid}
-              sx={{
-                display: "grid",
-                placeItems: "center",
-                color: packageThemes[pid].solid,
-              }}
-            >
-              <Check sx={{ fontSize: 20 }} />
-            </Box>
-          ))}
-        </ButtonBase>
-        {baseOpen && base.map((row) => line(row))}
       </Box>
       {mode === "offer" && (
         <Box
