@@ -46,7 +46,6 @@ interface PricingCardsProps {
 
 type ContentRow = { id: string; label: string };
 
-const MAX_HIGHLIGHTS = 4;
 const COMPARISON_ID = "osszehasonlitas";
 
 /**
@@ -478,11 +477,8 @@ export function PricingCards({
                         index === 0
                           ? null
                           : `Minden, ami a ${quote.packages[PACKAGE_IDS[index - 1]].name} csomagban`;
-                      const shown =
-                        index === 0
-                          ? highlights
-                          : highlights.slice(0, MAX_HIGHLIGHTS);
-                      const rest = highlights.length - shown.length;
+                      // Every item is written out – no "és még N tétel".
+                      const shown = highlights;
                       return (
                         <Stack
                           component="ul"
@@ -500,19 +496,6 @@ export function PricingCards({
                               requested={requested.has(row.id)}
                             />
                           ))}
-                          {rest > 0 && (
-                            <Box
-                              component="li"
-                              sx={{
-                                py: 1,
-                                fontSize: 13.5,
-                                color: palette.inkMuted,
-                                listStyle: "none",
-                              }}
-                            >
-                              és még {rest} tétel
-                            </Box>
-                          )}
                           <Box component="li" sx={{ pt: 1, listStyle: "none" }}>
                             <Box
                               component="a"
