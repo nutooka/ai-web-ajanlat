@@ -4,6 +4,8 @@ import ArrowForward from "@mui/icons-material/ArrowForward";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
+import MuiLink from "@mui/material/Link";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Blob } from "@/components/Blob";
 import { formatRon } from "@/lib/format";
@@ -22,7 +24,7 @@ export function ProjectTypeGrid({ options, startingPrices }: { options: ProjectT
       {options.map((option, index) => {
         const price = startingPrices[option.id];
         return (
-          <Box component="li" key={option.id} sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Box component="li" key={option.id} sx={{ borderBottom: 1, borderColor: "divider", position: "relative" }}>
             <ButtonBase
               onClick={() => start(option.id)}
               sx={{
@@ -78,6 +80,30 @@ export function ProjectTypeGrid({ options, startingPrices }: { options: ProjectT
               </Typography>
               <ArrowForward className="row-arrow" sx={{ display: { xs: "none", md: "block" }, transition: "transform .3s ease" }} />
             </ButtonBase>
+            {/* Separate link (not inside the button): the row starts the planner, this opens the service page. */}
+            {option.href && (
+              <MuiLink
+                component={Link}
+                href={option.href}
+                variant="body2"
+                sx={{
+                  position: { md: "absolute" },
+                  left: { md: 96 },
+                  bottom: { md: 6 },
+                  display: "inline-flex",
+                  alignItems: "center",
+                  minHeight: { xs: 40, md: 28 },
+                  px: { xs: 1, md: 0 },
+                  mt: { xs: -1.5, md: 0 },
+                  mb: { xs: 1, md: 0 },
+                  color: "text.secondary",
+                  fontWeight: 600,
+                  zIndex: 1,
+                }}
+              >
+                {option.hrefLabel ?? option.label} – részletek →
+              </MuiLink>
+            )}
           </Box>
         );
       })}

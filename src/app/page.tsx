@@ -21,6 +21,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { WaveDivider } from "@/components/WaveDivider";
 import { JsonLd } from "@/components/JsonLd";
+import { services } from "@/config/services";
 import { siteConfig, siteUrl } from "@/config/site";
 import { PROJECT_TYPE_LABELS } from "@/features/offer/buildOffer";
 import { pricingConfig } from "@/config/pricing";
@@ -106,7 +107,10 @@ export default function HomePage() {
   const prices = Object.fromEntries(RESOLVED_PROJECT_TYPES.map((type) => [type, startingPrice(type)]));
   // Computed here (server) and passed down as plain data: the browser never downloads the pricing engine for the home page.
   const sampleQuote = calculateQuote(SAMPLE_COMPANY_ANSWERS)!;
-  const projectTypes = projectTypeQuestion.options.map(({ id, label, description, icon }) => ({ id, label, description, icon }));
+  const projectTypes = projectTypeQuestion.options.map(({ id, label, description, icon }) => {
+    const service = services.find((item) => item.type === id);
+    return { id, label, description, icon, href: service ? `/${service.slug}` : undefined, hrefLabel: service?.name };
+  });
 
   return (
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
