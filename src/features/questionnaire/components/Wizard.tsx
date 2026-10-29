@@ -10,7 +10,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { track } from "@vercel/analytics";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Logo } from "@/components/Logo";
@@ -237,7 +237,7 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
           {stepLabel}
         </Typography>
         <AnimatePresence mode="wait" custom={direction} initial={false}>
-          <motion.div
+          <m.div
             key={question.id}
             custom={direction}
             variants={slide}
@@ -259,7 +259,7 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
                 ) : undefined
               }
             />
-          </motion.div>
+          </m.div>
         </AnimatePresence>
         </Box>
         <Box sx={{ display: { xs: "none", lg: "block" } }}>

@@ -10,7 +10,7 @@ import Container from "@mui/material/Container";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
 import { FluidBlobs } from "@/components/home/FluidBlobs";
@@ -192,7 +192,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
           <FluidBlobs variant="corner" tone={packageId} />
         </Box>
         <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1, pt: { xs: 4, md: 6 }, pb: { xs: 5, md: 7 } }}>
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: ease.out }}>
+          <m.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: ease.out }}>
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1.25fr 0.75fr" }, gap: { xs: 4, md: 8 }, alignItems: "end" }}>
               <Box>
                 <Typography sx={{ color: palette.inkMuted, fontSize: 14 }}>Személyre szabott ajánlat</Typography>
@@ -284,7 +284,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
             <Typography variant="body2" sx={{ color: palette.inkMuted, mt: { xs: 4, md: 5 }, fontSize: 13 }}>
               {offer.disclaimer}
             </Typography>
-          </motion.div>
+          </m.div>
         </Container>
       </Box>
       <WaveDivider from={palette.ink} to={palette.paper} />

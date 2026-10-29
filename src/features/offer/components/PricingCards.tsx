@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -275,7 +275,7 @@ export function PricingCards({
                 },
               }}
             >
-              <motion.div
+              <m.div
                 initial={{ y: 32 }}
                 whileInView={{ y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
@@ -618,7 +618,7 @@ export function PricingCards({
                     </Box>
                   </Box>
                 </Box>
-              </motion.div>
+              </m.div>
             </Box>
           );
         })}

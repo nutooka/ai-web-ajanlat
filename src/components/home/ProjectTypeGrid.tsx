@@ -5,21 +5,21 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
-import { projectTypeQuestion } from "@/features/questionnaire/config/branches";
 import { Blob } from "@/components/Blob";
 import { formatRon } from "@/lib/format";
 import { palette } from "@/theme/tokens";
+import type { ProjectTypeOption } from "./projectTypeOptions";
 import { startPlanner } from "./startPlanner";
 
 /** Typographic list of project types; each row starts the planner with that type pre-selected. */
-export function ProjectTypeGrid({ startingPrices }: { startingPrices: Record<string, number> }) {
+export function ProjectTypeGrid({ options, startingPrices }: { options: ProjectTypeOption[]; startingPrices: Record<string, number> }) {
   const router = useRouter();
 
   const start = (projectType: string) => startPlanner(projectType, router.push);
 
   return (
     <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0, borderTop: 1, borderColor: "divider" }}>
-      {projectTypeQuestion.options.map((option, index) => {
+      {options.map((option, index) => {
         const price = startingPrices[option.id];
         return (
           <Box component="li" key={option.id} sx={{ borderBottom: 1, borderColor: "divider" }}>

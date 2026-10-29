@@ -51,6 +51,16 @@ export const theme = createTheme({
             },
           },
         },
+        // Entrance motion in plain CSS, so content is visible as soon as the HTML paints (no JS needed).
+        "@media (prefers-reduced-motion: no-preference)": {
+          ".enter-rise": { animation: "enter-rise .6s cubic-bezier(.22,1,.36,1) both" },
+          ".enter-fade": { animation: "enter-fade .8s cubic-bezier(.22,1,.36,1) .2s both" },
+          ".enter-marker": { animation: "enter-marker .7s cubic-bezier(.22,1,.36,1) .45s both" },
+        },
+        // Transform only (no opacity): the headline is the LCP element and must be visible at once.
+        "@keyframes enter-rise": { from: { transform: "translateY(18px)" }, to: { transform: "none" } },
+        "@keyframes enter-fade": { from: { opacity: 0, transform: "translateY(24px)" }, to: { opacity: 1, transform: "none" } },
+        "@keyframes enter-marker": { from: { transform: "scaleX(0)" }, to: { transform: "scaleX(1)" } },
         "@keyframes reveal-up": {
           from: { opacity: 0, transform: "translateY(28px)" },
           to: { opacity: 1, transform: "none" },

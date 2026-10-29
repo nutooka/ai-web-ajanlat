@@ -10,23 +10,20 @@ import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { OPTION_ICONS } from "@/components/icons";
-import { pricingConfig } from "@/config/pricing";
-import { projectTypeQuestion } from "@/features/questionnaire/config/branches";
 import { formatRon } from "@/lib/format";
 import { useWizardSnapshot, wizardStore } from "@/lib/storage";
 import { gradients, palette } from "@/theme/tokens";
+import type { ProjectTypeOption } from "./projectTypeOptions";
 import { startPlanner } from "./startPlanner";
 
 /**
  * Hero call to action. A first visit gets the planner's first question right here:
  * one tap on a project type starts the questionnaire. A returning visitor gets "continue".
  */
-export function HeroActions({ startingPrices }: { startingPrices: Record<string, number> }) {
+export function HeroActions({ options, startingPrices, bestPercent }: { options: ProjectTypeOption[]; startingPrices: Record<string, number>; bestPercent: number }) {
   const router = useRouter();
   const snapshot = useWizardSnapshot();
   const hasProgress = Boolean(snapshot?.answers.projectType);
-  const quick = pricingConfig.discounts.quickDecision;
-  const bestPercent = quick.enabled ? (quick.tiers[0]?.percent ?? 0) : 0;
 
   const restart = () => {
     wizardStore.reset();
@@ -59,7 +56,7 @@ export function HeroActions({ startingPrices }: { startingPrices: Record<string,
             </Box>
           </Typography>
           <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", sm: "repeat(3, 1fr)" }, gap: 1, maxWidth: 560 }}>
-            {projectTypeQuestion.options.map((option) => {
+            {options.map((option) => {
               const Icon = option.icon ? OPTION_ICONS[option.icon] : null;
               const price = startingPrices[option.id];
               return (

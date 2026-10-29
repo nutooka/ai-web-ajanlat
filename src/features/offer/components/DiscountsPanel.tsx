@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { pricingConfig } from "@/config/pricing";
 import { resolveQuickDecision } from "@/features/pricing/quickDecision";
 import type { PackageId, PackageQuote } from "@/features/pricing/types";
@@ -151,7 +151,7 @@ export function DiscountsPanel({
       : Math.max(0, Math.min(1, 1 - ageMinutes / windowMinutes));
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.15, ease: ease.out }}
@@ -408,6 +408,6 @@ export function DiscountsPanel({
           )}
         </Box>
       </Box>
-    </motion.div>
+    </m.div>
   );
 }

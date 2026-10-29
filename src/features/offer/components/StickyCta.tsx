@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { useEffect, useState } from "react";
 import { Blob } from "@/components/Blob";
 import { pricingConfig } from "@/config/pricing";
@@ -67,7 +67,7 @@ export function StickyCta({
   return (
     <AnimatePresence>
       {!hidden && pricesReady && (
-        <motion.div
+        <m.div
           className="no-print"
           initial={{ y: 80, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -110,7 +110,7 @@ export function StickyCta({
               </Button>
             </Container>
           </Box>
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

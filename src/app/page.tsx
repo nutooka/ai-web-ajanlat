@@ -12,7 +12,6 @@ import type { Metadata } from "next";
 import { Blob, type BlobTone } from "@/components/Blob";
 import { SectionBlob } from "@/components/SectionBlob";
 import { HeroActions } from "@/components/home/HeroActions";
-import { HomePricing } from "@/components/home/HomePricing";
 import { HeroTitle } from "@/components/home/HeroTitle";
 import { OfferPreview } from "@/components/home/OfferPreview";
 import { References } from "@/components/home/References";
@@ -25,7 +24,10 @@ import { JsonLd } from "@/components/JsonLd";
 import { siteConfig, siteUrl } from "@/config/site";
 import { PROJECT_TYPE_LABELS } from "@/features/offer/buildOffer";
 import { pricingConfig } from "@/config/pricing";
-import { startingPrice } from "@/features/pricing/startingPrice";
+import { SAMPLE_COMPANY_ANSWERS, startingPrice } from "@/features/pricing/startingPrice";
+import { calculateQuote } from "@/features/pricing/engine";
+import { PricingCards } from "@/features/offer/components/PricingCards";
+import { projectTypeQuestion } from "@/features/questionnaire/config/branches";
 import { RESOLVED_PROJECT_TYPES } from "@/features/questionnaire/types";
 import { formatRon } from "@/lib/format";
 import { gradients, palette } from "@/theme/tokens";
@@ -102,6 +104,9 @@ export default function HomePage() {
   const quick = pricingConfig.discounts.quickDecision;
   const bestPercent = quick.enabled ? (quick.tiers[0]?.percent ?? 0) : 0;
   const prices = Object.fromEntries(RESOLVED_PROJECT_TYPES.map((type) => [type, startingPrice(type)]));
+  // Computed here (server) and passed down as plain data: the browser never downloads the pricing engine for the home page.
+  const sampleQuote = calculateQuote(SAMPLE_COMPANY_ANSWERS)!;
+  const projectTypes = projectTypeQuestion.options.map(({ id, label, description, icon }) => ({ id, label, description, icon }));
 
   return (
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -120,11 +125,11 @@ export default function HomePage() {
                 </Box>
                 .
               </Typography>
-              <HeroActions startingPrices={prices} />
+              <HeroActions options={projectTypes} startingPrices={prices} bestPercent={bestPercent} />
             </Stack>
             {/* Phones: extra room above the preview, so its shapes never reach the text above. */}
             <Box sx={{ position: "relative", py: { xs: 2, md: 4 }, mt: { xs: 5, md: 0 } }}>
-              <OfferPreview />
+              <OfferPreview quote={sampleQuote} />
             </Box>
           </Box>
         </Container>
@@ -174,7 +179,7 @@ export default function HomePage() {
                 Így néz ki egy 6–10 oldalas céges weboldal ajánlata. A te csomagjaid a válaszaidból épülnek fel.
               </Typography>
             </Box>
-            <HomePricing />
+            <PricingCards quote={sampleQuote} mode="home" />
           </Container>
         </Box>
 
@@ -190,7 +195,7 @@ export default function HomePage() {
                 Válassz egyet, és onnan folytatjuk. Az árak a legegyszerűbb változatra vonatkoznak.
               </Typography>
             </Stack>
-            <ProjectTypeGrid startingPrices={prices} />
+            <ProjectTypeGrid options={projectTypes} startingPrices={prices} />
           </Container>
         </Box>
 

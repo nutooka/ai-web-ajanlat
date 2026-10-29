@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import type { CSSProperties } from "react";
 import type { PackageId } from "@/features/pricing/types";
 import { ease, gradients, packageThemes } from "@/theme/tokens";
@@ -50,7 +50,7 @@ export function Blob({ tone, size, position, scale = 1, opacity = 1, zIndex = 0,
   const moving = morph && !reduce;
 
   return (
-    <motion.div
+    <m.div
       aria-hidden
       initial={{ scale: 0.6, opacity: 0 }}
       animate={{
@@ -77,7 +77,7 @@ export function Blob({ tone, size, position, scale = 1, opacity = 1, zIndex = 0,
     >
       {/* Cross-fade when the meaning (tone) changes – gradients cannot tween directly. */}
       <AnimatePresence initial={false}>
-        <motion.span
+        <m.span
           key={tone}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -86,6 +86,6 @@ export function Blob({ tone, size, position, scale = 1, opacity = 1, zIndex = 0,
           style={{ position: "absolute", inset: 0, background: BLOB_GRADIENTS[tone] }}
         />
       </AnimatePresence>
-    </motion.div>
+    </m.div>
   );
 }

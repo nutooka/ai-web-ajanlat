@@ -2,7 +2,7 @@
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import type { PackageQuote } from "@/features/pricing/types";
 import { formatRon } from "@/lib/format";
 import { palette } from "@/theme/tokens";
@@ -35,7 +35,7 @@ export function PriceBreakdown({ pkg }: { pkg: PackageQuote }) {
   return (
     <Box>
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={pkg.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
+        <m.div key={pkg.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
           {groups.map((group) => (
             <Box key={group.id} sx={{ "& + &": { mt: 3 } }}>
               {hasSurcharges && (
@@ -85,7 +85,7 @@ export function PriceBreakdown({ pkg }: { pkg: PackageQuote }) {
               </Typography>
             </Box>
           </Box>
-        </motion.div>
+        </m.div>
       </AnimatePresence>
     </Box>
   );

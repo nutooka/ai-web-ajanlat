@@ -5,19 +5,10 @@ import ArrowForward from "@mui/icons-material/ArrowForward";
 import ButtonBase from "@mui/material/ButtonBase";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import {
-  AnimatePresence,
-  animate,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useTransform,
-} from "motion/react";
+import { AnimatePresence, animate, m, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { calculateQuote } from "@/features/pricing/engine";
-import { SAMPLE_COMPANY_ANSWERS } from "@/features/pricing/startingPrice";
-import { PACKAGE_IDS, type PackageId } from "@/features/pricing/types";
+import { useEffect, useState } from "react";
+import { PACKAGE_IDS, type PackageId, type Quote } from "@/features/pricing/types";
 import { formatRon, formatWeeks } from "@/lib/format";
 import { FluidBlobs } from "./FluidBlobs";
 import { gradients, ease, palette, shadow } from "@/theme/tokens";
@@ -31,8 +22,8 @@ const groupFormatter = new Intl.NumberFormat("hu-HU", {
 });
 
 /** Live sample offer: real numbers from the pricing engine, cycling through the three packages. */
-export function OfferPreview() {
-  const quote = useMemo(() => calculateQuote(SAMPLE_COMPANY_ANSWERS)!, []);
+/** The sample quote is computed on the server and passed in as data. */
+export function OfferPreview({ quote }: { quote: Quote }) {
   const [active, setActive] = useState<PackageId>("standard");
   const [paused, setPaused] = useState(false);
   const pkg = quote.packages[active];
@@ -71,11 +62,10 @@ export function OfferPreview() {
   return (
     <>
       <FluidBlobs active={active} />
-      <motion.div
-        style={{ position: "relative", zIndex: 1 }}
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.25, ease: ease.out }}
+      {/* CSS entrance: visible from the server HTML on, not hidden until JavaScript runs. */}
+      <Box
+        className="enter-fade"
+        sx={{ position: "relative", zIndex: 1 }}
         onPointerDown={() => setPaused(true)}
         onFocusCapture={() => setPaused(true)}
       >
@@ -172,7 +162,7 @@ export function OfferPreview() {
                     }}
                   >
                     {id === active && (
-                      <motion.span
+                      <m.span
                         layoutId="preview-tab"
                         transition={{
                           type: "spring",
@@ -204,7 +194,7 @@ export function OfferPreview() {
             >
               <AnimatePresence initial={false} mode="popLayout">
                 {items.map((item) => (
-                  <motion.li
+                  <m.li
                     key={item.id}
                     layout
                     initial={{ opacity: 0, x: -10 }}
@@ -230,7 +220,7 @@ export function OfferPreview() {
                     >
                       {formatRon(item.price)}
                     </span>
-                  </motion.li>
+                  </m.li>
                 ))}
               </AnimatePresence>
               <Typography
@@ -264,7 +254,7 @@ export function OfferPreview() {
                 <Typography variant="body2" sx={{ color: palette.muted }}>
                   Példaár <s>{formatRon(pkg.listPrice)}</s>
                 </Typography>
-                <motion.span
+                <m.span
                   style={{
                     display: "block",
                     fontFamily: "var(--font-display)",
@@ -276,7 +266,7 @@ export function OfferPreview() {
                   }}
                 >
                   {priceText}
-                </motion.span>
+                </m.span>
               </Box>
             </Stack>
           </Box>
@@ -312,7 +302,7 @@ export function OfferPreview() {
             <ArrowForward sx={{ fontSize: 20, color: "#fff" }} />
           </ButtonBase>
         </Box>
-      </motion.div>
+      </Box>
     </>
   );
 }
