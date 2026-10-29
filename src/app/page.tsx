@@ -116,7 +116,7 @@ export default function HomePage() {
                 </Box>
                 .
               </Typography>
-              <HeroActions />
+              <HeroActions startingPrices={prices} />
             </Stack>
             <Box sx={{ position: "relative", py: { xs: 2, md: 4 } }}>
               <OfferPreview />

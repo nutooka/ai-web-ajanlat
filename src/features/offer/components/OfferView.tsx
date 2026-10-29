@@ -12,7 +12,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { motion } from "motion/react";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { FluidBlobs } from "@/components/home/FluidBlobs";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -20,6 +20,8 @@ import { WaveDivider } from "@/components/WaveDivider";
 import { pricingConfig } from "@/config/pricing";
 import { siteConfig } from "@/config/site";
 import { ContactForm } from "@/features/contact/components/ContactForm";
+import { SaveOffer } from "@/features/contact/components/SaveOffer";
+import { trackStep } from "@/features/funnel/track";
 import { resolveQuickDecision } from "@/features/pricing/quickDecision";
 import type { PackageId } from "@/features/pricing/types";
 import { isComplete } from "@/features/questionnaire/engine";
@@ -29,6 +31,7 @@ import { useWizardSnapshot, wizardStore, type Submission } from "@/lib/storage";
 import { ease, palette } from "@/theme/tokens";
 import { buildOffer } from "../buildOffer";
 import { offerAgeMinutesFrom, useNow, useOfferClock } from "../useOfferClock";
+import { useOfferCode } from "../useOfferCode";
 import { DISCOUNTS_ID, DiscountsPanel, totalSavings } from "./DiscountsPanel";
 import { OfferCodeBadge } from "./OfferCodeBadge";
 import { LoadSharedOfferButton } from "./LoadSharedOfferButton";
@@ -126,11 +129,17 @@ export function SharedOfferView({ answers, packageId, frozen }: { answers: Answe
 function OfferContent({ answers, packageId, submission, frozen }: { answers: Answers; packageId: PackageId; submission: Submission | null; frozen?: FrozenOffer }) {
   const quickConfig = pricingConfig.discounts.quickDecision;
   const clockState = useOfferClock(!frozen);
+  useEffect(() => {
+    if (!frozen) trackStep("offer_view");
+  }, [frozen]);
   // Coarse tick for prices (tier changes); the banner has its own per-second countdown.
   const now = useNow(15_000);
   const frozenAge = frozen ? (frozen.ageMinutes ?? Number.MAX_SAFE_INTEGER) : undefined;
   const ageMinutes = frozen ? frozenAge : offerAgeMinutesFrom(clockState.clock, now);
   const tierIndex = resolveQuickDecision(quickConfig, ageMinutes).tierIndex;
+  // A shared (frozen) offer already has its code – never create a new one from the viewer's clock.
+  const liveCode = useOfferCode(answers, packageId, tierIndex, !frozen);
+  const code = frozen?.code ?? liveCode;
   const tierAtLoad = clockState.clock ? resolveQuickDecision(quickConfig, clockState.clock.ageAtLoad).tierIndex : tierIndex;
   const tierChanged = !frozen && clockState.status === "ready" && tierIndex !== tierAtLoad;
   const pricesReady = Boolean(frozen) || clockState.status !== "loading";
@@ -252,7 +261,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
                     </Typography>
                   </Box>
                 </Stack>
-                <OfferCodeBadge answers={answers} packageId={packageId} tier={tierIndex} fixedCode={frozen?.code} />
+                <OfferCodeBadge code={code} />
                 <Box sx={{ mt: 3, display: frozen ? "none" : "block" }} className="no-print">
                   {submission ? (
                     <Button
@@ -344,12 +353,15 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
           {submission ? (
             <SubmittedPanel submission={submission} packageName={pkg.name} nextSteps={offer.nextSteps} />
           ) : (
-            <ContactForm
-              answers={answers}
-              packageId={packageId}
-              packageName={pkg.name}
-              onSubmitted={(copySent) => wizardStore.update({ submission: { at: Date.now(), copySent } })}
-            />
+            <>
+              <ContactForm
+                answers={answers}
+                packageId={packageId}
+                packageName={pkg.name}
+                onSubmitted={(copySent) => wizardStore.update({ submission: { at: Date.now(), copySent } })}
+              />
+              <SaveOffer answers={answers} packageId={packageId} packageName={pkg.name} price={pkg.finalPrice} code={code} />
+            </>
           )}
         </Box>
 

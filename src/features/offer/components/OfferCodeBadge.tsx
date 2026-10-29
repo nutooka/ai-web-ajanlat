@@ -6,19 +6,14 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import type { PackageId } from "@/features/pricing/types";
-import type { Answers } from "@/features/questionnaire/types";
 import { palette } from "@/theme/tokens";
-import { offerLink, useOfferCode } from "../useOfferCode";
+import { offerLink } from "../useOfferCode";
 
 /**
  * "Ajánlat-kód: K7M3QX · nutooka.tech/a/K7M3QX" – sits next to the price, so even a screenshot
  * sent on Messenger leads back to every answer.
  */
-export function OfferCodeBadge({ answers, packageId, tier, fixedCode }: { answers: Answers; packageId: PackageId; tier: number; fixedCode?: string }) {
-  // A shared (frozen) offer already has its code – never create a new one from the viewer's clock.
-  const liveCode = useOfferCode(answers, packageId, tier, !fixedCode);
-  const code = fixedCode ?? liveCode;
+export function OfferCodeBadge({ code }: { code: string | null }) {
   const [copied, setCopied] = useState(false);
   if (!code) return <Box sx={{ minHeight: 32, mt: 2 }} />;
 

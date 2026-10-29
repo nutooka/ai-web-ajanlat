@@ -50,7 +50,11 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
     return { status: 422, body: { ok: false, error: "Kérjük, ellenőrizd a megadott adatokat.", fieldErrors } };
   }
 
-  const { answers: rawAnswers, packageId, contact, website, elapsedMs } = parsed.data;
+  const { answers: rawAnswers, packageId, contact, website, elapsedMs, intent } = parsed.data;
+  const saving = intent === "save";
+  if (saving && !contact.email) {
+    return { status: 422, body: { ok: false, error: "Add meg az e-mail-címed.", fieldErrors: { "contact.email": "Add meg az e-mail-címed." } } };
+  }
 
   // Pretend success to bots so they don't retry, but send nothing.
   if (!checkSpamSignals({ website, elapsedMs }).ok) return { status: 200, body: { ok: true, copySent: false } };
@@ -83,9 +87,26 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
     return { status: 503, body: { ok: false, error: "Az e-mail-küldés jelenleg nem elérhető. Kérjük, próbáld később, vagy keress minket közvetlenül." } };
   }
 
+  const shareUrl = deps.shareLink ? await deps.shareLink(answers, packageId, offerAgeMinutes).catch(() => null) : null;
+  const meta: SubmissionMeta = { submittedAt: now, offerOpenedAt: effectiveOpenedAt, offerAgeMinutes, lock, shareUrl, intent };
+
+  // Saving: the visitor's own copy is the point, the owner only gets a heads-up.
+  if (saving && contact.email) {
+    try {
+      await deps.send({ ...customerEmail(offer, packageId, contact, { saved: true, shareUrl }), to: contact.email, replyTo: deps.ownerEmail });
+    } catch (error) {
+      console.error("[offer] saved copy failed", error);
+      return { status: 500, body: { ok: false, error: "Nem sikerült elküldeni az e-mailt. Kérjük, próbáld újra néhány perc múlva." } };
+    }
+    try {
+      await deps.send({ ...ownerEmail(offer, packageId, contact, meta), to: deps.ownerEmail, replyTo: contact.email });
+    } catch (error) {
+      console.error("[offer] owner heads-up failed", error);
+    }
+    return { status: 200, body: { ok: true, copySent: true } };
+  }
+
   try {
-    const shareUrl = deps.shareLink ? await deps.shareLink(answers, packageId, offerAgeMinutes).catch(() => null) : null;
-    const meta: SubmissionMeta = { submittedAt: now, offerOpenedAt: effectiveOpenedAt, offerAgeMinutes, lock, shareUrl };
     await deps.send({ ...ownerEmail(offer, packageId, contact, meta), to: deps.ownerEmail, replyTo: contact.email });
   } catch (error) {
     console.error("[offer] owner e-mail failed", error);
@@ -95,7 +116,7 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
   let copySent = false;
   if (contact.wantsCopy && contact.email) {
     try {
-      await deps.send({ ...customerEmail(offer, packageId, contact), to: contact.email });
+      await deps.send({ ...customerEmail(offer, packageId, contact, { shareUrl }), to: contact.email, replyTo: deps.ownerEmail });
       copySent = true;
     } catch (error) {
       // The owner already has the request; a failed copy should not fail the whole submission.

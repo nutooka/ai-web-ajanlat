@@ -33,6 +33,11 @@ export const siteConfig = {
     email: "info@nutooka.tech",
     phone: "",
   },
+  /**
+   * Üzenetküldős kapcsolat az ajánlat oldalán. Üresen hagyva a gomb nem jelenik meg.
+   * messenger: a Facebook-oldal felhasználóneve (m.me/<ez>), whatsapp: telefonszám nemzetközi formában, szóközök nélkül (pl. 40712345678).
+   */
+  chat: { messenger: "", whatsapp: "" },
   /** Ennyi napig érvényes az ajánlatban rögzített (kedvezményes) ár az egyeztetés kérése után. */
   offerValidityDays: 30,
   privacy: {

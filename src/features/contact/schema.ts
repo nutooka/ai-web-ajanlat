@@ -115,6 +115,8 @@ export const submissionSchema = z.object({
   website: z.string().max(200).optional(),
   /** ms since the contact form was shown. */
   elapsedMs: z.number().int().nonnegative(),
+  /** "save": the visitor only e-mails the offer to themselves (no consultation yet). */
+  intent: z.enum(["consultation", "save"]).default("consultation"),
 });
 
 export type Submission = z.input<typeof submissionSchema>;

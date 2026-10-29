@@ -6,21 +6,15 @@ import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
 import { projectTypeQuestion } from "@/features/questionnaire/config/branches";
-import { getVisibleQuestions } from "@/features/questionnaire/engine";
 import { formatRon } from "@/lib/format";
-import { wizardStore } from "@/lib/storage";
 import { palette } from "@/theme/tokens";
+import { startPlanner } from "./startPlanner";
 
 /** Typographic list of project types; each row starts the planner with that type pre-selected. */
 export function ProjectTypeGrid({ startingPrices }: { startingPrices: Record<string, number> }) {
   const router = useRouter();
 
-  const start = (projectType: string) => {
-    const answers = { projectType };
-    wizardStore.reset();
-    wizardStore.update({ answers, currentId: getVisibleQuestions(answers)[1]?.id ?? null });
-    router.push("/tervezo");
-  };
+  const start = (projectType: string) => startPlanner(projectType, router.push);
 
   return (
     <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0, borderTop: 1, borderColor: "divider" }}>

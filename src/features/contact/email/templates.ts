@@ -105,6 +105,8 @@ export interface SubmissionMeta {
   lock?: { status: "off" | "error" } | { status: "first" | "repeat"; firstSeenAt: number };
   /** Link to the stored offer (all answers), if the share store is configured. */
   shareUrl?: string | null;
+  /** "save": the visitor only e-mailed the offer to themselves. */
+  intent?: "consultation" | "save";
 }
 
 const dateTime = new Intl.DateTimeFormat("hu-HU", { timeZone: "Europe/Bucharest", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
@@ -200,7 +202,10 @@ export function ownerEmail(offer: Offer, packageId: PackageId, contact: ContactD
   const answers: [string, string][] = offer.answerRows.map((row) => [row.question, row.answer]);
   const who = contact.company ?? contact.name ?? contact.phone ?? contact.email ?? "Új érdeklődő";
   const when = contact.callbackTime ? ` · hívás: ${CALLBACK_LABELS[contact.callbackTime].toLowerCase()}` : "";
-  const subject = `Új ajánlatkérés: ${offer.projectTypeLabel} – ${who} (${formatRon(pkg.finalPrice)})${when}`;
+  const saved = meta.intent === "save";
+  const subject = saved
+    ? `Ajánlatot mentett (még nem kért egyeztetést): ${offer.projectTypeLabel} – ${who} (${formatRon(pkg.finalPrice)})`
+    : `Új ajánlatkérés: ${offer.projectTypeLabel} – ${who} (${formatRon(pkg.finalPrice)})${when}`;
 
   const sections: { title: string; rows?: [string, string][]; list?: string[]; text?: string }[] = [
     { title: "Időzítés", rows: timingRows(offer, meta) },
@@ -226,7 +231,10 @@ export function ownerEmail(offer: Offer, packageId: PackageId, contact: ContactD
     )
     .join("\n");
 
-  const html = layout("Új ajánlatkérés érkezett", `${actionBox(contact, offer, packageId)}${quote.html}${sectionHtml}`);
+  const savedNote = saved
+    ? `<p style="font-size:14px;line-height:1.6;margin:0 0 16px;padding:12px 14px;border-radius:10px;background:#FFF6E5;">Az érdeklődő <b>csak elküldte magának</b> az ajánlatot – még nem kért egyeztetést. Egy rövid, kedves e-mail 1–2 nap múlva sokat segíthet.</p>`
+    : "";
+  const html = layout(saved ? "Valaki elmentette az ajánlatát" : "Új ajánlatkérés érkezett", `${savedNote}${actionBox(contact, offer, packageId)}${quote.html}${sectionHtml}`);
 
   const sectionText = sections.flatMap((section) => [
     "",
@@ -234,7 +242,7 @@ export function ownerEmail(offer: Offer, packageId: PackageId, contact: ContactD
     ...(section.rows ? section.rows.map(([key, value]) => `- ${key}: ${value}`) : section.list ? section.list.map((item) => `- ${item}`) : [section.text ?? ""]),
   ]);
   const text = [
-    "ÚJ AJÁNLATKÉRÉS",
+    saved ? "AJÁNLATOT MENTETT – még nem kért egyeztetést" : "ÚJ AJÁNLATKÉRÉS",
     `Teendő: keresd ${contact.name ?? "az érdeklődőt"} – ${[contact.phone, contact.email].filter(Boolean).join(" · ")}`,
     `Mikor kérte: ${contact.callbackTime ? CALLBACK_LABELS[contact.callbackTime] : "nincs megadva"}`,
     "",
@@ -245,21 +253,32 @@ export function ownerEmail(offer: Offer, packageId: PackageId, contact: ContactD
   return { subject, html, text };
 }
 
-export function customerEmail(offer: Offer, packageId: PackageId, contact: ContactData): EmailContent {
+export function customerEmail(
+  offer: Offer,
+  packageId: PackageId,
+  contact: ContactData,
+  { saved = false, shareUrl = null }: { saved?: boolean; shareUrl?: string | null } = {},
+): EmailContent {
   const quote = quoteSection(offer, packageId, false);
   const greeting = contact.name ? `Kedves ${contact.name}!` : "Kedves Érdeklődő!";
   const subject = `Becsült árajánlatod – ${offer.projectTypeLabel}`;
   const steps = offer.nextSteps.map((step, index) => `${index + 1}. ${step}`);
+  const intro = saved
+    ? "Itt az ajánlatod, ahogy kérted. Ha kérdésed van, egyszerűen válaszolj erre az e-mailre – vagy kérj ingyenes egyeztetést az ajánlat oldalán."
+    : "Megkaptuk az ajánlatkérésed, hamarosan jelentkezünk. Az alábbiakban a becsült ajánlat másolatát találod.";
+  const linkHtml = shareUrl
+    ? `<p style="font-size:14px;line-height:1.6;"><a href="${escapeHtml(shareUrl)}" style="color:#14161A;font-weight:bold;">Az ajánlatod megnyitása</a> – pontosan úgy, ahogy most láttad.</p>`
+    : "";
 
   const html = layout(
-    "Köszönjük az érdeklődést!",
+    saved ? "Az ajánlatod" : "Köszönjük az érdeklődést!",
     `<p style="font-size:15px;">${escapeHtml(greeting)}</p>
-<p style="font-size:14px;line-height:1.6;">Megkaptuk az ajánlatkérésed, hamarosan jelentkezünk. Az alábbiakban a becsült ajánlat másolatát találod.</p>
+<p style="font-size:14px;line-height:1.6;">${escapeHtml(intro)}</p>${linkHtml}
 ${heading("Összefoglaló")}<p style="font-size:14px;line-height:1.6;">${escapeHtml(offer.summary)}</p>
 ${quote.html}${heading("Következő lépések")}<p style="font-size:14px;line-height:1.8;">${steps.map(escapeHtml).join("<br>")}</p>
 <p style="font-size:12px;color:#5C616B;border-top:1px solid #ECEAE4;padding-top:12px;">${escapeHtml(offer.disclaimer)}</p>`,
   );
 
-  const text = [greeting, "", "Megkaptuk az ajánlatkérésed, hamarosan jelentkezünk.", "", offer.summary, "", quote.text, "", ...steps, "", offer.disclaimer].join("\n");
+  const text = [greeting, "", intro, ...(shareUrl ? ["", `Az ajánlatod: ${shareUrl}`] : []), "", offer.summary, "", quote.text, "", ...steps, "", offer.disclaimer].join("\n");
   return { subject, html, text };
 }

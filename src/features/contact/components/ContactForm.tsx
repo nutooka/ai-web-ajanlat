@@ -20,6 +20,7 @@ import { track } from "@vercel/analytics";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm, useWatch, type UseFormRegisterReturn } from "react-hook-form";
+import { trackStep } from "@/features/funnel/track";
 import type { PackageId } from "@/features/pricing/types";
 import type { Answers } from "@/features/questionnaire/types";
 import { Blob } from "@/components/Blob";
@@ -100,6 +101,7 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
 
       if (response.ok && body?.ok) {
         track("Egyeztetés kérve", { package: packageId, callbackTime: values.callbackTime, channel: isEmailLike(values.reach) ? "email" : "phone" });
+        trackStep("consultation");
         onSubmitted(body.copySent);
         return;
       }

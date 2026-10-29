@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Logo } from "@/components/Logo";
+import { trackStep } from "@/features/funnel/track";
 import { calculateQuote } from "@/features/pricing/engine";
 import { useWizardSnapshot, wizardStore } from "@/lib/storage";
 import { palette } from "@/theme/tokens";
@@ -102,6 +103,8 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
   useEffect(() => {
     headingRef.current?.focus({ preventScroll: true });
     window.scrollTo({ top: 0 });
+    // Funnel: which questions people reach (the drop-off is between two consecutive ones).
+    trackStep(`q:${question.id}`);
   }, [question.id]);
 
   useEffect(() => () => window.clearTimeout(advanceTimer.current), []);

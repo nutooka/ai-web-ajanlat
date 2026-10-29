@@ -182,3 +182,31 @@ describe("submitOffer", () => {
     expect(copyFails).toEqual({ status: 200, body: { ok: true, copySent: false } });
   });
 });
+
+describe("submitOffer – sending the offer to yourself", () => {
+  it("e-mails the visitor first, then tells the owner it was only saved", async () => {
+    const { sent, deps } = setup();
+    const result = await submitOffer(submission({ intent: "save" }), { ...deps, shareLink: async () => "https://nutooka.tech/a/ABC123" });
+    expect(result.status).toBe(200);
+    expect(sent.map((email) => email.to)).toEqual(["elek@example.com", "owner@example.com"]);
+    expect(sent[0].text).toContain("Itt az ajánlatod, ahogy kérted");
+    expect(sent[0].text).toContain("https://nutooka.tech/a/ABC123");
+    expect(sent[0].replyTo).toBe("owner@example.com");
+    expect(sent[1].subject).toMatch(/^Ajánlatot mentett/);
+    expect(sent[1].text).toContain("még nem kért egyeztetést");
+  });
+
+  it("needs an e-mail address", async () => {
+    const { send, deps } = setup();
+    const result = await submitOffer(submission({ intent: "save", contact: { phone: "+40 712 345 678", wantsCopy: false, consent: true } }), deps);
+    expect(result.status).toBe(422);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("a normal request still reads as a request", async () => {
+    const { sent, deps } = setup();
+    await submitOffer(submission(), deps);
+    expect(sent[0].subject).toMatch(/^Új ajánlatkérés/);
+    expect(sent[1].text).toContain("Megkaptuk az ajánlatkérésed");
+  });
+});
