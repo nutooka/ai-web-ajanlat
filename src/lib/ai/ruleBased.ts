@@ -75,7 +75,7 @@ export function recommendTechnology(answers: Answers, projectType: ResolvedProje
         title: "Shopify-webáruház",
         description:
           "Megbízható, könnyen kezelhető Shopify bolt profi témával és bevált appokkal – a rendeléseket, készletet és termékeket egy helyen kezeled, programozói tudás nélkül.",
-        stack: ["Shopify", "Shopify-téma", "Netopia / EuPlatesc", "Futár- és számlázó-appok"],
+        stack: ["Shopify", "Shopify-téma", "Shopify Payments", "Futár- és számlázó-appok"],
       };
     case "webapp":
       return {

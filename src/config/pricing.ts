@@ -1147,7 +1147,7 @@ export const pricingConfig: PricingConfig = {
       id: "payment.account",
       kind: "requirement",
       when: { shop_payments: ["card"], shop_paymentAccount: ["no", "unsure"] },
-      text: "Bankkártyás fizetéshez fiók kell egy fizetési szolgáltatónál (pl. Netopia, EuPlatesc) – a regisztrációban segítünk.",
+      text: "Online fizetéshez aktív fizetési fiók kell (Shopify Payments vagy pl. Netopia) – a beállításban segítünk.",
     },
     {
       id: "courier.contract",
@@ -1165,7 +1165,7 @@ export const pricingConfig: PricingConfig = {
       id: "payment.romania",
       kind: "requirement",
       when: { shop_payments: ["card"] },
-      text: "A Shopify Payments Romániában nem elérhető: a kártyás fizetés külső szolgáltatóval működik, aminek a jóváhagyása 1–3 hét is lehet – érdemes időben elindítani.",
+      text: "A kártyás fizetéshez a Shopify Payments aktiválása kell (cégadatok, bankszámla, személyazonosság-ellenőrzés) – ezt a cég nevében te indítod, a beállításban segítünk.",
     },
     {
       id: "shipping.carrier_plan",

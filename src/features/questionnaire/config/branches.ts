@@ -248,7 +248,7 @@ const webshopQuestions: Question[] = [
     required: true,
     showIf: answerIn("shop_payments", ["card"]),
     title: "Van már fiókod online fizetési szolgáltatónál?",
-    hint: "Pl. Netopia vagy EuPlatesc. Ha nincs, a regisztrációban segítünk – a díjaikat nekik fizeted.",
+    hint: "Pl. Shopify Payments, Netopia vagy EuPlatesc. Ha nincs, a beállításban segítünk – a tranzakciós díjat nekik fizeted.",
     options: [
       { id: "yes", label: "Igen", icon: "check" },
       { id: "no", label: "Nincs", icon: "close" },

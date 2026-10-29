@@ -251,7 +251,7 @@ describe("Shopify limits shown as conditions", () => {
     expect(quote({ ...answers, shop_count: "11-50" }).review.required).toBe(false);
   });
 
-  it("warns that Shopify Payments is not available in Romania", () => {
+  it("asks the owner to activate Shopify Payments for card payments", () => {
     expect(quote(base).requirements.join(" ")).toMatch(/Shopify Payments/);
     expect(quote({ ...base, shop_payments: ["cod"] }).requirements.join(" ")).not.toMatch(/Shopify Payments/);
   });
