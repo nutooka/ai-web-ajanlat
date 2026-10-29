@@ -307,6 +307,30 @@ function enforceTierOrder(packages: PackageQuote[], config: PricingConfig): Pack
   }, []);
 }
 
+const DESIGN_ORDER: DesignLevel[] = ["template", "tailored", "custom"];
+
+/**
+ * What the visitor asked for, and the cheapest package that has all of it.
+ * Design items are package-driven (Premium may add one unasked), so design is compared by level instead.
+ */
+function coverage(packages: PackageQuote[], answers: Answers, config: PricingConfig): { recommended: PackageId; requested: Quote["requested"] } {
+  const requested = new Map<string, string>();
+  for (const pkg of packages) {
+    for (const item of pkg.items) if (item.source === "answer" && !item.id.startsWith("design.")) requested.set(item.id, item.label);
+  }
+  const wantedDesign = chosenDesign(answers, config);
+  const missing = Object.fromEntries(
+    packages.map((pkg) => {
+      const has = new Set(pkg.items.map((item) => item.id));
+      const labels = [...requested].filter(([id]) => !has.has(id)).map(([, label]) => label);
+      if (DESIGN_ORDER.indexOf(pkg.design.level) < DESIGN_ORDER.indexOf(wantedDesign)) labels.unshift("A választott design");
+      return [pkg.id, labels];
+    }),
+  ) as Record<PackageId, string[]>;
+  const recommended = packages.find((pkg) => missing[pkg.id].length === 0)?.id ?? "premium";
+  return { recommended, requested: { ids: [...requested.keys()], missing } };
+}
+
 /**
  * Pure and deterministic: the same answers + config always give the same quote.
  * Returns null until the project type is known.
@@ -335,13 +359,16 @@ export function calculateQuote(rawAnswers: Answers, config: PricingConfig = pric
   const reasons = [...new Set(ordered.flatMap((pkg) => pkg.items.map((item) => item.review).filter((reason): reason is string => Boolean(reason))))];
   const notes = config.offerNotes.filter((note) => matchesCondition(answers, note.when));
 
+  const { recommended, requested } = coverage(ordered, answers, config);
+
   return {
     projectType,
     currency: config.currency,
     hourlyRate: config.hourlyRate,
     urgency: { level: urgencyLevel, label: config.urgency[urgencyLevel].label, priceMultiplier: config.urgency[urgencyLevel].priceMultiplier },
     languageMultiplier,
-    recommended: "standard",
+    recommended,
+    requested,
     quickDecision,
     packages: Object.fromEntries(ordered.map((pkg) => [pkg.id, pkg])) as Record<PackageId, PackageQuote>,
     review: { required: reasons.length > 0, reasons },

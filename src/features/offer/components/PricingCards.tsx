@@ -50,6 +50,18 @@ function comparisonRows(quote: Quote) {
   return { differences, common };
 }
 
+/** One line under the tagline: why this package is (or is not) the one for the visitor. */
+function coverageNote(quote: Quote, id: PackageId): { text: string; strong: boolean } {
+  const missing = quote.requested.missing[id];
+  if (missing.length > 0) {
+    const names = missing.slice(0, 2).join(", ");
+    const more = missing.length > 2 ? ` és még ${missing.length - 2}` : "";
+    return { text: `A kéréseidből ${missing.length} nincs benne: ${names}${more}.`, strong: false };
+  }
+  if (id === quote.recommended) return { text: "Ebben minden benne van, amit kértél – ezért ezt ajánljuk.", strong: true };
+  return { text: "Mindent tartalmaz, amit kértél, plusz extrákat.", strong: false };
+}
+
 /** Decorative wave + bubbles at the bottom of the gradient header. */
 function HeaderDecor({ bubble }: { bubble: string }) {
   return (
@@ -66,6 +78,7 @@ function HeaderDecor({ bubble }: { bubble: string }) {
 
 export function PricingCards({ quote, mode, selected, onSelect, readOnly = false, detailsHref = "#reszletek" }: PricingCardsProps) {
   const { differences, common } = comparisonRows(quote);
+  const requested = new Set(mode === "offer" ? quote.requested.ids : []);
   const selectable = mode === "offer" && Boolean(onSelect);
   // Mobile shows one card at a time; on the home page (and in a read-only snapshot) the visitor browses locally.
   const [browsing, setBrowsing] = useState<PackageId>(readOnly && selected ? selected : "standard");
@@ -196,7 +209,28 @@ export function PricingCards({ quote, mode, selected, onSelect, readOnly = false
 
                   {/* Body */}
                   <Box sx={{ px: 3, pt: 1, pb: 3, display: "flex", flexDirection: "column", flex: 1 }}>
-                    <Typography sx={{ textAlign: "center", color: palette.inkMuted, fontSize: 14, mb: 2 }}>{pkg.tagline}</Typography>
+                    <Typography sx={{ textAlign: "center", color: palette.inkMuted, fontSize: 14, mb: mode === "offer" ? 1.5 : 2 }}>{pkg.tagline}</Typography>
+                    {mode === "offer" &&
+                      (() => {
+                        const note = coverageNote(quote, id);
+                        return (
+                          <Typography
+                            sx={{
+                              mb: 2,
+                              px: 1.5,
+                              py: 1,
+                              borderRadius: 2,
+                              fontSize: 13.5,
+                              fontWeight: 600,
+                              textAlign: "center",
+                              border: `1px solid ${note.strong ? palette.lime : palette.inkLine}`,
+                              color: note.strong ? palette.lime : palette.inkMuted,
+                            }}
+                          >
+                            {note.text}
+                          </Typography>
+                        );
+                      })()}
                     <Stack component="ul" sx={{ listStyle: "none", p: 0, m: 0, flex: 1 }}>
                       <GroupLabel>Ebben különböznek</GroupLabel>
                       <Row included label={pkg.design.label} />
@@ -205,12 +239,13 @@ export function PricingCards({ quote, mode, selected, onSelect, readOnly = false
                           key={row.id}
                           included={pkg.items.some((item) => item.id === row.id)}
                           label={row.label}
+                          requested={requested.has(row.id)}
                           availableIn={PACKAGE_IDS.map((pid) => quote.packages[pid]).find((other) => other.items.some((item) => item.id === row.id))?.name}
                         />
                       ))}
                       {common.length > 0 && <GroupLabel spaced>Mindhárom csomagban benne van</GroupLabel>}
                       {mode === "offer" ? (
-                        common.map((row) => <Row key={row.id} included label={row.label} />)
+                        common.map((row) => <Row key={row.id} included label={row.label} requested={requested.has(row.id)} />)
                       ) : (
                         // Home page sample: keep the cards short – the shared base is one line.
                         <Row included label={`${common.length} közös alaptétel: tervezés, fejlesztés, tesztelés, élesítés`} />
@@ -300,7 +335,7 @@ function GroupLabel({ children, spaced = false }: { children: React.ReactNode; s
 }
 
 /** Included = green tick. Not included = quiet dash plus where it is available – no red crosses. */
-function Row({ included, label, availableIn }: { included: boolean; label: string; availableIn?: string }) {
+function Row({ included, label, availableIn, requested = false }: { included: boolean; label: string; availableIn?: string; requested?: boolean }) {
   const Icon = included ? Check : Remove;
   return (
     <Stack component="li" direction="row" spacing={1.5} sx={{ alignItems: "center", py: 1.1, borderBottom: `1px solid ${palette.inkLine}` }}>
@@ -324,7 +359,26 @@ function Row({ included, label, availableIn }: { included: boolean; label: strin
           {included ? "Tartalmazza: " : "Nem tartalmazza: "}
         </Box>
         {label}
-        {!included && availableIn && (
+        {requested && (
+          <Box
+            component="span"
+            sx={{
+              ml: 0.75,
+              px: 0.75,
+              py: 0.1,
+              borderRadius: 1,
+              fontSize: 11,
+              fontWeight: 700,
+              whiteSpace: "nowrap",
+              border: `1px solid ${palette.lime}`,
+              color: included ? palette.ink : palette.lime,
+              background: included ? palette.lime : "transparent",
+            }}
+          >
+            {included || !availableIn ? "Kérted" : `Kérted · ${availableIn}tól`}
+          </Box>
+        )}
+        {!requested && !included && availableIn && (
           <Box component="span" sx={{ ml: 0.75, px: 0.75, py: 0.1, borderRadius: 1, border: `1px solid ${palette.inkLine}`, fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }}>
             {availableIn}ban
           </Box>

@@ -196,7 +196,10 @@ export interface Quote {
   hourlyRate: number;
   urgency: { level: UrgencyLevel; label: string; priceMultiplier: number };
   languageMultiplier: number;
+  /** The cheapest package that contains everything the visitor asked for. */
   recommended: PackageId;
+  /** What the visitor asked for (from the answers) and which of it each package leaves out. */
+  requested: { ids: string[]; missing: Record<PackageId, string[]> };
   quickDecision: QuickDecisionState;
   /** Risky or custom requests: the price is a starting estimate, a technical review comes first. */
   review: { required: boolean; reasons: string[] };

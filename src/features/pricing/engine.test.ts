@@ -194,10 +194,25 @@ describe("deadline slider (time vs money)", () => {
   });
 });
 
-describe("recommendation", () => {
-  it("always recommends Standard (no budget question)", () => {
-    expect(calculateQuote(fixtures.company)!.recommended).toBe("standard");
-    expect(calculateQuote({ ...fixtures.webapp, budget: "under5k" })!.recommended).toBe("standard");
+describe("recommendation: the cheapest package with everything the visitor asked for", () => {
+  it("recommends Standard when Basic leaves out a request, and names it", () => {
+    const quote = calculateQuote(fixtures.company)!;
+    expect(quote.recommended).toBe("standard");
+    expect(quote.requested.missing.basic).toEqual(["Blog / hírek modul"]);
+    expect(quote.requested.missing.standard).toEqual([]);
+  });
+
+  it("recommends Basic when it already covers every request", () => {
+    const quote = calculateQuote({ ...fixtures.company, company_features: ["contact_form", "map"] })!;
+    expect(quote.recommended).toBe("basic");
+    expect(quote.requested.missing.basic).toEqual([]);
+    expect(quote.requested.ids).toContain("company_features.contact_form");
+  });
+
+  it("counts the chosen design as a request", () => {
+    const quote = calculateQuote({ ...fixtures.company, company_features: ["contact_form"], design: "tailored" })!;
+    expect(quote.requested.missing.basic).toContain("A választott design");
+    expect(quote.recommended).toBe("standard");
   });
 });
 

@@ -17,7 +17,7 @@ export const pricingConfig: PricingConfig = {
 
   packages: {
     basic: { name: "Basic", tagline: "Az alapok, kedvezőbb áron" },
-    standard: { name: "Standard", tagline: "Pontosan az, amit kértél" },
+    standard: { name: "Standard", tagline: "Kiegyensúlyozott, mérés és sebesség is" },
     premium: {
       name: "Premium",
       tagline: "Egyedi design és kiemelt szolgáltatások",
