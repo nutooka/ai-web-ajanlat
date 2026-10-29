@@ -16,7 +16,7 @@ export const siteConfig = {
     taxId: "49185840",
     /**
      * ÁFA: a cég jelenleg NEM ÁFA-kötelezett (ANAF, 2026. október) – az ajánlott ár a végső ár.
-     * Ha ÁFA-kötelezett lesz: registered: true, és mindenhol "+ ÁFA" jelenik meg.
+     * Az oldal nem ír ÁFA-t (a tulajdonos döntése: csak egy ár látszik). Ha ÁFA-kötelezett lesz, ezt újra kell gondolni.
      */
     vat: { registered: false, rate: 21 },
     /** Strukturált cím a keresőknek (schema.org PostalAddress). */

@@ -3,7 +3,7 @@ import type { Offer } from "@/features/offer/buildOffer";
 import type { PackageId } from "@/features/pricing/types";
 import { formatHours, formatRon, formatWeeks } from "@/lib/format";
 import { CALLBACK_LABELS, type ContactData } from "../schema";
-import { validityNote, vatNote } from "@/lib/priceNotes";
+import { validityNote } from "@/lib/priceNotes";
 
 export interface EmailContent {
   subject: string;
@@ -52,7 +52,6 @@ function quoteSection(offer: Offer, packageId: PackageId, internal: boolean): { 
   itemRows.push(["Listaár", formatRon(pkg.listPrice)]);
   for (const discount of pkg.discounts) itemRows.push([`${discount.label} (−${discount.percent}%)`, `−${formatRon(discount.amount)}`]);
   itemRows.push([review.required ? "Becsült projektár (kiinduló)" : "Becsült projektár", `${formatRon(pkg.finalPrice)}${review.required ? "-tól" : ""}`]);
-  itemRows.push(["ÁFA", vatNote()]);
 
   const meta: [string, string][] = [
     ["Csomag", pkg.name],
