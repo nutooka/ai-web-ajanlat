@@ -13,7 +13,7 @@ interface SectionBlobProps {
 
 /**
  * The one decorative shape of a section (see DESIGN.md): cropped at the edge, never behind text, still.
- * On phones it shrinks to half and moves to the top-right corner, above the heading.
+ * On phones it shrinks to half and sits at the top-right, cropped only by the right edge.
  */
 export function SectionBlob({ tone = "brand", size = 320, position }: SectionBlobProps) {
   return (
@@ -25,7 +25,8 @@ export function SectionBlob({ tone = "brand", size = 320, position }: SectionBlo
         zIndex: 0,
         pointerEvents: "none",
         // Every side is set at md too ("auto" when unused), so the phone corner never leaks into desktop.
-        top: { xs: -size * 0.25, md: position.top ?? "auto" },
+        // Phones: starts inside the section (never cut flat by its top edge), only the right edge crops it.
+        top: { xs: 16, md: position.top ?? "auto" },
         right: { xs: -size * 0.25, md: position.right ?? "auto" },
         bottom: { xs: "auto", md: position.bottom ?? "auto" },
         left: { xs: "auto", md: position.left ?? "auto" },
