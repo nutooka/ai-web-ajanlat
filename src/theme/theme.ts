@@ -11,7 +11,7 @@ export const theme = createTheme({
   palette: {
     mode: "light",
     // The brand gradient is drawn on buttons below; this solid is its mid tone for anything MUI paints itself.
-    primary: { main: "#3A7BFF", dark: "#2F66D6", light: palette.brandTint, contrastText: palette.ink },
+    primary: { main: "#FF7A6B", dark: "#E5604F", light: palette.brandTint, contrastText: palette.ink },
     secondary: { main: palette.ink, contrastText: "#FFFFFF" },
     success: { main: palette.success },
     background: { default: palette.paper, paper: palette.surface },
@@ -37,8 +37,8 @@ export const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: { WebkitFontSmoothing: "antialiased", textRendering: "optimizeLegibility" },
-        "::selection": { background: "#CFE0FF", color: palette.ink },
-        "html": { caretColor: palette.ink, accentColor: "#3A7BFF" },
+        "::selection": { background: "#FFD9CF", color: palette.ink },
+        "html": { caretColor: palette.ink, accentColor: "#FF7A6B" },
         "h1, h2, h3": { textWrap: "balance" },
         ":focus-visible": { outline: `2px solid ${palette.ink}`, outlineOffset: 3 },
         // Scroll-linked reveal: progressive enhancement, content is never hidden without support.
@@ -89,7 +89,7 @@ export const theme = createTheme({
           props: { variant: "contained", color: "primary" },
           style: {
             color: palette.ink,
-            backgroundColor: "#3A7BFF",
+            backgroundColor: "#FF7A6B",
             backgroundImage: gradients.brand,
             backgroundSize: "200% 100%",
             backgroundPosition: "0% 50%",

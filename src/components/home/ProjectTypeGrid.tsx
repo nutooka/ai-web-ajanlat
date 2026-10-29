@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { projectTypeQuestion } from "@/features/questionnaire/config/branches";
 import { Blob } from "@/components/Blob";
 import { formatRon } from "@/lib/format";
-import { gradients } from "@/theme/tokens";
+import { palette } from "@/theme/tokens";
 import { startPlanner } from "./startPlanner";
 
 /** Typographic list of project types; each row starts the planner with that type pre-selected. */
@@ -43,7 +43,7 @@ export function ProjectTypeGrid({ startingPrices }: { startingPrices: Record<str
                   position: "absolute",
                   inset: 0,
                   zIndex: -1,
-                  background: gradients.brand,
+                  background: palette.brandTint,
                   transform: "scaleX(0)",
                   transformOrigin: "left",
                   transition: "transform .45s cubic-bezier(.22,1,.36,1)",
@@ -54,7 +54,7 @@ export function ProjectTypeGrid({ startingPrices }: { startingPrices: Record<str
               }}
             >
               <Box component="span" aria-hidden sx={{ display: { xs: "none", md: "block" } }}>
-                <Blob tone="brand" size={26} morph={false} delay={index * 0.05} />
+                <Blob tone="standard" size={26} morph={false} delay={index * 0.05} />
               </Box>
               <Typography component="span" variant="h4" sx={{ fontSize: { xs: "1.2rem", md: "1.5rem" } }}>
                 {option.label}

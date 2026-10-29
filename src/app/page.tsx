@@ -133,7 +133,7 @@ export default function HomePage() {
       <Box component="main" sx={{ flex: 1 }}>
         {/* How it works */}
         <Box sx={{ position: "relative", overflow: "hidden" }}>
-        <SectionBlob position={{ top: "38%", right: -170 }} />
+        <SectionBlob tone="basic" position={{ top: "38%", right: -170 }} />
         <Container maxWidth="lg" component="section" sx={{ position: "relative", zIndex: 1, py: { xs: 9, md: 13 } }}>
           <Typography variant="h2" className="reveal" sx={{ mb: { xs: 5, md: 7 }, maxWidth: 680 }}>
             Mintha egy tanácsadóval ülnél le – csak gyorsabb.
@@ -196,7 +196,7 @@ export default function HomePage() {
         <WaveDivider from={palette.surface} to={palette.ink} flip line={false} />
         {/* Promises */}
         <Box component="section" sx={{ position: "relative", overflow: "hidden", background: palette.ink, color: "#fff" }}>
-          <SectionBlob size={420} position={{ bottom: -210, left: -170 }} />
+          <SectionBlob tone="premium" size={420} position={{ bottom: -210, left: -170 }} />
           <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1, py: { xs: 9, md: 13 }, display: "grid", gridTemplateColumns: { xs: "1fr", md: "0.9fr 1.1fr" }, gap: { xs: 5, md: 10 } }}>
             <Typography variant="h2" className="reveal">
               Prémium minőség, kisvállalkozói áron.

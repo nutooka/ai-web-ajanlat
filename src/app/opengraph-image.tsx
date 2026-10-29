@@ -7,7 +7,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const INK = "#0E0F12";
-const BRAND = "linear-gradient(120deg, #2BD2C9 0%, #3A7BFF 35%, #FF5E7E 70%, #FFB547 100%)";
+const BRAND = "linear-gradient(120deg, #FFB547 0%, #FF5E7E 100%)";
 const DISCOUNT = "linear-gradient(135deg, #FFD27A 0%, #FFB547 55%, #FF9447 100%)";
 
 /** Link preview for Facebook, Messenger, WhatsApp, LinkedIn. */

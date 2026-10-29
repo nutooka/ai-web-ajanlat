@@ -7,12 +7,12 @@ colors:
   surface: "#FFFFFF"
   line: "#E4E4DD"
   muted: "#5B5F68"
-  brandTint: "#EEF4FF"
-  brandOnDark: "#9CC1FF"
+  brandTint: "#FFF1EC"
+  brandOnDark: "#FFB59E"
   success: "#127A4B"
   cross: "#FF6B81"
 gradients:
-  brand: "linear-gradient(120deg, #2BD2C9 0%, #3A7BFF 35%, #FF5E7E 70%, #FFB547 100%)"
+  brand: "linear-gradient(120deg, #FFB547 0%, #FF5E7E 100%)"
   discount: "linear-gradient(135deg, #FFD27A 0%, #FFB547 55%, #FF9447 100%)"
   basic: "linear-gradient(135deg, #2BD2C9 0%, #3A7BFF 100%)"
   standard: "linear-gradient(135deg, #FFB547 0%, #FF5E7E 100%)"
@@ -37,7 +37,7 @@ A forrás a kódban: `src/theme/tokens.ts` (tokenek) és `src/theme/theme.ts` (M
 
 ## Színszerepek – minden színnek egy jelentése van
 
-Egy nyelv: színes, formás. **Nincs sima (egyszínű) lime vagy borostyán** – a kiemelés mindig gradiens. A gradiens **csak kitöltés**: rajta mindig ink szöveg, soha gradiens szöveg, soha fehér szöveg.
+Egy nyelv: színes, formás. **Nincs sima (egyszínű) lime vagy borostyán** – a kiemelés mindig gradiens. **Minden gradiens két szomszédos színből áll** (soha szivárvány: kék és rózsaszín keverése lila sávot ad). A gradiens **csak kitöltés**: rajta mindig ink szöveg, soha gradiens szöveg, soha fehér szöveg.
 
 | Szín | Jelentés | Soha |
 |---|---|---|
@@ -59,7 +59,7 @@ Gradiens keret: `border: 2px solid transparent; background: linear-gradient(<há
   | kék / narancs / smaragd | Basic / Standard / Premium (és a 3 lépés) | kezdőlap hero, lépésszámok, ajánlat hero sarka, egyeztetés-űrlap címkéje |
   | `discount` | kedvezmény és idő | kedvezménypanel fejléce (zsugorodik), sticky sáv |
   | `neutral` | még formálódik | kérdőív oldalsáv → végül az ajánlott csomag színe |
-  | `brand` | díszítés | **szekciónként legfeljebb egy** `SectionBlob`, a szélen levágva; projektsorok kis pontja |
+  | egy csomagszín | díszítés | **szekciónként legfeljebb egy** `SectionBlob` (lépések: kék, ígéretek: smaragd, „Még gondolkodsz?”: korall), a szélen levágva; projektsorok kis korall pontja |
 - **Soha** szöveg, ár, űrlapmező vagy válaszkártya mögött. Képernyőnként max. **egy mozgó** forma; a szekció-formák állnak.
 - Telefonon (`xs`) a szekció-forma 50%-os, a jobb felső sarokból lóg be a cím fölött. `prefers-reduced-motion`: semmi nem mozog.
 

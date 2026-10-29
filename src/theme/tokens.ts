@@ -18,17 +18,17 @@ export const palette = {
   line: "#E4E4DD",
   muted: "#5B5F68",
   /** Light tint behind a selected answer card ("your choice"). */
-  brandTint: "#EEF4FF",
-  /** Small accents (icons) on ink, from the brand blue – text on ink stays white. */
-  brandOnDark: "#9CC1FF",
+  brandTint: "#FFF1EC",
+  /** Small accents (icons) on ink, from the brand coral – text on ink stays white. */
+  brandOnDark: "#FFB59E",
   success: "#127A4B",
   cross: "#FF6B81",
 } as const;
 
 /** Shared gradients – fills only, always with ink text. */
 export const gradients = {
-  /** Built from the three package colours: action + "your choice". */
-  brand: "linear-gradient(120deg, #2BD2C9 0%, #3A7BFF 35%, #FF5E7E 70%, #FFB547 100%)",
+  /** Two neighbouring colours (orange → pink), never a rainbow: action + "your choice". */
+  brand: "linear-gradient(120deg, #FFB547 0%, #FF5E7E 100%)",
   /** Discount and time. */
   discount: "linear-gradient(135deg, #FFD27A 0%, #FFB547 55%, #FF9447 100%)",
 } as const;

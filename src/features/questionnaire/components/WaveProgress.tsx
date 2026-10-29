@@ -21,10 +21,8 @@ export function WaveProgress({ value, label }: { value: number; label: string })
         <path d={WAVE_PATH} fill="none" stroke="rgba(255,255,255,.18)" strokeWidth={4} vectorEffect="non-scaling-stroke" />
         <defs>
           <linearGradient id="wave-progress-gradient" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor="#2BD2C9" />
-            <stop offset="35%" stopColor="#3A7BFF" />
-            <stop offset="70%" stopColor="#FF5E7E" />
-            <stop offset="100%" stopColor="#FFB547" />
+            <stop offset="0%" stopColor="#FFB547" />
+            <stop offset="100%" stopColor="#FF5E7E" />
           </linearGradient>
           <clipPath id="wave-progress-clip">
             <Box

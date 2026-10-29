@@ -104,7 +104,7 @@ export function SaveOffer({ answers, packageId, packageName, price, code }: Save
 
   return (
     <Box sx={{ position: "relative", overflow: "hidden", mt: 3, borderRadius: { xs: 3, md: 4 }, border: 1, borderColor: "divider", background: palette.surface, p: { xs: 3, sm: 4 } }}>
-      <SectionBlob size={180} position={{ top: -90, right: -70 }} />
+      <SectionBlob tone="standard" size={180} position={{ top: -90, right: -70 }} />
       <Box sx={{ position: "relative", zIndex: 1, display: "grid", gridTemplateColumns: { xs: "1fr", md: chatLinks.length ? "1.3fr 0.7fr" : "1fr" }, gap: { xs: 4, md: 5 } }}>
         <Box>
           <Typography variant="h4" component="h2" sx={{ mb: 0.75 }}>
