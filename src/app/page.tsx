@@ -111,7 +111,7 @@ export default function HomePage() {
         <SiteHeader />
         <Container maxWidth="lg" component="section" sx={{ pt: { xs: 5, md: 9 }, pb: { xs: 8, md: 13 } }}>
           <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1.1fr 0.9fr" }, gap: { xs: 6, md: 8 }, alignItems: "center" }}>
-            <Stack spacing={4} sx={{ alignItems: "flex-start" }}>
+            <Stack spacing={4} sx={{ alignItems: "flex-start", position: "relative", zIndex: 2 }}>
               <HeroTitle />
               <Typography sx={{ color: palette.inkMuted, fontSize: { xs: "1.0625rem", md: "1.25rem" }, lineHeight: 1.55, maxWidth: 520 }}>
                 Néhány egyszerű kérdés, és pár perc alatt tételes, személyre szabott árajánlatot kapsz. Céges weboldal már{" "}
@@ -122,7 +122,8 @@ export default function HomePage() {
               </Typography>
               <HeroActions startingPrices={prices} />
             </Stack>
-            <Box sx={{ position: "relative", py: { xs: 2, md: 4 } }}>
+            {/* Phones: extra room above the preview, so its shapes never reach the text above. */}
+            <Box sx={{ position: "relative", py: { xs: 2, md: 4 }, mt: { xs: 5, md: 0 } }}>
               <OfferPreview />
             </Box>
           </Box>
