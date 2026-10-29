@@ -51,12 +51,14 @@ const LABELS = {
   offer_saved: "Ajánlatot elküldte magának",
   chat_click: "Messenger / WhatsApp gomb",
   consultation: "Egyeztetést kért",
+  audit_run: "Átvilágítást futtatott",
+  audit_lead: "Átvilágítás-jelentést kért (e-mail)",
 };
 const questions = [...totals].filter(([step]) => step.startsWith("q:")).sort((a, b) => b[1] - a[1]);
 const rows = [
   ...(totals.has("home_type_pick") ? [["home_type_pick", totals.get("home_type_pick")]] : []),
   ...questions,
-  ...["offer_view", "offer_saved", "chat_click", "consultation"].filter((s) => totals.has(s)).map((s) => [s, totals.get(s)]),
+  ...["offer_view", "offer_saved", "chat_click", "consultation", "audit_run", "audit_lead"].filter((s) => totals.has(s)).map((s) => [s, totals.get(s)]),
 ];
 
 const top = questions[0]?.[1] ?? rows[0][1];

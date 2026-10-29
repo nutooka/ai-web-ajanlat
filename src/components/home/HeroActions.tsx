@@ -98,6 +98,12 @@ export function HeroActions({ options, startingPrices, bestPercent }: { options:
         </Box>
       )}
       <Typography variant="body2" sx={{ color: palette.inkMuted }}>
+        Van már weboldalad?{" "}
+        <Box component={Link} href="/atvilagitas" sx={{ color: "#fff", fontWeight: 650, textUnderlineOffset: 3 }}>
+          Ingyenes átvilágítás →
+        </Box>
+      </Typography>
+      <Typography variant="body2" sx={{ color: palette.inkMuted }}>
         Kb. 3 perc · ingyenes · nem kell regisztrálni
         {bestPercent > 0 && (
           <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 1.5, background: gradients.discount, color: palette.ink, fontWeight: 650 }}>

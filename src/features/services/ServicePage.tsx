@@ -95,6 +95,11 @@ export function ServicePage({ type }: { type: ResolvedProjectType }) {
           </Typography>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mt: 4, alignItems: { sm: "center" } }}>
             <StartPlannerButton projectType={type}>Kiszámolom az árat</StartPlannerButton>
+            {type === "redesign" && (
+              <Link href="/atvilagitas" style={{ color: "#fff", fontWeight: 650, textUnderlineOffset: 3 }}>
+                Előbb nézd meg ingyen, mit javítanék →
+              </Link>
+            )}
             <Typography sx={{ color: "#fff", fontWeight: 650 }}>
               már{" "}
               <Box component="span" sx={{ px: 0.75, borderRadius: 1, background: gradients.brand, color: palette.ink }}>

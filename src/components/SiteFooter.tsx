@@ -36,6 +36,9 @@ export function SiteFooter({ reserveStickyBar = false }: { reserveStickyBar?: bo
             {service.name}
           </MuiLink>
         ))}
+        <MuiLink component={Link} href="/atvilagitas" variant="body2" color="text.secondary" sx={{ display: "inline-flex", alignItems: "center", minHeight: 44 }}>
+          Ingyenes weboldal-átvilágítás
+        </MuiLink>
       </Container>
       <Container maxWidth="lg" sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, alignItems: { xs: "flex-start", sm: "center" }, gap: { xs: 0.5, sm: 2 }, justifyContent: "space-between" }}>
         <MuiLink component={Link} href="/adatkezeles" variant="body2" color="text.secondary" sx={{ display: "inline-flex", alignItems: "center", minHeight: 44 }}>

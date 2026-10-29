@@ -41,7 +41,7 @@ export const siteConfig = {
   /** Ennyi napig érvényes az ajánlatban rögzített (kedvezményes) ár az egyeztetés kérése után. */
   offerValidityDays: 30,
   privacy: {
-    lastUpdated: "2026. október 27.",
+    lastUpdated: "2026. október 29.",
     retentionMonths: 24,
   },
 } as const;

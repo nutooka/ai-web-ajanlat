@@ -8,6 +8,8 @@ export const FUNNEL_EVENTS = [
   "offer_saved", // sent the offer to their own e-mail
   "chat_click", // opened Messenger / WhatsApp from the offer
   "consultation", // requested a consultation
+  "audit_run", // ran the free website check
+  "audit_lead", // asked for the full check report by e-mail
 ] as const;
 
 export type FunnelEvent = (typeof FUNNEL_EVENTS)[number];
