@@ -3,7 +3,8 @@ import { AuditError, normalizeUrl, readCachedAudit, writeCachedAudit, type Audit
 import { runFullAudit } from "@/features/audit/run";
 
 // The Google test itself takes 15–40 seconds.
-export const maxDuration = 60;
+// Google needs up to ~100 s for heavy pages.
+export const maxDuration = 120;
 
 const isAllowed = createRateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 });
 

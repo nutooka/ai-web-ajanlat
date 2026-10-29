@@ -160,7 +160,7 @@ export async function runPageSpeed(
   const params = new URLSearchParams({ url, strategy: "mobile", locale: "hu" });
   for (const category of ["performance", "seo", "accessibility", "best-practices"]) params.append("category", category);
   if (apiKey) params.set("key", apiKey);
-  const response = await fetchImpl(`${PSI}?${params}`, { signal: AbortSignal.timeout(55_000), cache: "no-store" });
+  const response = await fetchImpl(`${PSI}?${params}`, { signal: AbortSignal.timeout(110_000), cache: "no-store" });
   const body = (await response.json().catch(() => null)) as { error?: { message?: string; code?: number } } | null;
   if (!response.ok || !body) {
     const message = body?.error?.message ?? `HTTP ${response.status}`;
