@@ -65,7 +65,7 @@ export default function PricingArticle() {
         data={{
           "@context": "https://schema.org",
           "@graph": [
-            { "@type": "Article", headline: title, description, inLanguage: "hu", dateModified: "2026-10-29", url: `${siteUrl}/mennyibe-kerul-egy-weboldal`, author: { "@id": `${siteUrl}/#business` }, publisher: { "@id": `${siteUrl}/#business` } },
+            { "@type": "Article", headline: title, description, inLanguage: "hu", datePublished: "2026-10-29", dateModified: "2026-10-29", url: `${siteUrl}/mennyibe-kerul-egy-weboldal`, author: { "@id": `${siteUrl}/#business` }, publisher: { "@id": `${siteUrl}/#business` } },
             { "@type": "FAQPage", mainEntity: faq.map((item) => ({ "@type": "Question", name: item.q, acceptedAnswer: { "@type": "Answer", text: item.a } })) },
           ],
         }}
