@@ -7,7 +7,6 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { m } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -18,7 +17,6 @@ import {
 import { formatRon, formatWeeks } from "@/lib/format";
 import {
   gradients,
-  ease,
   packageThemes,
   palette,
   shadow,
@@ -274,15 +272,8 @@ export function PricingCards({
                 },
               }}
             >
-              <m.div
-                initial={{ y: 32 }}
-                whileInView={{ y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{
-                  duration: 0.6,
-                  delay: index * 0.08,
-                  ease: ease.out,
-                }}
+              <div
+                className="reveal"
                 // The chosen card gets a 4px brand-gradient ring (a padded gradient frame – borders can't be gradients).
                 style={{
                   height: "100%",
@@ -601,7 +592,7 @@ export function PricingCards({
                     </Box>
                   </Box>
                 </Box>
-              </m.div>
+              </div>
             </Box>
           );
         })}

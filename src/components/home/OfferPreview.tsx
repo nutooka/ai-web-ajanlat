@@ -6,15 +6,8 @@ import Check from "@mui/icons-material/Check";
 import ButtonBase from "@mui/material/ButtonBase";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import {
-  animate,
-  m,
-  useMotionValue,
-  useReducedMotion,
-  useTransform,
-} from "motion/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   PACKAGE_IDS,
   type PackageId,
@@ -24,7 +17,6 @@ import { formatWeeks } from "@/lib/format";
 import { FluidBlobs } from "./FluidBlobs";
 import {
   gradients,
-  ease,
   packageThemes,
   palette,
   shadow,
@@ -44,22 +36,18 @@ export function OfferPreview({ quote }: { quote: Quote }) {
   const [paused, setPaused] = useState(false);
   const pkg = quote.packages[active];
 
-  const price = useMotionValue(pkg.finalPrice);
-  const priceText = useTransform(
-    price,
-    (value) => `${groupFormatter.format(Math.round(value / 50) * 50)} RON`,
-  );
-
-  useEffect(() => {
-    const controls = animate(price, pkg.finalPrice, {
-      duration: 0.7,
-      ease: ease.out,
-    });
-    return () => controls.stop();
-  }, [pkg.finalPrice, price]);
+  const shown = useCountUp(pkg.finalPrice);
+  const priceText = `${groupFormatter.format(Math.round(shown / 50) * 50)} RON`;
 
   // One tour (Premium → Basic → back to Standard), then it rests. Any interaction stops it for good.
-  const reduceMotion = useReducedMotion();
+  const [reduceMotion, setReduceMotion] = useState(true);
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReduceMotion(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
   useEffect(() => {
     if (paused || reduceMotion) return;
     let step = 0;
@@ -186,22 +174,18 @@ export function OfferPreview({ quote }: { quote: Quote }) {
                       color: id === active ? palette.ink : palette.muted,
                     }}
                   >
-                    {id === active && (
-                      <m.span
-                        layoutId="preview-tab"
-                        transition={{
-                          type: "spring",
-                          stiffness: 420,
-                          damping: 34,
-                        }}
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          borderRadius: 6,
-                          background: gradients.brand,
-                        }}
-                      />
-                    )}
+                    <span
+                      aria-hidden
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        borderRadius: 6,
+                        background: gradients.brand,
+                        opacity: id === active ? 1 : 0,
+                        transform: id === active ? "none" : "scale(.85)",
+                        transition: "opacity .25s, transform .25s",
+                      }}
+                    />
                     <span style={{ position: "relative" }}>
                       {quote.packages[id].name}
                     </span>
@@ -262,7 +246,7 @@ export function OfferPreview({ quote }: { quote: Quote }) {
                 <Typography variant="body2" sx={{ color: palette.muted }}>
                   Példaár
                 </Typography>
-                <m.span
+                <span
                   style={{
                     display: "block",
                     fontFamily: "var(--font-display)",
@@ -274,7 +258,7 @@ export function OfferPreview({ quote }: { quote: Quote }) {
                   }}
                 >
                   {priceText}
-                </m.span>
+                </span>
               </Box>
             </Stack>
           </Box>
@@ -404,3 +388,29 @@ const visuallyHidden = {
   overflow: "hidden",
   clip: "rect(0 0 0 0)",
 } as const;
+
+/** Counts smoothly to a new price (0.7 s, ease-out); jumps straight there when motion is reduced. */
+function useCountUp(target: number): number {
+  const [value, setValue] = useState(target);
+  const from = useRef(target);
+  useEffect(() => {
+    const start = from.current;
+    if (start === target || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      from.current = target;
+      setValue(target);
+      return;
+    }
+    const began = performance.now();
+    let frame = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - began) / 700);
+      const next = start + (target - start) * (1 - Math.pow(1 - t, 3));
+      from.current = next;
+      setValue(next);
+      if (t < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [target]);
+  return value;
+}

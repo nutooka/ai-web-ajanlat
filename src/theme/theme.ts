@@ -61,6 +61,20 @@ export const theme = createTheme({
         "@keyframes enter-rise": { from: { transform: "translateY(18px)" }, to: { transform: "none" } },
         "@keyframes enter-fade": { from: { opacity: 0, transform: "translateY(24px)" }, to: { opacity: 1, transform: "none" } },
         "@keyframes enter-marker": { from: { transform: "scaleX(0)" }, to: { transform: "scaleX(1)" } },
+        // Blob: entrance + slow organic morph, CSS only (see Blob.tsx).
+        ".blob-in": { animation: "blob-in .8s cubic-bezier(.22,1,.36,1) both" },
+        ".blob-morph": { animation: "blob-morph 15s ease-in-out infinite" },
+        ".blob-tone": { transition: "opacity .6s cubic-bezier(.22,1,.36,1)" },
+        "@media (prefers-reduced-motion: reduce)": {
+          ".blob-in, .blob-morph": { animation: "none !important" },
+          ".blob-tone": { transition: "none" },
+        },
+        "@keyframes blob-in": { from: { opacity: 0, transform: "scale(.6)" }, to: { opacity: 1, transform: "none" } },
+        "@keyframes blob-morph": {
+          "0%, 100%": { borderRadius: "42% 58% 70% 30% / 45% 45% 55% 55%", transform: "none" },
+          "33%": { borderRadius: "60% 40% 30% 70% / 60% 30% 70% 40%", transform: "rotate(12deg) translateY(-12px)" },
+          "66%": { borderRadius: "35% 65% 55% 45% / 50% 60% 40% 50%", transform: "rotate(-6deg) translateY(8px)" },
+        },
         "@keyframes reveal-up": {
           // Transform only: fading text reads as low contrast to Google's accessibility test.
           from: { transform: "translateY(28px)" },

@@ -1,9 +1,8 @@
-"use client";
-
-import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import type { CSSProperties } from "react";
 import type { PackageId } from "@/features/pricing/types";
 import { ease, gradients, packageThemes } from "@/theme/tokens";
+
+const EASE_OUT = `cubic-bezier(${ease.out.join(",")})`;
 
 /**
  * The one liquid shape of the site. Its colour always means something:
@@ -45,47 +44,42 @@ interface BlobProps {
   delay?: number;
 }
 
+/**
+ * Pure CSS (no JS animation loop): the morph runs in the browser's style engine, so it costs
+ * no main-thread JavaScript on phones. Keyframes live in theme.ts (blob-in, blob-morph).
+ */
 export function Blob({ tone, size, position, scale = 1, opacity = 1, zIndex = 0, morph = true, duration = 15, delay = 0 }: BlobProps) {
-  const reduce = useReducedMotion();
-  const moving = morph && !reduce;
-
   return (
-    <m.div
+    <div
       aria-hidden
-      initial={{ scale: 0.6, opacity: 0 }}
-      animate={{
-        scale,
-        opacity,
-        ...(moving ? { borderRadius: [...SHAPES, SHAPES[0]], rotate: [0, 12, -6, 0], y: [0, -12, 8, 0] } : {}),
-      }}
-      transition={{
-        scale: { duration: 0.8, delay, ease: ease.out },
-        opacity: { duration: 0.6, delay },
-        ...(moving ? { default: { duration, repeat: Infinity, ease: "easeInOut" } } : {}),
-      }}
       style={{
         position: position ? "absolute" : "relative",
         ...position,
         width: size,
         height: size,
         flexShrink: 0,
-        borderRadius: SHAPES[0],
-        overflow: "hidden",
         pointerEvents: "none",
         zIndex,
+        opacity,
+        transform: `scale(${scale})`,
+        transition: `transform .8s ${EASE_OUT}, opacity .6s`,
       }}
     >
-      {/* Cross-fade when the meaning (tone) changes – gradients cannot tween directly. */}
-      <AnimatePresence initial={false}>
-        <m.span
-          key={tone}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: reduce ? 0 : 0.6, ease: ease.out }}
-          style={{ position: "absolute", inset: 0, background: BLOB_GRADIENTS[tone] }}
-        />
-      </AnimatePresence>
-    </m.div>
+      <div className="blob-in" style={{ width: "100%", height: "100%", animationDelay: `${delay}s` }}>
+        <div
+          className={morph ? "blob-morph" : undefined}
+          style={{ position: "relative", width: "100%", height: "100%", borderRadius: SHAPES[0], overflow: "hidden", animationDuration: `${duration}s` }}
+        >
+          {/* Cross-fade when the meaning (tone) changes – gradients cannot tween directly. */}
+          {(Object.keys(BLOB_GRADIENTS) as BlobTone[]).map((key) => (
+            <span
+              key={key}
+              className="blob-tone"
+              style={{ position: "absolute", inset: 0, background: BLOB_GRADIENTS[key], opacity: key === tone ? 1 : 0 }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
