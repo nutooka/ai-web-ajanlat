@@ -10,7 +10,7 @@ import { WaveDivider } from "@/components/WaveDivider";
 import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { pricingConfig } from "@/config/pricing";
 import { serviceByType } from "@/config/services";
-import { siteUrl } from "@/config/site";
+import { siteUrl, defaultOgImage } from "@/config/site";
 import { calculateQuote } from "@/features/pricing/engine";
 import { SAMPLE_COMPANY_ANSWERS } from "@/features/pricing/startingPrice";
 import { PACKAGE_IDS, type Quote } from "@/features/pricing/types";
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   title: { absolute: `${title} | Nutooka` },
   description,
   alternates: { canonical: "/mennyibe-kerul-egy-weboldal" },
-  openGraph: { title, description, url: "/mennyibe-kerul-egy-weboldal", type: "article" },
+  openGraph: { title, description, url: "/mennyibe-kerul-egy-weboldal", type: "article", images: [defaultOgImage] },
 };
 
 export default function PricingArticle() {

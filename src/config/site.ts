@@ -45,3 +45,6 @@ export const siteConfig = {
     retentionMonths: 24,
   },
 } as const;
+
+/** Shared preview image. A page that sets its own `openGraph` replaces the root one, so it has to repeat this. */
+export const defaultOgImage = { url: "/opengraph-image", width: 1200, height: 630, alt: "Nutooka – weboldal-árajánlat 3 perc alatt" };

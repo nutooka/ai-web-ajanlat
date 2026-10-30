@@ -8,7 +8,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WaveDivider } from "@/components/WaveDivider";
 import { WhatsAppFab } from "@/components/WhatsAppFab";
-import { siteUrl } from "@/config/site";
+import { siteUrl, defaultOgImage } from "@/config/site";
 import { AuditTool } from "@/features/audit/AuditTool";
 import { palette } from "@/theme/tokens";
 
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   title: { absolute: `${title} | Nutooka` },
   description,
   alternates: { canonical: "/atvilagitas" },
-  openGraph: { title, description, url: "/atvilagitas" },
+  openGraph: { title, description, url: "/atvilagitas", images: [defaultOgImage] },
 };
 
 const faq = [

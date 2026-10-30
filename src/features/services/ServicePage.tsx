@@ -13,7 +13,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { WaveDivider } from "@/components/WaveDivider";
 import { pricingConfig } from "@/config/pricing";
 import { serviceByType, services } from "@/config/services";
-import { siteConfig, siteUrl } from "@/config/site";
+import { siteConfig, siteUrl, defaultOgImage } from "@/config/site";
 import { startingPrice } from "@/features/pricing/startingPrice";
 import type { ResolvedProjectType } from "@/features/questionnaire/types";
 import { formatRon } from "@/lib/format";
@@ -31,7 +31,7 @@ export function serviceMetadata(type: ResolvedProjectType): Metadata {
     title: { absolute: `${title} | Nutooka` },
     description,
     alternates: { canonical: `/${service.slug}` },
-    openGraph: { title, description, url: `/${service.slug}` },
+    openGraph: { title, description, url: `/${service.slug}`, images: [defaultOgImage] },
   };
 }
 
