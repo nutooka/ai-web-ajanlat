@@ -40,6 +40,8 @@ export const theme = createTheme({
         "::selection": { background: "#FFD9CF", color: palette.ink },
         "html": { caretColor: palette.ink, accentColor: "#FF7A6B" },
         "h1, h2, h3": { textWrap: "balance" },
+        // Harder to save images: no drag-out, no iOS long-press menu.
+        img: { WebkitUserDrag: "none", userSelect: "none", WebkitTouchCallout: "none" },
         ":focus-visible": { outline: `2px solid ${palette.ink}`, outlineOffset: 3 },
         // Scroll-linked reveal: progressive enhancement, content is never hidden without support.
         "@supports (animation-timeline: view())": {

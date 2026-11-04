@@ -48,7 +48,9 @@ export function References() {
               }}
             >
               <Box sx={{ position: "relative", aspectRatio: "16 / 10", background: palette.ink }}>
-                <Image src={reference.image} alt={`${reference.name} – a weboldal nyitóképe`} fill sizes="(max-width: 900px) 100vw, 60vw" style={{ objectFit: "cover", objectPosition: "top" }} />
+                <Image src={reference.image} alt={`${reference.name} – a weboldal nyitóképe`} fill sizes="(max-width: 900px) 100vw, 60vw" draggable={false} style={{ objectFit: "cover", objectPosition: "top" }} />
+                {/* Transparent cover: right-click / long-press hits this, not the image, so there is no "Save image". */}
+                <Box aria-hidden sx={{ position: "absolute", inset: 0 }} />
               </Box>
               <Stack sx={{ p: { xs: 3, md: 5 }, justifyContent: "center" }} spacing={2}>
                 <Typography variant="body2" color="text.secondary">

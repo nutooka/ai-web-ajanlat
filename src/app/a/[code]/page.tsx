@@ -14,7 +14,7 @@ import { loadSharedOffer, normalizeCode } from "@/features/offer/share";
 export const metadata: Metadata = {
   title: "Megosztott ajánlat",
   description: "Egy kitöltött weboldal-ajánlat pontosan úgy, ahogy a kitöltő látta.",
-  robots: { index: false },
+  robots: { index: false, noimageindex: true },
 };
 
 export default function SharedOfferPage({ params }: { params: Promise<{ code: string }> }) {

@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   applicationName: "Nutooka",
   openGraph: { siteName: "Nutooka", title: "Weboldal készítés azonnali árajánlattal", description: siteConfig.tagline, locale: "hu_HU", type: "website" },
   twitter: { card: "summary_large_image" },
+  // Pages are indexed, their images are not (no Google Images results).
+  robots: { index: true, follow: true, noimageindex: true },
 };
 
 export const viewport: Viewport = { themeColor: "#0E0F12" };
