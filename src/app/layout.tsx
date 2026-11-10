@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
+import { preload } from "react-dom";
 import { ThemeRegistry } from "@/components/ThemeRegistry";
 import { siteConfig } from "@/config/site";
 
@@ -22,6 +23,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#0E0F12" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Start fetching the analytics script early. It also makes the measurement visible in the HTML (site audits look for it).
+  if (process.env.VERCEL) preload("/_vercel/insights/script.js", { as: "script" });
   return (
     <html lang="hu" className={`${display.variable} ${body.variable}`}>
       {/* Browser extensions (e.g. ColorZilla) add attributes to <body> before React loads. */}

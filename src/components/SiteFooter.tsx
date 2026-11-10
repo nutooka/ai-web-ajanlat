@@ -47,6 +47,9 @@ export function SiteFooter({ reserveStickyBar = false }: { reserveStickyBar?: bo
         <MuiLink component={Link} href="/adatkezeles" variant="body2" color="text.secondary" sx={{ display: "inline-flex", alignItems: "center", minHeight: 44 }}>
           Adatkezelési tájékoztató
         </MuiLink>
+        <MuiLink component={Link} href="/adatkezeles#sutik" variant="body2" color="text.secondary" sx={{ display: "inline-flex", alignItems: "center", minHeight: 44 }}>
+          Sütik
+        </MuiLink>
         <Typography variant="body2" color="text.secondary">
           {siteConfig.company.phone && (
             <>

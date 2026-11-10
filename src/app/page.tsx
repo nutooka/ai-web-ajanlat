@@ -13,6 +13,7 @@ import { Blob, type BlobTone } from "@/components/Blob";
 import { SectionBlob } from "@/components/SectionBlob";
 import { HeroActions } from "@/components/home/HeroActions";
 import { HeroTitle } from "@/components/home/HeroTitle";
+import { QuickQuestion } from "@/components/home/QuickQuestion";
 import { OfferPreview } from "@/components/home/OfferPreview";
 import { AboutBlock } from "@/components/home/AboutBlock";
 import { References } from "@/components/home/References";
@@ -269,6 +270,7 @@ export default function HomePage() {
               </Accordion>
             ))}
           </Box>
+          <QuickQuestion />
         </Container>
 
         <WaveDivider from={palette.paper} to={palette.ink} flip line={false} />
