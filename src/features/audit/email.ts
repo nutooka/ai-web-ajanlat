@@ -68,12 +68,13 @@ ${checklistHtml(result)}
   return { subject: `Weboldal-átvilágítás – ${new URL(result.url).hostname}`, html, text };
 }
 
-export function auditOwnerEmail(result: AuditResult, email: string) {
+export function auditOwnerEmail(result: AuditResult, email: string, followUpStopUrl: string | null = null) {
   const html = wrap(
     "Új átvilágítás-kérés",
     `<p style="padding:12px 14px;border-radius:10px;background:#FFF1EC;"><b>${escapeHtml(email)}</b> kérte a teljes jelentést. Írj neki pár személyes sort 1–2 napon belül – innen jó eséllyel felújítás lesz.</p>
 <p>Oldal: <a href="${escapeHtml(result.url)}">${escapeHtml(result.url)}</a></p>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:8px 0 20px;">${scoreRows(result)}</table>
+${followUpStopUrl ? `<p style="font-size:13px;color:#5C616B;">2 utánkövető levél ütemezve (2. és 28. nap). Ha már beszéltetek, <a href="${escapeHtml(followUpStopUrl)}">állítsd le</a>.</p>` : ""}
 ${result.inspection?.facts.platform ? `<p>Rendszer: <b>${escapeHtml(result.inspection.facts.platform)}</b></p>` : ""}
 ${checklistHtml(result)}
 ${issueList(result)}`,

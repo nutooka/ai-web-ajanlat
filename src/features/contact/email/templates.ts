@@ -106,6 +106,8 @@ export interface SubmissionMeta {
   shareUrl?: string | null;
   /** "save": the visitor only e-mailed the offer to themselves. */
   intent?: "consultation" | "save";
+  /** Scheduled follow-up e-mails to the visitor, with the stop link. */
+  followUp?: { stopUrl: string; labels: string[] } | null;
 }
 
 const dateTime = new Intl.DateTimeFormat("hu-HU", { timeZone: "Europe/Bucharest", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
@@ -163,6 +165,9 @@ function timingRows(offer: Offer, meta: SubmissionMeta): [string, string][] {
     ["Gyors döntés kedvezmény", quick.percent > 0 ? `−${quick.percent}% (rögzítve)` : "nem járt (lejárt az idő)"],
     ["Ismételt kérés?", lockLabel(meta)],
     ...(meta.shareUrl ? ([["Teljes ajánlat online", meta.shareUrl]] as [string, string][]) : []),
+    ...(meta.followUp
+      ? ([["Utánkövető levelek", `${meta.followUp.labels.length} db ütemezve. Ha megvan az ügyfél, állítsd le: ${meta.followUp.stopUrl}`]] as [string, string][])
+      : []),
   ];
 }
 

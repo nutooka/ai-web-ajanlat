@@ -37,6 +37,7 @@ const sections: { title: string; body: string[] }[] = [
       "Az ajánlat elküldésekor: a kérdőívre adott válaszokat, a választott csomagot, valamint az általad önkéntesen megadott nevet, e-mail-címet, telefonszámot, cégnevet és megjegyzést. Visszaélések megelőzése érdekében a kérés IP-címét rövid ideig, csak a memóriában kezeljük.",
       "Az ingyenes weboldal-átvilágításnál a megadott weboldal-címet a Google PageSpeed Insights szolgáltatásnak továbbítjuk mérésre. Ha a teljes jelentést kéred, az e-mail-címedet a jelentés elküldésére és a személyes javaslatunkhoz használjuk.",
       "A gyors döntés kedvezmény ismételt igénylésének kiszűrésére a megadott telefonszámból, illetve e-mail-címből titkos kulccsal képzett, visszafejthetetlen lenyomatot és az ajánlat első megnyitásának időpontját tároljuk. Magát a telefonszámot vagy e-mail-címet ebben a tárolóban nem őrizzük.",
+      "Utánkövető levelek: ha ajánlatkéréskor vagy az átvilágítás jelentéséhez e-mail-címet adsz meg, legfeljebb 3 rövid, az ajánlatodhoz vagy az átvilágításodhoz kapcsolódó levelet küldünk (ajánlatnál 7, átvilágításnál 28 napon belül). Minden levél alján egy kattintással leiratkozhatsz, ekkor a még el nem küldött leveleket töröljük. Hírlevelet nem küldünk.",
     ],
   },
   {
@@ -44,6 +45,7 @@ const sections: { title: string; body: string[] }[] = [
     body: [
       "Cél: az ajánlatkérésed megválaszolása, a kapcsolatfelvétel, és – kérésedre – az ajánlat másolatának megküldése.",
       "Jogalap: a hozzájárulásod (GDPR 6. cikk (1) a) pont), illetve a szerződés megkötését megelőző lépések megtétele a kérésedre (GDPR 6. cikk (1) b) pont).",
+      "Az utánkövető levelek jogalapja a jogos érdekünk (GDPR 6. cikk (1) f) pont): a kért ajánlattal vagy átvilágítással kapcsolatos, rövid ideig tartó tájékoztatás. Ez ellen bármikor tiltakozhatsz a levelek alján lévő leiratkozó linkkel.",
     ],
   },
   {
@@ -60,11 +62,11 @@ const sections: { title: string; body: string[] }[] = [
   {
     title: "5. Adatfeldolgozók",
     body: [
-      "E-mail-küldés: Resend (Resend, Inc.) – az ajánlatkérést e-mailben továbbítja.",
+      "E-mail-küldés: Resend (Resend, Inc.) – az ajánlatkérést e-mailben továbbítja, és az ütemezett utánkövető leveleket a küldésig tárolja.",
       "Tárhely: Vercel (Vercel Inc.) – a weboldal üzemeltetése.",
       "Weboldal-mérés: Google PageSpeed Insights (Google LLC) – az átvilágításhoz megadott weboldal-cím mérése.",
       "Látogatottsági statisztika: Vercel Web Analytics – süti nélkül, összesített, névtelen adatokat gyűjt (pl. megtekintett oldalak, ország, eszköztípus); személy azonosítására nem alkalmas.",
-      "Kulcs-érték tároló: Upstash (Upstash, Inc.) – a kedvezmény-ellenőrzéshez használt lenyomatok 30 napos tárolása.",
+      "Kulcs-érték tároló: Upstash (Upstash, Inc.) – a kedvezmény-ellenőrzéshez használt lenyomatok 30 napos tárolása, illetve az ütemezett utánkövető levelek azonosítóinak (e-mail-cím nélkül) legfeljebb 30 napos tárolása a leiratkozáshoz.",
       "Az adatfeldolgozók az EU-n kívül is kezelhetnek adatot; ilyenkor az Európai Bizottság általános szerződési feltételei biztosítják a megfelelő védelmet.",
     ],
   },

@@ -3,6 +3,9 @@ import { normalizeUrl, readCachedAudit } from "@/features/audit/audit";
 import { auditCustomerEmail, auditOwnerEmail } from "@/features/audit/email";
 import { createResendSender } from "@/features/contact/resendSender";
 import { checkSpamSignals, createRateLimiter } from "@/features/contact/spam";
+import { createFollowUpDeps } from "@/features/followup/deps";
+import { auditFollowUps } from "@/features/followup/plan";
+import { scheduleSequence } from "@/features/followup/sequence";
 
 const isAllowed = createRateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 });
 
@@ -39,6 +42,13 @@ export async function POST(request: Request) {
     console.error("[audit] customer e-mail failed", error);
     return Response.json({ ok: false, error: "Nem sikerült elküldeni. Próbáld újra pár perc múlva." }, { status: 500 });
   }
-  await send({ ...auditOwnerEmail(result, email), to: owner, replyTo: email }).catch((error) => console.error("[audit] owner e-mail failed", error));
+  const followUpDeps = createFollowUpDeps();
+  const followUp = followUpDeps
+    ? await scheduleSequence(auditFollowUps({ now: Date.now(), url: result.url }), { to: email, replyTo: owner }, followUpDeps).catch((error) => {
+        console.error("[audit] follow-up scheduling failed", error);
+        return null;
+      })
+    : null;
+  await send({ ...auditOwnerEmail(result, email, followUp?.stopUrl ?? null), to: owner, replyTo: email }).catch((error) => console.error("[audit] owner e-mail failed", error));
   return Response.json({ ok: true });
 }

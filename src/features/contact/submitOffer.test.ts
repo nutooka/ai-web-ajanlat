@@ -210,3 +210,51 @@ describe("submitOffer – sending the offer to yourself", () => {
     expect(sent[1].text).toContain("Megkaptam az ajánlatkérésed");
   });
 });
+
+describe("submitOffer – follow-up e-mails", () => {
+  function followUpDeps() {
+    const scheduled: { to: string; sendAt: number }[] = [];
+    const cancelled: string[] = [];
+    const data = new Map<string, string[]>();
+    return {
+      scheduled,
+      cancelled,
+      deps: {
+        schedule: async (email: { to: string; sendAt: number }) => {
+          scheduled.push(email);
+          return `id-${scheduled.length}`;
+        },
+        cancel: async (id: string) => {
+          cancelled.push(id);
+        },
+        store: { save: async (id: string, ids: string[]) => void data.set(id, ids), take: async (id: string) => data.get(id) ?? null },
+        secret: "test-secret-0123456789",
+      },
+    };
+  }
+
+  it("schedules follow-ups for an e-mail contact and tells the owner how to stop them", async () => {
+    const { sent, deps } = setup();
+    const followUps = followUpDeps();
+    await submitOffer(submission(), { ...deps, followUps: followUps.deps });
+    expect(followUps.scheduled.map((email) => email.to)).toEqual(["elek@example.com", "elek@example.com"]);
+    expect(sent[0].text).toContain("Utánkövető levelek: 2 db ütemezve");
+    expect(sent[0].text).toContain("/leiratkozas?t=");
+  });
+
+  it("sends nothing extra to phone-only contacts", async () => {
+    const { deps } = setup();
+    const followUps = followUpDeps();
+    await submitOffer(submission({ contact: { phone: "+40 712 345 678", wantsCopy: false, consent: true } }), { ...deps, followUps: followUps.deps });
+    expect(followUps.scheduled).toHaveLength(0);
+  });
+
+  it("cancels the follow-ups when the owner e-mail fails", async () => {
+    const followUps = followUpDeps();
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const send = vi.fn(async () => Promise.reject(new Error("down")));
+    const result = await submitOffer(submission(), { send, ownerEmail: "owner@example.com", followUps: followUps.deps });
+    expect(result.status).toBe(500);
+    expect(followUps.cancelled).toEqual(["id-1", "id-2"]);
+  });
+});

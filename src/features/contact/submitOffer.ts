@@ -6,6 +6,8 @@ import { contactKeys, type FirstSeenStore } from "./contactLock";
 import { customerEmail, ownerEmail, type EmailContent, type SubmissionMeta } from "./email/templates";
 import { submissionSchema } from "./schema";
 import { checkSpamSignals } from "./spam";
+import { offerFollowUps } from "@/features/followup/plan";
+import { scheduleSequence, type FollowUpDeps, type ScheduledSequence } from "@/features/followup/sequence";
 
 export interface OutgoingEmail extends EmailContent {
   to: string;
@@ -33,6 +35,8 @@ export interface SubmitDeps {
   lockSecret?: string;
   /** Stores the offer and returns its public link (offer code); null/undefined when unavailable. */
   shareLink?: (answers: Answers, packageId: PackageId, offerAgeMinutes: number) => Promise<string | null>;
+  /** Scheduled follow-up e-mails; null/undefined = none. */
+  followUps?: FollowUpDeps | null;
 }
 
 /**
@@ -88,7 +92,29 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
   }
 
   const shareUrl = deps.shareLink ? await deps.shareLink(answers, packageId, offerAgeMinutes).catch(() => null) : null;
-  const meta: SubmissionMeta = { submittedAt: now, offerOpenedAt: effectiveOpenedAt, offerAgeMinutes, lock, shareUrl, intent };
+
+  // Follow-ups only to an e-mail address, and only once per contact (a repeat request already has a sequence).
+  let followUp: ScheduledSequence | null = null;
+  if (deps.followUps && contact.email && lock.status !== "repeat") {
+    const quick = offer.quote.quickDecision;
+    const discountRunning = saving && quick.percent > 0 && quick.minutesLeft !== null;
+    const plan = offerFollowUps({
+      now,
+      discountEndsAt: discountRunning ? now + (quick.minutesLeft ?? 0) * 60_000 : null,
+      discountPercent: quick.percent,
+      packageName: offer.quote.packages[packageId].name,
+      shareUrl,
+      firstName: contact.name?.trim().split(/\s+/)[0] || undefined,
+    });
+    followUp = await scheduleSequence(plan, { to: contact.email, replyTo: deps.ownerEmail }, deps.followUps).catch((error) => {
+      console.error("[offer] follow-up scheduling failed", error);
+      return null;
+    });
+  }
+  const cancelFollowUps = async () => {
+    if (followUp && deps.followUps) await Promise.allSettled(followUp.ids.map((id) => deps.followUps!.cancel(id)));
+  };
+  const meta: SubmissionMeta = { submittedAt: now, offerOpenedAt: effectiveOpenedAt, offerAgeMinutes, lock, shareUrl, intent, followUp };
 
   // Saving: the visitor's own copy is the point, the owner only gets a heads-up.
   if (saving && contact.email) {
@@ -96,6 +122,7 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
       await deps.send({ ...customerEmail(offer, packageId, contact, { saved: true, shareUrl }), to: contact.email, replyTo: deps.ownerEmail });
     } catch (error) {
       console.error("[offer] saved copy failed", error);
+      await cancelFollowUps();
       return { status: 500, body: { ok: false, error: "Nem sikerült elküldeni az e-mailt. Kérjük, próbáld újra néhány perc múlva." } };
     }
     try {
@@ -110,6 +137,7 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
     await deps.send({ ...ownerEmail(offer, packageId, contact, meta), to: deps.ownerEmail, replyTo: contact.email });
   } catch (error) {
     console.error("[offer] owner e-mail failed", error);
+    await cancelFollowUps();
     return { status: 500, body: { ok: false, error: "Nem sikerült elküldeni az ajánlatot. Kérjük, próbáld újra néhány perc múlva." } };
   }
 

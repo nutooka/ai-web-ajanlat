@@ -3,6 +3,7 @@ import { createRateLimiter } from "@/features/contact/spam";
 import { createUpstashFirstSeenStore } from "@/features/contact/contactLock";
 import { submitOffer } from "@/features/contact/submitOffer";
 import { saveSharedOffer } from "@/features/offer/share";
+import { createFollowUpDeps } from "@/features/followup/deps";
 import { siteUrl } from "@/config/site";
 import { OFFER_CLOCK_COOKIE, offerAgeMinutes, offerClockSecret, readCookie, verifyOfferClock } from "@/features/offer/offerClock";
 
@@ -43,6 +44,7 @@ export async function POST(request: Request) {
       const code = await saveSharedOffer(answers, packageId, offerClockSecret(), { ageMinutes });
       return code ? `${siteUrl}/a/${code}` : null;
     },
+    followUps: createFollowUpDeps(),
   });
   return Response.json(result.body, { status: result.status });
 }
