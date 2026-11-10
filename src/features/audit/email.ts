@@ -13,7 +13,7 @@ function scoreRows(result: AuditResult): string {
 }
 
 function issueList(result: AuditResult): string {
-  if (result.issues.length === 0) return "<p>Komoly hibát nem találtam – szép munka!</p>";
+  if (result.issues.length === 0) return "<p>Komoly hibát nem találtunk – szép munka!</p>";
   return `<ol style="padding-left:18px;">${result.issues.map((issue) => `<li style="margin-bottom:8px;"><b>${escapeHtml(issue.title)}</b><br>${escapeHtml(issue.why)}</li>`).join("")}</ol>`;
 }
 
@@ -62,7 +62,7 @@ export function auditCustomerEmail(result: AuditResult) {
 <p>${escapeHtml(slownessImpact(result.lcpMs)?.text ?? `A fő tartalom mobilon ${result.metrics.lcp} alatt jelenik meg.`)}</p>
 ${checklistHtml(result)}
 <h2 style="font-size:16px;margin:20px 0 6px;">Sebesség – amit érdemes javítani</h2>${issueList(result)}
-<p>Hamarosan személyesen is írok pár sort arról, mit javítanék elsőként. Ha közben kíváncsi vagy, mennyibe kerülne a felújítás: <a href="${plannerUrl}">${plannerUrl}</a></p>`,
+<p>Hamarosan személyesen is írunk pár sort arról, mit javítanánk elsőként. Ha közben kíváncsi vagy, mennyibe kerülne a felújítás: <a href="${plannerUrl}">${plannerUrl}</a></p>`,
   );
   const text = [`A(z) ${result.url} átvilágítása`, "", textReport(result), "", ...checklistText(result), "", `Felújítás: ${plannerUrl}`].join("\n");
   return { subject: `Weboldal-átvilágítás – ${new URL(result.url).hostname}`, html, text };

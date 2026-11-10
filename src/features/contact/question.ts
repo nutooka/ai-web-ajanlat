@@ -14,7 +14,7 @@ export const questionSchema = z.object({
     .min(1, "Add meg a telefonszámod vagy az e-mail-címed.")
     .max(120)
     .refine((value) => EMAIL.test(value) || PHONE.test(value), "Adj meg érvényes telefonszámot vagy e-mail-címet."),
-  message: z.string().trim().min(3, "Írd le röviden, miben segíthetek.").max(2000),
+  message: z.string().trim().min(3, "Írd le röviden, miben segíthetünk.").max(2000),
   consent: z.literal(true, { error: "Fogadd el az adatkezelési tájékoztatót." }),
   website: z.string().max(200).optional(),
   elapsedMs: z.number().int().nonnegative(),

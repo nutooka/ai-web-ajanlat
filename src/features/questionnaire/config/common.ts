@@ -28,7 +28,7 @@ export const commonQuestions: Question[] = [
     hint: "A domain a weboldal címe, pl. cegnev.ro.",
     options: [
       { id: "has", label: "Igen, van", icon: "check" },
-      { id: "need", label: "Még nincs", description: "Segítek kiválasztani és regisztrálni", icon: "public" },
+      { id: "need", label: "Még nincs", description: "Segítünk kiválasztani és regisztrálni", icon: "public" },
     ],
   },
   {
@@ -41,7 +41,7 @@ export const commonQuestions: Question[] = [
     options: [
       { id: "full", label: "Igen, teljes arculat", description: "Logó, színek, betűtípusok", icon: "palette" },
       { id: "logo_only", label: "Csak logó van", icon: "brush" },
-      { id: "none", label: "Még nincs", description: "Ebben is segítek", icon: "auto" },
+      { id: "none", label: "Még nincs", description: "Ebben is segítünk", icon: "auto" },
     ],
   },
   {
@@ -68,8 +68,8 @@ export const commonQuestions: Question[] = [
     title: "Ki tölti fel az oldalak tartalmát?",
     options: [
       { id: "self", label: "Én magam", description: "Könnyen szerkeszthető rendszert kapsz", icon: "person" },
-      { id: "assisted", label: "Te, az általam adott anyagból", icon: "upload" },
-      { id: "full", label: "Te, képszerkesztéssel és optimalizálással", icon: "auto" },
+      { id: "assisted", label: "Ti, az általam adott anyagból", icon: "upload" },
+      { id: "full", label: "Ti, képszerkesztéssel és optimalizálással", icon: "auto" },
     ],
   },
   {
@@ -92,7 +92,7 @@ export const commonQuestions: Question[] = [
     required: false,
     maxLength: 2000,
     multiline: true,
-    title: "Van még valami, amit tudnom kell?",
+    title: "Van még valami, amit tudnunk kell?",
     subtitle: "Egy weboldal, ami tetszik, egy ötlet vagy kérés. Ki is hagyhatod.",
     placeholder: "Pl. tetszik a www.pelda.ro letisztultsága; fontos, hogy a szezon kezdetére elkészüljön…",
   },

@@ -26,6 +26,10 @@ export function QuickQuestion() {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!consent) {
+      setStatus({ kind: "error", message: "Az elküldéshez pipáld be, hogy elfogadod az adatkezelési tájékoztatót." });
+      return;
+    }
     const data = new FormData(event.currentTarget);
     setStatus({ kind: "sending" });
     try {
@@ -50,13 +54,13 @@ export function QuickQuestion() {
   return (
     <Box sx={{ mt: 6, p: { xs: 3, md: 4 }, borderRadius: 4, background: palette.surface, border: 1, borderColor: "divider" }}>
       <Typography variant="h5" component="h3" sx={{ mb: 0.75 }}>
-        Nem találod a választ? Kérdezz tőlem.
+        Nem találod a választ? Kérdezz tőlünk.
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 2.5 }}>
-        Írd le röviden, és 1 munkanapon belül válaszolok. Nem kell kitöltened a kérdőívet.
+        Írd le röviden, és 1 munkanapon belül válaszolunk. Nem kell kitöltened a kérdőívet.
       </Typography>
       {status.kind === "sent" ? (
-        <Alert severity="success">Megkaptam, hamarosan jelentkezem.</Alert>
+        <Alert severity="success">Megkaptuk, hamarosan jelentkezünk.</Alert>
       ) : (
         <Box component="form" onSubmit={onSubmit} noValidate sx={{ display: "grid", gap: 2 }}>
           <TextField name="reach" label="Telefonszám vagy e-mail-cím" required autoComplete="email" slotProps={{ htmlInput: { maxLength: 120 } }} />
@@ -77,7 +81,7 @@ export function QuickQuestion() {
             }
           />
           {status.kind === "error" && <Alert severity="error">{status.message}</Alert>}
-          <Button type="submit" variant="contained" size="large" disabled={status.kind === "sending" || !consent} sx={{ justifySelf: "start" }}>
+          <Button type="submit" variant="contained" size="large" disabled={status.kind === "sending"} sx={{ justifySelf: "start" }}>
             {status.kind === "sending" ? "Küldés…" : "Elküldöm"}
           </Button>
         </Box>

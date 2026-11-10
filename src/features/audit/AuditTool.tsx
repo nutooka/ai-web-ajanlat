@@ -26,11 +26,11 @@ import type { AuditResult } from "./audit";
 import { Checklist, Comparison, ImpactBox, Previews, ScoreCards } from "./AuditReport";
 
 const WAIT_STEPS = [
-  "Megnyitom az oldalt telefonos nézetben…",
-  "Mérem a betöltési sebességet…",
+  "Megnyitjuk az oldalt telefonos nézetben…",
+  "Mérjük a betöltési sebességet…",
   "Ellenőrizzük az elérhetőséget és a jogi minimumot…",
   "Megnézzük, hogyan látja a Google és a Facebook…",
-  "Összeállítom az eredményt…",
+  "Összeállítjuk az eredményt…",
 ];
 
 type Done = { kind: "done"; result: AuditResult; competitor: AuditResult | null; competitorError: string | null };
@@ -229,7 +229,7 @@ function ReportByEmail({ url }: { url: string }) {
         Kérd a teljes jelentést
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 2 }}>
-        Elküldöm e-mailben a teljes listával, és személyesen is írok pár sort arról, mit javítanék elsőként.
+        Elküldjük e-mailben a teljes listával, és személyesen is írunk pár sort arról, mit javítanánk elsőként.
       </Typography>
       {status.kind === "sent" ? (
         <Alert severity="success" icon={<MailOutline />}>

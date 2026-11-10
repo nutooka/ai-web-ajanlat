@@ -21,7 +21,7 @@ export default function UnsubscribePage() {
           Leiratkozás
         </Typography>
         <Typography color="text.secondary" sx={{ mb: 3 }}>
-          Egy kattintással leállíthatod a még el nem küldött leveleket. Hírlevelet egyébként sem küldök.
+          Egy kattintással leállíthatod a még el nem küldött leveleket. Hírlevelet egyébként sem küldünk.
         </Typography>
         <Suspense fallback={null}>
           <StopFollowUps />

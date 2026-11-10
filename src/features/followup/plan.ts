@@ -74,7 +74,7 @@ export function offerFollowUps(input: OfferFollowUpInput): FollowUp[] {
         greeting: greeting(firstName),
         paragraphs: [
           `Csak egy gyors emlékeztető: a kedvezményed ${ends}-ig érvényes a ${packageName} csomagra.`,
-          "Ha addig az ajánlatod alján kérsz egy ingyenes egyeztetést, a kedvezményes ár rögzül. A döntést ráérsz az egyeztetés után meghozni.",
+          "Ha addig az ajánlatod alján kérsz egy ingyenes egyeztetést, a kedvezményes árat rögzítjük. A döntést ráérsz az egyeztetés után meghozni.",
         ],
         cta: offerCta,
       }),
@@ -90,11 +90,11 @@ export function offerFollowUps(input: OfferFollowUpInput): FollowUp[] {
       eyebrow,
       heading: "3 kérdés, amit a legtöbben feltesznek",
       greeting: greeting(firstName),
-      paragraphs: ["Az ajánlatkérés után ezt a három kérdést kapom a legtöbbször, gondoltam, leírom:"],
+      paragraphs: ["Az ajánlatkérés után ezt a három kérdést kapjuk a legtöbbször, gondoltuk, leírjuk:"],
       qa: [
-        { q: "Tényleg ennyibe kerül?", a: "Az online ár a válaszaidból számolt becslés. A 30 perces egyeztetés után fix árat adok, és pluszmunka csak a jóváhagyásoddal kerül bele." },
+        { q: "Tényleg ennyibe kerül?", a: "Az online ár a válaszaidból számolt becslés. A 30 perces egyeztetés után fix árat adunk, és pluszmunka csak a jóváhagyásoddal kerül bele." },
         { q: "Kié lesz az oldal?", a: "A tiéd: a domain, a kód és a tartalom is a te nevedre szól, bármikor továbbviheted." },
-        { q: "Mi van, ha nincs kész szövegem vagy képem?", a: "Nem baj, ebben is segítek. Az egyeztetésen megbeszéljük, mi kell." },
+        { q: "Mi van, ha nincs kész szövegem vagy képem?", a: "Nem baj, ebben is segítünk. Az egyeztetésen megbeszéljük, mi kell." },
       ],
       cta: offerCta,
       after: ["Ha bármi más kérdésed van, írj vissza erre a levélre."],
@@ -112,7 +112,7 @@ export function offerFollowUps(input: OfferFollowUpInput): FollowUp[] {
       greeting: greeting(firstName),
       paragraphs: [
         `Egy hete kérted az ajánlatot a ${packageName} csomagra.`,
-        "Ha még aktuális, válaszolj egy szóval erre a levélre, és egyeztetünk egy rövid hívást. Ha közben változott valami (más határidő, kisebb vagy nagyobb kör), azt is szívesen átszámolom.",
+        "Ha még aktuális, válaszolj egy szóval erre a levélre, és egyeztetünk egy rövid hívást. Ha közben változott valami (más határidő, kisebb vagy nagyobb kör), azt is szívesen átszámoljuk.",
       ],
       cta: offerCta,
     }),
@@ -145,7 +145,7 @@ export function auditFollowUps({ now, url }: AuditFollowUpInput): FollowUp[] {
             `Pár napja átvilágítottad a(z) ${host} oldalt. Ha kíváncsi vagy, mennyibe kerülne kijavítani vagy felújítani, a kérdőív pár perc alatt tételesen kiszámolja.`,
           ],
           cta: { label: "Kiszámolom a felújítás árát", url: `${siteUrl}/weboldal-felujitas` },
-          after: ["Ha inkább csak egy-két hibát javítanál, írd meg válaszban, melyiket, és megmondom, mennyi munka."],
+          after: ["Ha inkább csak egy-két hibát javítanál, írd meg válaszban, melyiket, és megmondjuk, mennyi munka."],
         }),
       },
       {

@@ -1183,7 +1183,7 @@ export const pricingConfig: PricingConfig = {
       id: "payment.account",
       kind: "requirement",
       when: { shop_payments: ["card"], shop_paymentAccount: ["no", "unsure"] },
-      text: "Online fizetéshez aktív fizetési fiók kell (Shopify Payments vagy pl. Netopia) – a beállításban segítek.",
+      text: "Online fizetéshez aktív fizetési fiók kell (Shopify Payments vagy pl. Netopia) – a beállításban segítünk.",
     },
     {
       id: "courier.contract",
@@ -1201,7 +1201,7 @@ export const pricingConfig: PricingConfig = {
       id: "payment.romania",
       kind: "requirement",
       when: { shop_payments: ["card"] },
-      text: "A kártyás fizetéshez a Shopify Payments aktiválása kell (cégadatok, bankszámla, személyazonosság-ellenőrzés) – ezt a cég nevében te indítod, a beállításban segítek.",
+      text: "A kártyás fizetéshez a Shopify Payments aktiválása kell (cégadatok, bankszámla, személyazonosság-ellenőrzés) – ezt a cég nevében te indítod, a beállításban segítünk.",
     },
     {
       id: "shipping.carrier_plan",
@@ -1220,7 +1220,7 @@ export const pricingConfig: PricingConfig = {
       id: "migration.passwords",
       kind: "requirement",
       when: { shop_current: ["migrate"], shop_migrateData: ["customers"] },
-      text: "A vásárlók jelszavai nem vihetők át: az első belépéskor új jelszót állítanak be (erről e-mailt küldhetek nekik).",
+      text: "A vásárlók jelszavai nem vihetők át: az első belépéskor új jelszót állítanak be (erről e-mailt küldhetünk nekik).",
     },
     {
       id: "migration.orders_app",
@@ -1255,13 +1255,13 @@ export const pricingConfig: PricingConfig = {
       extraCost: true,
       kind: "exclusion",
       when: { shop_translations: ["partial", "full"] },
-      text: "A fordítás (a nyelvek technikai beállítása benne van, a fordítást külön ajánlom)",
+      text: "A fordítás (a nyelvek technikai beállítása benne van, a fordítást külön ajánljuk)",
     },
     {
       id: "legal.texts",
       kind: "exclusion",
       when: { shop_legal: ["notyet", "help"] },
-      text: "A jogi dokumentumok (ÁSZF, adatkezelés, elállás) megírása és jogi ellenőrzése – a kapott szöveget feltöltöm",
+      text: "A jogi dokumentumok (ÁSZF, adatkezelés, elállás) megírása és jogi ellenőrzése – a kapott szöveget feltöltjük",
     },
     {
       id: "shopify.fees",
@@ -1368,7 +1368,7 @@ export const pricingConfig: PricingConfig = {
       id: "premium.performance",
       label: "Sebesség-optimalizálás (képek, betöltés)",
       description:
-        "Képek és betöltött scriptek optimalizálása, mérés előtte és utána. Konkrét pontszámot nem garantálok.",
+        "Képek és betöltött scriptek optimalizálása, mérés előtte és utána. Konkrét pontszámot nem garantálunk.",
       hours: 6,
       fromPackage: "standard",
       category: "quality",
@@ -1445,7 +1445,7 @@ export const pricingConfig: PricingConfig = {
         name: "Alap",
         label: "Alap karbantartás (frissítések, mentések)",
         monthly: 90,
-        includes: ["Biztonsági és rendszerfrissítések", "Rendszeres mentés", "Ha leáll az oldal, én javítom"],
+        includes: ["Biztonsági és rendszerfrissítések", "Rendszeres mentés", "Ha leáll az oldal, mi javítjuk"],
       },
       standard: {
         name: "Standard",

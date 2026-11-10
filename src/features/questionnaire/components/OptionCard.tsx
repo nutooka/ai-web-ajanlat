@@ -131,7 +131,7 @@ export function OptionCard({ option, selected, multiple, shortcut, recommended, 
         {impacts.length > 0 && <ImpactBadges impacts={impacts} />}
         {recommended && (
           <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 999, background: gradients.brand, color: palette.ink, fontSize: 12, fontWeight: 700 }}>
-            Neked ajánlom
+            Neked ajánljuk
           </Box>
         )}
       </Box>

@@ -166,7 +166,7 @@ export function OfferDetails({ offer, packageId }: { offer: Offer; packageId: Pa
               A válaszaid
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Ezeket is megkapom, amikor egyeztetést kérsz – nem kell külön elküldened.
+              Ezeket is megkapjuk, amikor egyeztetést kérsz – nem kell külön elküldened.
             </Typography>
             <Box component="dl" sx={{ m: 0 }}>
               {offer.answerRows.map((row) => (

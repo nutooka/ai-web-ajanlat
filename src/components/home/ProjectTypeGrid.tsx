@@ -74,7 +74,7 @@ export function ProjectTypeGrid({ options, startingPrices }: { options: ProjectT
                   </>
                 ) : (
                   <Box component="span" sx={{ fontSize: 14 }}>
-                    Segítek dönteni
+                    Segítünk dönteni
                   </Box>
                 )}
               </Typography>

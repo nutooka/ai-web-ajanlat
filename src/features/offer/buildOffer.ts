@@ -75,7 +75,7 @@ function buildExcludes(quote: Quote, packageId: PackageId, answers: Answers): st
     .map((item) => `${item.label} (a Standard csomagban elérhető)`);
 
   const contextual: string[] = [];
-  if (answers.contentUpload === "self" || answers.contentUpload === undefined) contextual.push("Tartalomfeltöltés (te töltöd fel, én megmutatom, hogyan)");
+  if (answers.contentUpload === "self" || answers.contentUpload === undefined) contextual.push("Tartalomfeltöltés (te töltöd fel, mi megmutatjuk, hogyan)");
   if (answers.company_content === "ready") contextual.push("Szövegírás");
   if (answers.shop_productUpload === "self") contextual.push("Termékfeltöltés");
 
@@ -83,7 +83,7 @@ function buildExcludes(quote: Quote, packageId: PackageId, answers: Answers): st
 }
 
 const NEXT_STEPS = [
-  "Elküldöd az ajánlatot – 1 munkanapon belül jelentkezem.",
+  "Elküldöd az ajánlatot – 1 munkanapon belül jelentkezünk.",
   "30 perces ingyenes online egyeztetés a részletekről.",
   "Végleges, fix áras ajánlat és ütemterv.",
   "Szerződés, előleg, és indulhat a munka.",

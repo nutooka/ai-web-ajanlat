@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   }
 
   const deps = createFollowUpDeps();
-  if (!deps) return Response.json({ ok: false, error: "A leiratkozás most nem elérhető. Írj egy választ a levélre, és kézzel leállítom." }, { status: 503 });
+  if (!deps) return Response.json({ ok: false, error: "A leiratkozás most nem elérhető. Írj egy választ a levélre, és kézzel leállítjuk." }, { status: 503 });
 
   try {
     const result = await stopSequence(token, deps);

@@ -46,7 +46,7 @@ export const contactSchema = z
   })
   .superRefine((data, ctx) => {
     if (!data.email && !data.phone) {
-      ctx.addIssue({ code: "custom", path: ["email"], message: "Adj meg e-mail-címet vagy telefonszámot, hogy válaszolhassak." });
+      ctx.addIssue({ code: "custom", path: ["email"], message: "Adj meg e-mail-címet vagy telefonszámot, hogy válaszolhassunk." });
     }
     if (data.wantsCopy && !data.email) {
       ctx.addIssue({ code: "custom", path: ["email"], message: "A másolathoz add meg az e-mail-címed." });

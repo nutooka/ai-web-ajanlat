@@ -15,7 +15,7 @@ export function whatsAppOfferLink(number: string, code?: string, packageName?: s
   return `https://wa.me/${number}?text=${encodeURIComponent(`Szia! A nutooka.tech-ről írok ${offer}. Szeretnék egyeztetni.`)}`;
 }
 
-/** "Én hívlak vissza": the face next to the request form, plus a WhatsApp shortcut with the offer code. */
+/** "Betti hív vissza": the founder's face next to the request form, plus a WhatsApp shortcut with the offer code. */
 export function ContactPerson({ code, packageName }: { code?: string; packageName?: string }) {
   const { person, chat } = siteConfig;
   const number: string = chat.whatsapp;
@@ -26,7 +26,7 @@ export function ContactPerson({ code, packageName }: { code?: string; packageNam
           <Image src={person.photo} alt={person.name} fill sizes="56px" style={{ objectFit: "cover" }} />
         </Box>
         <Box>
-          <Typography sx={{ fontWeight: 700, lineHeight: 1.3 }}>Én hívlak vissza: {person.firstName}</Typography>
+          <Typography sx={{ fontWeight: 700, lineHeight: 1.3 }}>{person.firstName} hív vissza</Typography>
           <Typography variant="body2" color="text.secondary">
             {person.role}
           </Typography>

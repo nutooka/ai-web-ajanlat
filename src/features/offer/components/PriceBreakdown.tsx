@@ -58,7 +58,7 @@ export function PriceBreakdown({ pkg }: { pkg: PackageQuote }) {
           ))}
           {pkg.items.some((item) => item.review) && (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              * Technikai egyeztetés után véglegesítem – az ár kiinduló becslés.
+              * Technikai egyeztetés után véglegesítjük – az ár kiinduló becslés.
             </Typography>
           )}
           <Box sx={{ mt: 2 }}>

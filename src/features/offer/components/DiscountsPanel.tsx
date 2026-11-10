@@ -264,7 +264,7 @@ export function DiscountsPanel({
                       ) : (
                         quickWindowText(quickConfig)
                       )}
-                      , és rögzítem.{" "}
+                      , és rögzítjük.{" "}
                       {quick.nextPercent > 0
                         ? `Utána már csak −${quick.nextPercent}%.`
                         : "Utána teljes ár."}{" "}

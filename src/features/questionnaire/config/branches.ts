@@ -13,7 +13,7 @@ export const projectTypeQuestion: ChoiceQuestion = {
     { id: "webapp", label: "Egyedi webalkalmazás", description: "Saját rendszer, portál vagy eszköz", icon: "apps" },
     { id: "landing", label: "Landing page", description: "Egyetlen, konverzióra optimalizált oldal", icon: "rocket" },
     { id: "redesign", label: "Meglévő weboldal felújítása", description: "Modernizálás, gyorsítás, újratervezés", icon: "refresh" },
-    { id: "unsure", label: "Még nem tudom pontosan", description: "Néhány kérdéssel segítek eldönteni", icon: "help" },
+    { id: "unsure", label: "Még nem tudom pontosan", description: "Néhány kérdéssel segítünk eldönteni", icon: "help" },
   ],
 };
 
@@ -24,7 +24,7 @@ export const unsureQuestions: Question[] = [
     kind: "single",
     required: true,
     title: "Mi a legfontosabb, amit a weboldaladtól vársz?",
-    hint: "A cél alapján javaslok projekttípust – nem kell ismerned a szakszavakat.",
+    hint: "A cél alapján javaslunk projekttípust – nem kell ismerned a szakszavakat.",
     options: [
       { id: "present", label: "Bemutatkozás és bizalomépítés", description: "Hogy megtaláljanak és megbízzanak bennem", icon: "business" },
       { id: "sell", label: "Termékek eladása online", description: "Rendelések fogadása a weboldalon", icon: "sell" },
@@ -43,7 +43,7 @@ export const unsureQuestions: Question[] = [
     id: "resolvedType",
     kind: "single",
     required: true,
-    title: "Ezt a megoldást javaslom neked",
+    title: "Ezt a megoldást javasoljuk neked",
     subtitle: "A válaszaid alapján megjelöltük a legjobban illő típust. Válaszd ki ezt, vagy bármelyik másikat.",
     options: projectTypeQuestion.options.filter((option) => option.id !== "unsure"),
   },
@@ -56,7 +56,7 @@ const companyQuestions: Question[] = [
     required: false,
     maxLength: 500,
     title: "Milyen tevékenységet végez a vállalkozásod?",
-    hint: "Pár szó is elég – ebből értem meg, kiknek szól az oldal.",
+    hint: "Pár szó is elég – ebből értjük meg, kiknek szól az oldal.",
     placeholder: "Pl. fogászati rendelő Csíkszeredában, családi panzió, könyvelőiroda…",
   },
   {
@@ -66,7 +66,7 @@ const companyQuestions: Question[] = [
     // Already asked as "unsure_goal" on the "not sure yet" path.
     showIf: (answers) => answers.projectType !== "unsure",
     title: "Mi a weboldal legfontosabb célja?",
-    hint: "Erre optimalizálom a szerkezetet és a gombokat – minden oldal egy célt szolgál.",
+    hint: "Erre optimalizáljuk a szerkezetet és a gombokat – minden oldal egy célt szolgál.",
     options: [
       { id: "leads", label: "Több megkeresés, telefon", description: "Az érdeklődőből ügyfél legyen", icon: "phone" },
       { id: "bookings", label: "Online foglalások", description: "Időpontok, asztalok, szobák", icon: "calendar" },
@@ -200,8 +200,8 @@ const webshopQuestions: Question[] = [
     title: "Ki tölti fel a termékeket?",
     hint: "Legfeljebb 10 termék feltöltése benne van az árban.",
     options: [
-      { id: "self", label: "Én magam", description: "Megmutatom, hogyan kell", icon: "person" },
-      { id: "us", label: "Kérem, hogy te töltsd fel", description: "Képekkel, leírásokkal", icon: "upload" },
+      { id: "self", label: "Én magam", description: "Megmutatjuk, hogyan kell", icon: "person" },
+      { id: "us", label: "Kérem, hogy ti töltsétek fel", description: "Képekkel, leírásokkal", icon: "upload" },
     ],
   },
   {
@@ -252,7 +252,7 @@ const webshopQuestions: Question[] = [
     required: true,
     showIf: answerIn("shop_payments", ["card"]),
     title: "Van már fiókod online fizetési szolgáltatónál?",
-    hint: "Pl. Shopify Payments, Netopia vagy EuPlatesc. Ha nincs, a beállításban segítek – a tranzakciós díjat nekik fizeted.",
+    hint: "Pl. Shopify Payments, Netopia vagy EuPlatesc. Ha nincs, a beállításban segítünk – a tranzakciós díjat nekik fizeted.",
     options: [
       { id: "yes", label: "Igen", icon: "check" },
       { id: "no", label: "Nincs", icon: "close" },
@@ -375,7 +375,7 @@ const webshopQuestions: Question[] = [
     kind: "single",
     required: true,
     title: "Automatikusan készüljön számla minden rendelésről?",
-    hint: "A webshopot összekötöm a számlázóprogramoddal.",
+    hint: "A webshopot összekötjük a számlázóprogramoddal.",
     options: [
       { id: "no", label: "Nem kell", description: "Kézzel számlázok", icon: "close" },
       { id: "smartbill", label: "Igen, SmartBill-lel", icon: "receipt" },
@@ -423,11 +423,11 @@ const webshopQuestions: Question[] = [
     kind: "single",
     required: true,
     title: "Megvannak a webshop jogi szövegei?",
-    hint: "ÁSZF, adatkezelési tájékoztató, elállási tájékoztató. Az oldalakat én hozom létre, a szövegeket jogász írja.",
+    hint: "ÁSZF, adatkezelési tájékoztató, elállási tájékoztató. Az oldalakat mi hozzuk létre, a szövegeket jogász írja.",
     options: [
       { id: "yes", label: "Igen, megvannak", icon: "check" },
       { id: "notyet", label: "Még nincsenek", icon: "close" },
-      { id: "help", label: "Segítség kell hozzá", description: "Ajánlok szakembert", icon: "help" },
+      { id: "help", label: "Segítség kell hozzá", description: "Ajánlunk szakembert", icon: "help" },
     ],
   },
 ];
@@ -512,7 +512,7 @@ const webappQuestions: Question[] = [
     options: [
       { id: "yes", label: "Igen", icon: "database" },
       { id: "no", label: "Nem", icon: "close" },
-      { id: "unsure", label: "Nem tudom", description: "Segítek eldönteni", icon: "question" },
+      { id: "unsure", label: "Nem tudom", description: "Segítünk eldönteni", icon: "question" },
     ],
   },
   {
@@ -602,7 +602,7 @@ const webappQuestions: Question[] = [
     kind: "single",
     required: true,
     title: "Hogyan indulnál?",
-    hint: "Egy MVP-vel gyorsabban kiderül, mire van valóban szükség – utána célzottan bővíthető.",
+    hint: "Egy MVP-vel gyorsabban kiderül, mire van valóban szükség – utána célzottan bővítünk.",
     options: [
       { id: "mvp", label: "Gyors MVP, aztán bővítés", description: "Az alapfunkciókkal minél előbb élesben", icon: "rocket" },
       { id: "full", label: "Teljes rendszer egyben", icon: "layers" },
@@ -697,7 +697,7 @@ const landingQuestions: Question[] = [
     kind: "single",
     required: true,
     title: "Hirdetési kampányhoz készül az oldal?",
-    hint: "Ilyenkor beállítom a Meta- és Google-követőkódokat is.",
+    hint: "Ilyenkor beállítjuk a Meta- és Google-követőkódokat is.",
     options: yesNo("Facebook, Instagram, Google Ads", "Nem tervezek hirdetést"),
   },
 ];

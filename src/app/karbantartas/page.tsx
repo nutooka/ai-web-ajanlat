@@ -36,10 +36,29 @@ const hostingRows: { label: string; type: keyof typeof maintenance.hostingMonthl
   { label: "Webalkalmazás", type: "webapp" },
 ];
 
+const why = [
+  "Egy weboldal nem kész termék, amit egyszer leteszel és elfelejtesz. A mögötte futó rendszerek, könyvtárak és a tárhely folyamatosan frissülnek, a böngészők változnak, és ami ma hibátlanul működik, fél év múlva lassulhat vagy hibázhat.",
+  "A frissítetlen oldal a leggyakoribb oka annak, hogy egy kisvállalkozás honlapja egyszer csak nem töltődik be, eltűnik egy űrlap, vagy a Google figyelmeztet, hogy az oldal nem biztonságos. Ilyenkor az ügyfél nem ír, hanem továbblép a versenytárshoz.",
+  "A karbantartással ezt mi figyeljük helyetted: frissítjük a rendszert, mentést készítünk, és ha valami elromlik, nem neked kell fejlesztőt keresned. A módosítási kerettel pedig az árlista, a nyitvatartás vagy egy új szolgáltatás pár nap alatt kint van az oldalon, anélkül hogy külön ajánlatot kérnél.",
+];
+
+const month = [
+  "Frissítjük a rendszert és a felhasznált könyvtárakat, és utána ellenőrizzük, hogy minden oldal, űrlap és fizetés rendben működik.",
+  "Mentést készítünk az oldalról és a tartalomról, hogy baj esetén pár perc alatt vissza lehessen állni.",
+  "Ha módosítási keret is van a csomagban, a kéréseidet e-mailben vagy WhatsAppon küldöd, mi pedig elvégezzük, és szólunk, amikor kint van.",
+  "Ha valami elromlik (lejár egy tanúsítvány, leáll egy külső szolgáltatás), nem neked kell kideríteni, mi a baj: mi javítjuk.",
+];
+
+const which = [
+  { who: "Alap:", text: "ha az oldal ritkán változik (bemutatkozó oldal, landing page), és csak azt szeretnéd, hogy biztonságos, gyors és működő maradjon." },
+  { who: "Standard:", text: "ha havonta egyszer-kétszer cserélnél szöveget, árat vagy képet, vagy új aloldalt tennél fel. A legtöbb céges oldalnak ez elég." },
+  { who: "Premium:", text: "webshopnak vagy webalkalmazásnak, ahol rendszeresen jön új funkció, akció vagy termék, és fontos, hogy a kéréseid gyorsan sorra kerüljenek." },
+];
+
 const faq = [
   {
     q: "Kötelező a karbantartás?",
-    a: "Nem. Karbantartás nélkül is a tiéd az oldal, ilyenkor csak a tárhelyet és a domaint fizeted. Ajánlani azért ajánlom: egy frissítetlen oldal idővel lassul, hibázik, és sebezhetővé válik.",
+    a: "Nem. Karbantartás nélkül is a tiéd az oldal, ilyenkor csak a tárhelyet és a domaint fizeted. Ajánlani azért ajánljuk: egy frissítetlen oldal idővel lassul, hibázik, és sebezhetővé válik.",
   },
   {
     q: "Hogyan tudom lemondani?",
@@ -47,20 +66,21 @@ const faq = [
   },
   {
     q: "Mi számít módosításnak?",
-    a: "Szöveg-, kép- és árcsere, új aloldal vagy blogbejegyzés feltöltése, kisebb design-igazítás. Ha egy kérés több időt igényel, előre megmondom, mennyi.",
+    a: "Szöveg-, kép- és árcsere, új aloldal vagy blogbejegyzés feltöltése, kisebb design-igazítás. Ha egy kérés több időt igényel, előre megmondjuk, mennyi.",
   },
   {
     q: "Mi van, ha egy hónapban nem használom ki a módosítási órákat?",
     a: "Nem gyűlnek: a havi keret arra a hónapra szól. Ha tudod, hogy ritkán kérsz módosítást, az Alap csomag elég.",
   },
   {
-    q: "Más által készített oldalt is vállalsz?",
-    a: "Igen, ha előbb átnézem. Az ingyenes átvilágítás jó kiindulópont: abból látszik, milyen állapotban van az oldal.",
+    q: "Más által készített oldalt is vállaltok?",
+    a: "Igen, ha előbb átnézhetjük. Az ingyenes átvilágítás jó kiindulópont: abból látszik, milyen állapotban van az oldal.",
   },
 ];
 
 export default function MaintenancePage() {
   const h2 = { fontSize: { xs: "1.6rem", md: "2rem" }, mt: 7, mb: 2 } as const;
+  const p = { mb: 2, fontSize: "1.0625rem", lineHeight: 1.7 } as const;
   return (
     <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
       <JsonLd
@@ -108,6 +128,9 @@ export default function MaintenancePage() {
       <WaveDivider from={palette.ink} to={palette.paper} />
 
       <Container maxWidth="lg" component="main" sx={{ flex: 1, py: { xs: 5, md: 7 } }}>
+        <Typography variant="h2" sx={{ fontSize: { xs: "1.6rem", md: "2rem" }, mb: 3 }}>
+          Karbantartási csomagok
+        </Typography>
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, gap: 3 }}>
           {PACKAGE_IDS.map((id) => {
             const tier = maintenance.support[id];
@@ -118,7 +141,7 @@ export default function MaintenancePage() {
                 sx={{ borderRadius: 4, overflow: "hidden", background: palette.surface, border: recommended ? 2 : 1, borderColor: recommended ? palette.ink : "divider", display: "flex", flexDirection: "column" }}
               >
                 <Box sx={{ background: packageThemes[id].gradient, color: palette.ink, px: 3, py: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <Typography component="h2" sx={{ fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", fontSize: 15 }}>
+                  <Typography component="h3" sx={{ fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", fontSize: 15 }}>
                     {tier.name}
                   </Typography>
                   {recommended && (
@@ -154,6 +177,33 @@ export default function MaintenancePage() {
         </Box>
 
         <Container maxWidth="md" disableGutters>
+          <Typography variant="h2" sx={h2}>
+            Miért kell egy weboldalt karbantartani?
+          </Typography>
+          {why.map((text) => (
+            <Typography key={text} sx={p}>
+              {text}
+            </Typography>
+          ))}
+
+          <Typography variant="h2" sx={h2}>
+            Hogyan zajlik egy hónap?
+          </Typography>
+          <Box component="ol" sx={{ pl: 2.5, m: 0, mb: 2, "& li": { mb: 1.5, fontSize: "1.0625rem", lineHeight: 1.7 } }}>
+            {month.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </Box>
+
+          <Typography variant="h2" sx={h2}>
+            Melyik csomag kell neked?
+          </Typography>
+          {which.map((item) => (
+            <Typography key={item.who} sx={p}>
+              <b>{item.who}</b> {item.text}
+            </Typography>
+          ))}
+
           <Typography variant="h2" sx={h2}>
             Mit fizetsz még mellette?
           </Typography>

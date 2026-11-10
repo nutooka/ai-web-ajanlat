@@ -111,7 +111,7 @@ export function SaveOffer({ answers, packageId, packageName, price, code }: Save
             Még gondolkodsz?
           </Typography>
           <Typography color="text.secondary" sx={{ mb: 2 }}>
-            Küldd el magadnak az ajánlatot egy linkkel, amivel később is pontosan ezt látod. Nem hívlak fel, ha nem kéred.
+            Küldd el magadnak az ajánlatot egy linkkel, amivel később is pontosan ezt látod. Nem hívunk fel, ha nem kéred.
           </Typography>
 
           {status.kind === "sent" ? (

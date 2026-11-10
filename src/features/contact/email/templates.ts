@@ -270,13 +270,13 @@ export function customerEmail(
   const steps = offer.nextSteps.map((step, index) => `${index + 1}. ${step}`);
   const intro = saved
     ? "Itt az ajánlatod, ahogy kérted. Ha kérdésed van, egyszerűen válaszolj erre az e-mailre – vagy kérj ingyenes egyeztetést az ajánlat oldalán."
-    : "Megkaptam az ajánlatkérésed, hamarosan jelentkezem. Az alábbiakban a becsült ajánlat másolatát találod.";
+    : "Megkaptuk az ajánlatkérésed, hamarosan jelentkezünk. Az alábbiakban a becsült ajánlat másolatát találod.";
   const linkHtml = shareUrl
     ? `<p style="font-size:14px;line-height:1.6;"><a href="${escapeHtml(shareUrl)}" style="color:#14161A;font-weight:bold;">Az ajánlatod megnyitása</a> – pontosan úgy, ahogy most láttad.</p>`
     : "";
 
   const html = layout(
-    saved ? "Az ajánlatod" : "Köszönöm az érdeklődést!",
+    saved ? "Az ajánlatod" : "Köszönjük az érdeklődést!",
     `<p style="font-size:15px;">${escapeHtml(greeting)}</p>
 <p style="font-size:14px;line-height:1.6;">${escapeHtml(intro)}</p>${linkHtml}
 ${heading("Összefoglaló")}<p style="font-size:14px;line-height:1.6;">${escapeHtml(offer.summary)}</p>

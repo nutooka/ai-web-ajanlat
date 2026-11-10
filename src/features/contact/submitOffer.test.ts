@@ -207,7 +207,7 @@ describe("submitOffer – sending the offer to yourself", () => {
     const { sent, deps } = setup();
     await submitOffer(submission(), deps);
     expect(sent[0].subject).toMatch(/^Új ajánlatkérés/);
-    expect(sent[1].text).toContain("Megkaptam az ajánlatkérésed");
+    expect(sent[1].text).toContain("Megkaptuk az ajánlatkérésed");
   });
 });
 

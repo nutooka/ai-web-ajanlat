@@ -12,7 +12,7 @@ export function StopFollowUps() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
   if (!token) return <Alert severity="warning">Hiányzik a leiratkozó kód. Nyisd meg újra a levél alján lévő linket.</Alert>;
-  if (status.kind === "done") return <Alert severity="success">Kész, több levelet nem küldök erről.</Alert>;
+  if (status.kind === "done") return <Alert severity="success">Kész, erről több levelet nem küldünk.</Alert>;
 
   async function stop() {
     setStatus({ kind: "sending" });

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 const faq = [
   { q: "Mit mér az átvilágítás?", a: "A Google PageSpeed telefonos mérését futtatja le: sebességet, Google-megjelenést (SEO), akadálymentességet és biztonságot, majd magyarul elmagyarázza a legfontosabb hibákat." },
-  { q: "Tényleg ingyenes?", a: "Igen, és nem kell regisztrálni. Ha kéred, a teljes jelentést e-mailben is elküldöm, személyes javaslattal." },
+  { q: "Tényleg ingyenes?", a: "Igen, és nem kell regisztrálni. Ha kéred, a teljes jelentést e-mailben is elküldjük, személyes javaslattal." },
   { q: "Mit tegyek, ha gyenge lett az eredmény?", a: "A legtöbb hiba javítható. A felújítási kérdőívvel 3 perc alatt kiszámolod, mennyibe kerülne." },
 ];
 

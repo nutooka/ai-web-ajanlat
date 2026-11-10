@@ -30,7 +30,7 @@ export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; a
           </Typography>
 
           <Typography variant="body2" sx={{ mt: 2, color: palette.inkMuted }}>
-            A pontos árat és a három csomagot a kérdések végén mutatom meg.
+            A pontos árat és a három csomagot a kérdések végén mutatjuk meg.
           </Typography>
 
           {features.length > 0 && (

@@ -40,7 +40,7 @@ export const siteConfig = {
    */
   chat: { messenger: "", whatsapp: "40753968097" },
   /**
-   * A cég arca: a főoldali „Ki vagyok?” blokk és az ajánlat-űrlap melletti névjegy.
+   * A cég arca: a főoldali „Kik vagyunk?” blokk és az ajánlat-űrlap melletti névjegy.
    * A fotó a public/team mappában van (LinkedIn-profilkép, 480×480).
    */
   person: {
@@ -50,8 +50,8 @@ export const siteConfig = {
     photo: "/team/beata.jpg",
     linkedin: "https://www.linkedin.com/in/fulop-beata/",
     bio: [
-      "Szia, Betti vagyok, a Nutooka alapítója. 8 év frontend-fejlesztői tapasztalattal építek weboldalakat, webshopokat és webalkalmazásokat React és Next.js alapon, budapesti cégeknél és nemzetközi projekteken is dolgoztam.",
-      "Székelyudvarhelyen élek. Ha ajánlatot kérsz, én hívlak vissza, és személyesen egyeztetünk.",
+      "A Nutookát Zátyi Beáta (Betti) alapította. 8 év frontend-fejlesztői tapasztalattal építünk weboldalakat, webshopokat és webalkalmazásokat React és Next.js alapon; Betti korábban budapesti cégeknél és nemzetközi projekteken dolgozott.",
+      "Székelyudvarhelyen vagyunk. Ha ajánlatot kérsz, az alapító hív vissza, és személyesen egyeztetünk.",
     ],
   },
   /** Ennyi napig érvényes az ajánlatban rögzített (kedvezményes) ár az egyeztetés kérése után. */

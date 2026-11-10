@@ -92,7 +92,7 @@ function signature(): string {
 <td width="64" valign="top" style="padding-top:20px;"><img src="${siteUrl}${person.photo}" width="52" height="52" alt="${escapeHtml(person.firstName)}" style="display:block;width:52px;height:52px;border-radius:50%;object-fit:cover;"></td>
 <td valign="top" style="padding-top:20px;font-family:${BODY};font-size:14px;line-height:1.5;color:${C.muted};">
 <span style="font-family:${DISPLAY};font-size:16px;font-weight:700;color:${C.ink};">${escapeHtml(person.firstName)}</span><br>
-${escapeHtml(person.role)}, Nutooka<br>${contact}
+${escapeHtml(person.role)} · Nutooka<br>${contact}
 </td></tr></table>`;
 }
 
@@ -142,7 +142,7 @@ Azért kaptad ezt a levelet, mert ajánlatot vagy átvilágítást kértél a nu
     email.cta ? `${email.cta.label}: ${email.cta.url}` : null,
     ...(email.after ?? []),
     "",
-    `${siteConfig.person.firstName}, ${siteConfig.person.role}, Nutooka`,
+    `${siteConfig.person.firstName}\n${siteConfig.person.role} · Nutooka`,
     siteConfig.company.phone ? `Telefon: ${siteConfig.company.phone}` : null,
     siteConfig.chat.whatsapp ? `WhatsApp: https://wa.me/${siteConfig.chat.whatsapp}` : null,
     "",

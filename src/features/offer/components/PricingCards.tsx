@@ -743,7 +743,7 @@ function RequestStatus({
       >
         {ok
           ? recommended
-            ? "Minden kérésed benne van – ezt ajánlom."
+            ? "Minden kérésed benne van – ezt ajánljuk."
             : "Minden kérésed benne van."
           : `Hiányzik ${missing.length} kérésed: ${missing.join(", ")}.`}
       </Typography>

@@ -101,7 +101,7 @@ export function DeadlineSlider({ pkg, onChange }: { pkg: PackageQuote; onChange:
               Mikorra kell elkészülnie?
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Minél több időt adsz, annál olcsóbb – a munkát a szabad kapacitásomba tudom tenni.
+              Minél több időt adsz, annál olcsóbb – a munkát a szabad kapacitásunkba tudjuk tenni.
             </Typography>
           </Box>
         </Stack>

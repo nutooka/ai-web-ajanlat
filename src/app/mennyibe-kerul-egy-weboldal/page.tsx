@@ -93,8 +93,8 @@ export default function PricingArticle() {
 
         <Typography sx={p}>
           Weboldalt ma Erdélyben néhány száz lejtől több tízezer lejig lehet készíttetni – a különbség a terjedelemben, a design egyediségében és a funkciókban van. Az
-          alábbi árak nem becslések a semmiből: ugyanazzal az árazással számoltuk őket, amellyel a{" "}
-          <Link href="/tervezo">pár perces kérdőívem</Link> is dolgozik.
+          alábbi árakat ugyanazzal az árazással számoltuk, amellyel a{" "}
+          <Link href="/tervezo">pár perces kérdőívünk</Link> is dolgozik.
         </Typography>
 
         <Typography variant="h2" sx={h2}>
@@ -171,7 +171,7 @@ export default function PricingArticle() {
         <Box component="ul" sx={{ pl: 2.5, "& li": { mb: 1, fontSize: "1.0625rem", lineHeight: 1.7 } }}>
           <li>Adj rugalmas határidőt – akár −{flexibleDiscount}%.</li>
           <li>Hozd a saját szövegeidet és képeidet.</li>
-          <li>Kezdj kisebb csomaggal, és bővíts később – modern alapra építek, ez bármikor megy.</li>
+          <li>Kezdj kisebb csomaggal, és bővíts később – modern alapra építünk, ez bármikor megy.</li>
           <li>Ha gyorsan döntesz, az ajánlat után {quickWindow} −{quickPercent}% kedvezmény jár.</li>
         </Box>
 

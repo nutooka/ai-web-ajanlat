@@ -42,24 +42,24 @@ const STEP_TONES: BlobTone[] = ["basic", "standard", "premium"];
 const steps = [
   { title: "Válaszolj pár kérdésre", text: "Egyszerre egy kérdés, szakszavak nélkül. Bármikor abbahagyhatod, a válaszaid megmaradnak." },
   { title: "Azonnal látod az árat", text: "Tételes kalkuláció három csomagban, átfutási idővel és fenntartási költséggel." },
-  { title: "Ingyenes egyeztetés", text: "Ha tetszik, egy kattintással elküldöd. 1 munkanapon belül jelentkezem." },
+  { title: "Ingyenes egyeztetés", text: "Ha tetszik, egy kattintással elküldöd. 1 munkanapon belül jelentkezünk." },
 ];
 
 const promises = [
-  { title: "Fix ár, nincs meglepetés", text: "Amit az egyeztetés után leírok, annyiba kerül. Pluszmunka csak a jóváhagyásoddal." },
+  { title: "Fix ár, nincs meglepetés", text: "Amit az egyeztetés után leírunk, annyiba kerül. Pluszmunka csak a jóváhagyásoddal." },
   { title: "2–4 hét alatt élesben", text: "Egy átlagos céges oldal egy hónapon belül elkészül – nem negyedév múlva." },
   { title: "Minden a tiéd", text: "Domain, kód, tartalom: a te nevedre szól. Bármikor továbbviheted." },
-  { title: "Ügynökségi rezsi nélkül", text: "Egyedül dolgozom, irodai rezsi és projektmenedzser nélkül, ezért kerül kevesebbe, és mindig velem beszélsz." },
+  { title: "Ügynökségi rezsi nélkül", text: "Nincs irodai rezsi és projektmenedzser, ezért kerül kevesebbe, és mindig közvetlenül az alapítóval beszélsz." },
 ];
 
 const faqs = [
   {
     q: "Tényleg ennyibe kerül?",
-    a: "Az ajánlat a válaszaidból számolt, tételes becslés. A végleges, fix árat a 30 perces egyeztetés után adom – általában a becslés közelében marad.",
+    a: "Az azonnali ár a válaszaidból számolt tételes kalkuláció. A 30 perces egyeztetés után írásban fix árat adunk, és az általában ennek közelében marad.",
   },
-  { q: "Mit kell előkészítenem?", a: "Semmit. Ha van logód, szöveged, képeid, az gyorsít; ha nincs, ebben is segítek." },
-  { q: "Mi van, ha később bővíteni szeretném?", a: "Modern, bővíthető alapra építek, így később bármikor jöhet új oldal, webshop vagy funkció." },
-  { q: "Ki fogja kezelni az oldalt?", a: "Te is tudod szerkeszteni, megmutatom, hogyan. Ha nem akarsz vele foglalkozni, kérhetsz karbantartást." },
+  { q: "Mit kell előkészítenem?", a: "Semmit. Ha van logód, szöveged, képeid, az gyorsít; ha nincs, ebben is segítünk." },
+  { q: "Mi van, ha később bővíteni szeretném?", a: "Modern, bővíthető alapra építünk, így később bármikor jöhet új oldal, webshop vagy funkció." },
+  { q: "Ki fogja kezelni az oldalt?", a: "Te is tudod szerkeszteni, megmutatjuk, hogyan. Ha nem akarsz vele foglalkozni, kérhetsz karbantartást." },
 ];
 
 const companyFrom = formatRon(startingPrice("company"));
@@ -141,7 +141,7 @@ export default function HomePage() {
             <Stack spacing={4} sx={{ alignItems: "flex-start", position: "relative", zIndex: 2 }}>
               <HeroTitle />
               <Typography sx={{ color: palette.inkMuted, fontSize: { xs: "1.0625rem", md: "1.25rem" }, lineHeight: 1.55, maxWidth: 520 }}>
-                Néhány egyszerű kérdés, és pár perc alatt tételes, személyre szabott árajánlatot kapsz. Céges weboldal már{" "}
+                Olyan weboldal, amiről hívnak és foglalnak, nem csak szép. Pár kérdés után tételesen látod, mennyibe kerül: céges weboldal már{" "}
                 <Box component="span" sx={{ color: "#fff", fontWeight: 600 }}>
                   {formatRon(prices.company)}-tól
                 </Box>
@@ -164,7 +164,7 @@ export default function HomePage() {
         <SectionBlob tone="basic" position={{ top: "38%", right: -170 }} />
         <Container maxWidth="lg" component="section" sx={{ position: "relative", zIndex: 1, py: { xs: 9, md: 13 } }}>
           <Typography variant="h2" className="reveal" sx={{ mb: { xs: 5, md: 7 }, maxWidth: 680 }}>
-            Mintha egy tanácsadóval ülnél le – csak gyorsabb.
+            Így jutsz el pár perc alatt a tételes árig.
           </Typography>
           <Box component="ol" sx={{ listStyle: "none", p: 0, m: 0, display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, columnGap: 5, rowGap: 5 }}>
             {steps.map((step, index) => (
@@ -227,7 +227,7 @@ export default function HomePage() {
           <SectionBlob tone="premium" size={260} position={{ bottom: 56, left: -120 }} />
           <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1, py: { xs: 9, md: 13 }, display: "grid", gridTemplateColumns: { xs: "1fr", md: "0.9fr 1.1fr" }, gap: { xs: 5, md: 10 } }}>
             <Typography variant="h2" className="reveal">
-              Prémium minőség, kisvállalkozói áron.
+              Ügynökségi minőség, rezsi nélkül: 8 év tapasztalat, közvetlenül az alapítótól.
             </Typography>
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, columnGap: 5, rowGap: 4 }}>
               {promises.map((promise) => (

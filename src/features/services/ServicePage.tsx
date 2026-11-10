@@ -125,7 +125,7 @@ export function ServicePage({ type }: { type: ResolvedProjectType }) {
           </Box>
           <Box component="section">
             <Typography variant="h2" sx={h2}>
-              Kinek ajánlom?
+              Kinek ajánljuk?
             </Typography>
             <CheckList items={service.forWhom} color={packageThemes.standard.solid} />
           </Box>
@@ -157,7 +157,7 @@ export function ServicePage({ type }: { type: ResolvedProjectType }) {
         <Box component="section" aria-labelledby="process-title" sx={{ background: palette.surface }}>
           <Container maxWidth="lg" sx={{ py: { xs: 7, md: 10 } }}>
             <Typography id="process-title" variant="h2" sx={h2}>
-              Így dolgozom: {service.name.toLowerCase()} lépésről lépésre
+              Így dolgozunk: {service.name.toLowerCase()} lépésről lépésre
             </Typography>
             <Box component="ol" sx={{ listStyle: "none", p: 0, m: 0, display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" }, gap: { xs: 3, md: 4 } }}>
               {service.process.map((step, index) => (
@@ -211,7 +211,7 @@ export function ServicePage({ type }: { type: ResolvedProjectType }) {
             <Typography id="related-title" variant="h2" sx={h2}>
               Ezek is érdekelhetnek
             </Typography>
-            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, gap: 2 }}>
+            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: `repeat(${Math.min(service.related.length, 4)}, 1fr)` }, gap: 2 }}>
               {service.related.map((item) => (
                 <Link key={item.href} href={item.href} style={{ color: "inherit", textDecoration: "none" }}>
                   <Box sx={{ height: "100%", p: 3, borderRadius: 3, border: 1, borderColor: "divider", transition: "border-color .2s ease", "&:hover": { borderColor: palette.ink } }}>

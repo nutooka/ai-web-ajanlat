@@ -18,7 +18,7 @@ export function References() {
             Legutóbbi munkánk
           </Typography>
           <Typography color="text.secondary" sx={{ maxWidth: 360 }}>
-            Nézd meg élőben – ugyanígy készül a te oldalad is.
+            Nézd meg élőben: ugyanezzel a technológiával készül a te oldalad is.
           </Typography>
         </Stack>
 
