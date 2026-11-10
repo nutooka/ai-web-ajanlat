@@ -54,7 +54,7 @@ export default function PricingArticle() {
   const faq = [
     { q: "Mennyibe kerül egy egyszerű weboldal?", a: `Egy egyszerű, 1–5 oldalas bemutatkozó weboldal ${formatRon(companySimple.packages.basic.finalPrice)}-tól készül, kb. ${formatWeeks(companySimple.packages.basic.timeline.minWeeks, companySimple.packages.basic.timeline.maxWeeks)} alatt.` },
     { q: "Mennyibe kerül egy webshop?", a: `Egy egyszerű Shopify-webshop ${formatRon(rows[3].quote.packages.basic.finalPrice)}-tól; futár-, fizetés- és számlázó-integrációval ennél több. A Shopify havidíja külön, a Shopify felé fizetendő.` },
-    { q: "Mennyi a havi költség?", a: `A tárhely egy céges oldalnál kb. ${formatRon(maintenance.hostingMonthly.company ?? 0)}/hó, a domain kb. ${formatRon(maintenance.domainYearly)}/év. A karbantartás nem kötelező: ${formatRon(maintenance.support.basic.monthly)}/hótól.` },
+    { q: "Mennyi a havi költség?", a: `A tárhely egy céges oldalnál kb. ${formatRon(maintenance.hostingMonthly.company ?? 0)}/hó, a domain kb. ${formatRon(maintenance.domainYearly)}/év. Karbantartás ${formatRon(maintenance.support.basic.monthly)}/hótól, az első hónap ingyen, és havonta lemondható.` },
   ];
 
   const h2 = { fontSize: { xs: "1.6rem", md: "2rem" }, mt: 6, mb: 2 } as const;
@@ -161,8 +161,8 @@ export default function PricingArticle() {
         </Typography>
         <Typography sx={p}>
           Egy céges weboldal tárhelye kb. {formatRon(maintenance.hostingMonthly.company ?? 0)}/hó, a domain kb. {formatRon(maintenance.domainYearly)}/év. Webshopnál a Shopify
-          előfizetése kb. {formatRon(maintenance.hostingMonthly.webshop ?? 0)}/hó, ezt a Shopify felé fizeted. Karbantartás (frissítések, mentések, kisebb módosítások) nem
-          kötelező, {formatRon(maintenance.support.basic.monthly)}/hótól.
+          előfizetése kb. {formatRon(maintenance.hostingMonthly.webshop ?? 0)}/hó, ezt a Shopify felé fizeted. Karbantartás (frissítések, mentések, kisebb módosítások){" "}
+          {formatRon(maintenance.support.basic.monthly)}/hótól, az első hónap ingyen: <Link href="/karbantartas">karbantartási csomagok</Link>.
         </Typography>
 
         <Typography variant="h2" sx={h2}>

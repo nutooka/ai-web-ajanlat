@@ -1439,19 +1439,27 @@ export const pricingConfig: PricingConfig = {
       webshop: "Shopify-előfizetés (kb., a Shopify felé fizetendő)",
     },
     domainYearly: 80,
+    // Nyilvános karbantartási csomagok (/karbantartas). Az ajánlatban a csomaggal azonos szint az ajánlott.
     support: {
       basic: {
+        name: "Alap",
         label: "Alap karbantartás (frissítések, mentések)",
         monthly: 90,
+        includes: ["Biztonsági és rendszerfrissítések", "Rendszeres mentés", "Ha leáll az oldal, én javítom"],
       },
       standard: {
+        name: "Standard",
         label: "Standard karbantartás (+ havi 1 óra módosítás)",
         monthly: 190,
+        includes: ["Minden, ami az Alapban", "Havi 1 óra módosítás (szöveg, kép, ár, új aloldal)", "Havi rövid jelentés a látogatókról"],
       },
       premium: {
+        name: "Premium",
         label: "Premium karbantartás (+ havi 3 óra módosítás, prioritás)",
         monthly: 390,
+        includes: ["Minden, ami a Standardban", "Havi 3 óra módosítás vagy fejlesztés", "Elsőbbség: a kéréseid kerülnek előre"],
       },
     },
+    firstMonthFree: true,
   },
 };

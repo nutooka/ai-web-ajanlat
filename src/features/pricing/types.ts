@@ -125,7 +125,9 @@ export interface PricingConfig {
     /** Name of the monthly running cost per project type (default: hosting). */
     hostingLabels?: Partial<Record<ResolvedProjectType, string>>;
     domainYearly: number;
-    support: Record<PackageId, { label: string; monthly: number }>;
+    support: Record<PackageId, { label: string; monthly: number; name: string; includes: string[] }>;
+    /** The first month of maintenance is free (shown on the offer and the maintenance page). */
+    firstMonthFree: boolean;
   };
 }
 

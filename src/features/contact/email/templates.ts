@@ -1,4 +1,5 @@
 import { siteConfig } from "@/config/site";
+import { supportNote } from "@/features/pricing/maintenance";
 import type { Offer } from "@/features/offer/buildOffer";
 import type { PackageId } from "@/features/pricing/types";
 import { formatHours, formatRon, formatWeeks } from "@/lib/format";
@@ -61,7 +62,7 @@ function quoteSection(offer: Offer, packageId: PackageId, internal: boolean): { 
       : []),
     ["Becsült átfutás", formatWeeks(pkg.timeline.minWeeks, pkg.timeline.maxWeeks)],
     [`${pkg.maintenance.hostingLabel} (havonta)`, formatRon(pkg.maintenance.hostingMonthly)],
-    [`${pkg.maintenance.supportLabel} – nem kötelező (havonta)`, formatRon(pkg.maintenance.supportMonthly)],
+    [`${pkg.maintenance.supportLabel} – ${supportNote()} (havonta)`, formatRon(pkg.maintenance.supportMonthly)],
     ["Ár érvényessége", validityNote()],
     ["Fenntartás (évente, domainnel)", formatRon(pkg.maintenance.yearlyTotal)],
   ];

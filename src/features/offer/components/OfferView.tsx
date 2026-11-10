@@ -1,5 +1,6 @@
 "use client";
 
+import { supportNote } from "@/features/pricing/maintenance";
 import ArrowDownward from "@mui/icons-material/ArrowDownward";
 import CheckCircleOutlineOutlined from "@mui/icons-material/CheckCircleOutlineOutlined";
 import EditNoteOutlined from "@mui/icons-material/EditNoteOutlined";
@@ -257,7 +258,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
                       </Box>
                     </Typography>
                     <Typography sx={{ fontSize: 13, color: palette.inkMuted }}>
-                      + karbantartás {formatRon(pkg.maintenance.supportMonthly)}/hó, nem kötelező
+                      + karbantartás {formatRon(pkg.maintenance.supportMonthly)}/hó ({supportNote()})
                     </Typography>
                   </Box>
                 </Stack>

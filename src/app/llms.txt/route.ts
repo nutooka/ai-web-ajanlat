@@ -1,3 +1,4 @@
+import { pricingConfig } from "@/config/pricing";
 import { services } from "@/config/services";
 import { siteConfig, siteUrl } from "@/config/site";
 import { startingPrice } from "@/features/pricing/startingPrice";
@@ -28,6 +29,7 @@ export function GET() {
     "## Eszközök",
     "",
     `- [Árajánlat-kérdőív](${siteUrl}/tervezo): 3 perc, azonnali tételes ár három csomagban.`,
+    `- [Weboldal karbantartás](${siteUrl}/karbantartas): havidíjas karbantartás 3 szinten (${pricingConfig.maintenance.support.basic.monthly}/${pricingConfig.maintenance.support.standard.monthly}/${pricingConfig.maintenance.support.premium.monthly} RON/hó), első hónap ingyen, havonta lemondható.`,
     `- [Ingyenes weboldal-átvilágítás](${siteUrl}/atvilagitas): mobilos sebesség (Google PageSpeed), elérhetőség, jogi minimum, Google-alapok, versenytárs-összehasonlítás.`,
     "",
     "## Cikkek",
