@@ -45,12 +45,12 @@ export const siteConfig = {
    */
   person: {
     name: "Zátyi (Fülöp) Beáta",
-    firstName: "Beáta",
+    firstName: "Betti",
     role: "Alapító, webfejlesztő",
     photo: "/team/beata.jpg",
     linkedin: "https://www.linkedin.com/in/fulop-beata/",
     bio: [
-      "Szia, Beáta vagyok, a Nutooka alapítója. Weboldalakat, webshopokat és webalkalmazásokat fejlesztek React és Next.js alapon, és mesterséges intelligenciával gyorsítom a munkát, ezért tudok kedvező árat adni.",
+      "Szia, Betti vagyok, a Nutooka alapítója. 8 év frontend-fejlesztői tapasztalattal építek weboldalakat, webshopokat és webalkalmazásokat React és Next.js alapon, budapesti cégeknél és nemzetközi projekteken is dolgoztam.",
       "Székelyudvarhelyen élek. Ha ajánlatot kérsz, én hívlak vissza, és magyarul vagy románul is egyeztethetünk.",
     ],
   },
