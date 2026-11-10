@@ -459,7 +459,7 @@ export function inspectHtml({
       /googletagmanager\.com|google-analytics\.com|gtag\(|plausible\.io|_vercel\/insights|matomo|clarity\.ms|umami/,
     ),
     "Méri a látogatókat",
-    "Nem látunk látogatómérést",
+    "Nem látok látogatómérést",
     "Ha nincs mérés (pl. Google Analytics), nem tudod, hányan jönnek, honnan, és hányan kérnek ajánlatot.",
   );
   add(

@@ -25,7 +25,7 @@ export function PlannerIntro() {
         </Typography>
         <Typography color="text.secondary" sx={{ mb: 3 }}>
           A végén három csomagot látsz (Basic, Standard, Premium) az átfutási idővel és a havi fenntartási költségekkel együtt. Nem kell regisztrálni, a válaszaid a
-          böngésződben maradnak, és bármikor folytathatod. A végleges, fix árat egy ingyenes, 30 perces egyeztetés után adjuk.
+          böngésződben maradnak, és bármikor folytathatod. A végleges, fix árat egy ingyenes, 30 perces egyeztetés után adom.
         </Typography>
         <Typography sx={{ fontWeight: 700, mb: 1 }}>Kezdő árak projekttípusonként</Typography>
         <Box component="ul" sx={{ m: 0, pl: 2.5, color: "text.secondary" }}>

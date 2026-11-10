@@ -138,10 +138,10 @@ export function ContactForm({ answers, packageId, packageName, code, onSubmitted
             Kérj ingyenes, 30 perces egyeztetést
           </Typography>
           <Typography color="text.secondary">
-            Hagyd meg a telefonszámod vagy az e-mail-címed, és jelentkezünk a <b>{packageName}</b> csomag ajánlatával. Nincs kötelezettség, előre nem kell fizetni semmit.
+            Hagyd meg a telefonszámod vagy az e-mail-címed, és jelentkezem a <b>{packageName}</b> csomag ajánlatával. Nincs kötelezettség, előre nem kell fizetni semmit.
           </Typography>
           <Typography variant="body2" sx={{ mt: 2, p: 1.5, borderRadius: 2, background: palette.brandTint, color: palette.ink }}>
-            <b>Minden válaszodat és az ajánlatot is megkapjuk</b> – nem kell képernyőképet küldened. Ha inkább üzenetben írnál, elég az ajánlat-kódot vagy a linket elküldened. {validityNote()}
+            <b>Minden válaszodat és az ajánlatot is megkapom</b> – nem kell képernyőképet küldened. Ha inkább üzenetben írnál, elég az ajánlat-kódot vagy a linket elküldened. {validityNote()}
           </Typography>
           <ContactPerson code={code} packageName={packageName} />
         </Box>
@@ -155,12 +155,12 @@ export function ContactForm({ answers, packageId, packageName, code, onSubmitted
               inputMode={emailEntered ? "email" : "text"}
               {...field(register("reach"))}
               error={Boolean(errors.reach)}
-              helperText={errors.reach?.message ?? "Csak ezt kell megadnod – ezen keresünk."}
+              helperText={errors.reach?.message ?? "Csak ezt kell megadnod – ezen kereslek."}
             />
 
             <Box>
               <Typography id="callback-label" variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-                Mikor keressünk?
+                Mikor keresselek?
               </Typography>
               <Controller
                 name="callbackTime"

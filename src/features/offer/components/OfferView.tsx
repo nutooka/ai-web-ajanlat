@@ -81,7 +81,7 @@ export function OfferView() {
             Még nincs elkészült ajánlatod
           </Typography>
           <Typography variant="subtitle1" sx={{ mb: 4 }}>
-            Válaszolj néhány kérdésre, és azonnal összeállítjuk a személyre szabott árajánlatod.
+            Válaszolj néhány kérdésre, és azonnal összeállítom a személyre szabott árajánlatod.
           </Typography>
           <Button component={Link} href="/tervezo" variant="contained" color="primary" size="large">
             {snapshot.answers.projectType ? "Kérdőív folytatása" : "Kérdőív indítása"}
@@ -301,7 +301,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
           )}
           {clockState.status === "error" && (
             <Typography variant="body2" sx={{ p: 2, borderRadius: 2, border: 1, borderColor: "divider", background: palette.surface }}>
-              A kedvezmény idejét most nem tudtuk betölteni. Ne aggódj: a kedvezményt az elküldéskor rögzítjük.
+              A kedvezmény idejét most nem sikerült betölteni. Ne aggódj: a kedvezményt az elküldéskor rögzítem.
             </Typography>
           )}
         </Box>

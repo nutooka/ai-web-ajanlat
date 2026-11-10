@@ -41,30 +41,30 @@ const STEP_TONES: BlobTone[] = ["basic", "standard", "premium"];
 const steps = [
   { title: "Válaszolj pár kérdésre", text: "Egyszerre egy kérdés, szakszavak nélkül. Bármikor abbahagyhatod, a válaszaid megmaradnak." },
   { title: "Azonnal látod az árat", text: "Tételes kalkuláció három csomagban, átfutási idővel és fenntartási költséggel." },
-  { title: "Ingyenes egyeztetés", text: "Ha tetszik, egy kattintással elküldöd. 1 munkanapon belül jelentkezünk." },
+  { title: "Ingyenes egyeztetés", text: "Ha tetszik, egy kattintással elküldöd. 1 munkanapon belül jelentkezem." },
 ];
 
 const promises = [
-  { title: "Fix ár, nincs meglepetés", text: "Amit az egyeztetés után leírunk, annyiba kerül. Pluszmunka csak a jóváhagyásoddal." },
+  { title: "Fix ár, nincs meglepetés", text: "Amit az egyeztetés után leírok, annyiba kerül. Pluszmunka csak a jóváhagyásoddal." },
   { title: "2–4 hét alatt élesben", text: "Egy átlagos céges oldal egy hónapon belül elkészül – nem negyedév múlva." },
   { title: "Minden a tiéd", text: "Domain, kód, tartalom: a te nevedre szól. Bármikor továbbviheted." },
-  { title: "Ügynökségi rezsi nélkül", text: "Modern eszközökkel, kis csapatban dolgozunk, ezért tudunk kedvező árat adni." },
+  { title: "Ügynökségi rezsi nélkül", text: "Egyedül dolgozom, irodai rezsi és projektmenedzser nélkül, ezért kerül kevesebbe, és mindig velem beszélsz." },
 ];
 
 const faqs = [
   {
     q: "Tényleg ennyibe kerül?",
-    a: "Az ajánlat a válaszaidból számolt, tételes becslés. A végleges, fix árat a 30 perces egyeztetés után adjuk – általában a becslés közelében marad.",
+    a: "Az ajánlat a válaszaidból számolt, tételes becslés. A végleges, fix árat a 30 perces egyeztetés után adom – általában a becslés közelében marad.",
   },
-  { q: "Mit kell előkészítenem?", a: "Semmit. Ha van logód, szöveged, képeid, az gyorsít; ha nincs, ebben is segítünk." },
-  { q: "Mi van, ha később bővíteni szeretném?", a: "Modern, bővíthető alapra építünk, így később bármikor jöhet új oldal, webshop vagy funkció." },
-  { q: "Ki fogja kezelni az oldalt?", a: "Te is tudod szerkeszteni – megmutatjuk, hogyan. Ha nem akarsz vele foglalkozni, kérhetsz karbantartást." },
+  { q: "Mit kell előkészítenem?", a: "Semmit. Ha van logód, szöveged, képeid, az gyorsít; ha nincs, ebben is segítek." },
+  { q: "Mi van, ha később bővíteni szeretném?", a: "Modern, bővíthető alapra építek, így később bármikor jöhet új oldal, webshop vagy funkció." },
+  { q: "Ki fogja kezelni az oldalt?", a: "Te is tudod szerkeszteni, megmutatom, hogyan. Ha nem akarsz vele foglalkozni, kérhetsz karbantartást." },
 ];
 
 const companyFrom = formatRon(startingPrice("company"));
 
-const homeTitle = `Weboldal készítés ${companyFrom}-tól – azonnali ár | Nutooka`;
-const homeDescription = `Weboldal, webshop és landing page készítés Székelyudvarhelyről, Erdély-szerte. Töltsd ki a rövid kérdőívet, és azonnal tételes árajánlatot kapsz – céges weboldal ${companyFrom}-tól, akár −25% kedvezménnyel.`;
+const homeTitle = "Weboldal, webshop, webapp – azonnali árajánlat | Nutooka";
+const homeDescription = `Weboldal, webshop és webapp Székelyudvarhelyről. Pár perces kérdőív, azonnali tételes árajánlat: céges weboldal ${companyFrom}-tól.`;
 
 export const metadata: Metadata = {
   title: { absolute: homeTitle },

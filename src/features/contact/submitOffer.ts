@@ -84,7 +84,7 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
   if (!offer) return { status: 400, body: { ok: false, error: "A kérdőív hiányos. Kérjük, töltsd ki újra." } };
 
   if (!deps.send || !deps.ownerEmail) {
-    return { status: 503, body: { ok: false, error: "Az e-mail-küldés jelenleg nem elérhető. Kérjük, próbáld később, vagy keress minket közvetlenül." } };
+    return { status: 503, body: { ok: false, error: "Az e-mail-küldés jelenleg nem elérhető. Kérjük, próbáld később, vagy keress közvetlenül telefonon vagy WhatsAppon." } };
   }
 
   const shareUrl = deps.shareLink ? await deps.shareLink(answers, packageId, offerAgeMinutes).catch(() => null) : null;

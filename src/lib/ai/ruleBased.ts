@@ -32,13 +32,13 @@ export function summarizeProject(answers: Answers, projectType: ResolvedProjectT
       parts.push(`Egy Shopify-alapú ${typeName} készül${products}; a kínálat mérete: ${label(answers, "shop_count")}.`);
       if (Array.isArray(answers.shop_payments) && answers.shop_payments.includes("card")) parts.push("A vásárlók online, bankkártyával is fizethetnek.");
       if (answers.shop_courier === "yes") parts.push("A csomagokat futárszolgálat viszi ki.");
-      if (answers.shop_current === "migrate") parts.push("A meglévő webshop adatait átköltöztetjük.");
+      if (answers.shop_current === "migrate") parts.push("A meglévő webshop adatait átköltöztetem.");
       break;
     }
     case "webapp": {
       const goal = typeof answers.app_goal === "string" ? ` Cél: ${answers.app_goal}` : "";
       parts.push(`Egy ${typeName} készül, amelyet elsősorban ${label(answers, "app_users")} használnak.${goal}`);
-      if (answers.app_phase === "mvp") parts.push("Első lépésként egy gyorsan élesíthető MVP készül, amelyet a visszajelzések alapján bővítünk.");
+      if (answers.app_phase === "mvp") parts.push("Első lépésként egy gyorsan élesíthető MVP készül, amelyet a visszajelzések alapján bővítek.");
       break;
     }
     case "landing":

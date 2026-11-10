@@ -40,7 +40,7 @@ export const siteConfig = {
    */
   chat: { messenger: "", whatsapp: "40753968097" },
   /**
-   * A cég arca: a főoldali „Kik vagyunk” blokk és az ajánlat-űrlap melletti névjegy.
+   * A cég arca: a főoldali „Ki vagyok?” blokk és az ajánlat-űrlap melletti névjegy.
    * A fotó a public/team mappában van (LinkedIn-profilkép, 480×480).
    */
   person: {

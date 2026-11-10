@@ -13,7 +13,7 @@ function scoreRows(result: AuditResult): string {
 }
 
 function issueList(result: AuditResult): string {
-  if (result.issues.length === 0) return "<p>Komoly hibát nem találtunk – szép munka!</p>";
+  if (result.issues.length === 0) return "<p>Komoly hibát nem találtam – szép munka!</p>";
   return `<ol style="padding-left:18px;">${result.issues.map((issue) => `<li style="margin-bottom:8px;"><b>${escapeHtml(issue.title)}</b><br>${escapeHtml(issue.why)}</li>`).join("")}</ol>`;
 }
 

@@ -125,7 +125,7 @@ export function ServicePage({ type }: { type: ResolvedProjectType }) {
           </Box>
           <Box component="section">
             <Typography variant="h2" sx={h2}>
-              Kinek ajánljuk?
+              Kinek ajánlom?
             </Typography>
             <CheckList items={service.forWhom} color={packageThemes.standard.solid} />
           </Box>
@@ -157,7 +157,7 @@ export function ServicePage({ type }: { type: ResolvedProjectType }) {
         <Box component="section" aria-labelledby="process-title" sx={{ background: palette.surface }}>
           <Container maxWidth="lg" sx={{ py: { xs: 7, md: 10 } }}>
             <Typography id="process-title" variant="h2" sx={h2}>
-              Így dolgozunk: {service.name.toLowerCase()} lépésről lépésre
+              Így dolgozom: {service.name.toLowerCase()} lépésről lépésre
             </Typography>
             <Box component="ol" sx={{ listStyle: "none", p: 0, m: 0, display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" }, gap: { xs: 3, md: 4 } }}>
               {service.process.map((step, index) => (

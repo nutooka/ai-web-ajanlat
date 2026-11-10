@@ -8,7 +8,7 @@ import { palette } from "@/theme/tokens";
 
 const FACTS = ["Székelyudvarhely", "8 év tapasztalat", "Saját kód, a te nevedre"];
 
-/** "Kik vagyunk": the person behind the site, so visitors know who will call them back. */
+/** "Ki vagyok?": the person behind the site, so visitors know who will call them back. */
 export function AboutBlock() {
   const { person, chat } = siteConfig;
   return (
@@ -20,7 +20,7 @@ export function AboutBlock() {
           </Box>
           <Box sx={{ maxWidth: 640 }}>
             <Typography color="text.secondary" sx={{ fontWeight: 600, mb: 1 }}>
-              Kik vagyunk?
+              Ki vagyok?
             </Typography>
             <Typography id="about-title" variant="h2" sx={{ mb: 2.5 }}>
               Nem ügyfélszolgálat hív vissza, hanem én.

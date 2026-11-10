@@ -104,7 +104,7 @@ export function HeroActions({
                       {option.label}
                     </Box>
                     <Box component="span" className="pick-price" sx={{ display: "block", fontSize: 12, mt: 0.25, color: palette.inkMuted }}>
-                      {price ? `${formatRon(price)}-tól · ${minutes[option.id]} perc` : "Segítünk dönteni"}
+                      {price ? `${formatRon(price)}-tól · ${minutes[option.id]} perc` : "Segítek dönteni"}
                     </Box>
                   </Box>
                 </ButtonBase>

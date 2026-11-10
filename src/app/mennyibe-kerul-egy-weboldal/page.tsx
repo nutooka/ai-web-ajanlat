@@ -23,8 +23,8 @@ const MINIMAL = { languages: "1", domain: "has", branding: "full", design: "temp
 
 /** Every number on this page comes from the live pricing engine – when prices change, the article follows. */
 const scenarios: { name: string; type: ResolvedProjectType; answers: Answers; note: string }[] = [
-  { name: "Egyszerű bemutatkozó oldal (1–5 oldal)", type: "company", answers: { projectType: "company", ...MINIMAL }, note: "Sablonalapú design, kapcsolati űrlap" },
-  { name: "Céges weboldal (6–10 oldal)", type: "company", answers: SAMPLE_COMPANY_ANSWERS, note: "Kapcsolati űrlap; a nagyobb csomagokban testreszabott design, időpontfoglalás, galéria" },
+  { name: "Céges weboldal (1–5 oldal)", type: "company", answers: { projectType: "company", ...MINIMAL }, note: "Sablonalapú design, kapcsolati űrlap" },
+  { name: "Nagyobb céges weboldal (6–10 oldal)", type: "company", answers: SAMPLE_COMPANY_ANSWERS, note: "Kapcsolati űrlap; a nagyobb csomagokban testreszabott design, időpontfoglalás, galéria" },
   { name: "Landing page", type: "landing", answers: { projectType: "landing", ...MINIMAL }, note: "Egy oldal, egy cél, mérőkódok" },
   { name: "Webshop (Shopify)", type: "webshop", answers: { projectType: "webshop", ...MINIMAL }, note: "Legfeljebb 10 termék, egy fizetési mód" },
   { name: "Weboldal felújítás", type: "redesign", answers: { projectType: "redesign", ...MINIMAL }, note: "Új design, tartalom átvitele" },
@@ -33,7 +33,7 @@ const scenarios: { name: string; type: ResolvedProjectType; answers: Answers; no
 
 const title = "Mennyibe kerül egy weboldal 2026-ban Erdélyben?";
 const description =
-  "Valódi árak RON-ban: bemutatkozó oldal, céges weboldal, webshop, landing page és webalkalmazás – csomagonként, átfutással és havi költségekkel. Mitől függ az ár, és hol lehet spórolni?";
+  "Valódi árak RON-ban: céges weboldal, webshop, landing page és webapp csomagonként, átfutással és havi költséggel. Mitől függ az ár, hol spórolhatsz?";
 
 export const metadata: Metadata = {
   title: { absolute: `${title} | Nutooka` },
@@ -94,7 +94,7 @@ export default function PricingArticle() {
         <Typography sx={p}>
           Weboldalt ma Erdélyben néhány száz lejtől több tízezer lejig lehet készíttetni – a különbség a terjedelemben, a design egyediségében és a funkciókban van. Az
           alábbi árak nem becslések a semmiből: ugyanazzal az árazással számoltuk őket, amellyel a{" "}
-          <Link href="/tervezo">3 perces kérdőívünk</Link> is dolgozik.
+          <Link href="/tervezo">pár perces kérdőívem</Link> is dolgozik.
         </Typography>
 
         <Typography variant="h2" sx={h2}>
@@ -171,7 +171,7 @@ export default function PricingArticle() {
         <Box component="ul" sx={{ pl: 2.5, "& li": { mb: 1, fontSize: "1.0625rem", lineHeight: 1.7 } }}>
           <li>Adj rugalmas határidőt – akár −{flexibleDiscount}%.</li>
           <li>Hozd a saját szövegeidet és képeidet.</li>
-          <li>Kezdj kisebb csomaggal, és bővíts később – modern alapra építünk, ez bármikor megy.</li>
+          <li>Kezdj kisebb csomaggal, és bővíts később – modern alapra építek, ez bármikor megy.</li>
           <li>Ha gyorsan döntesz, az ajánlat után {quickWindow} −{quickPercent}% kedvezmény jár.</li>
         </Box>
 

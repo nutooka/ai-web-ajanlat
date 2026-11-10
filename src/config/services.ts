@@ -33,7 +33,7 @@ export const services: ServiceContent[] = [
     name: "Weboldal készítés",
     metaTitle: "Weboldal készítés Székelyudvarhely, {from}-tól",
     metaDescription:
-      "Céges, bemutatkozó weboldal készítés Székelyudvarhelyről, Erdély-szerte. Mobilbarát, gyors, könnyen szerkeszthető – {from}-tól. Az árat pár perc alatt, tételesen kiszámolod.",
+      "Céges weboldal készítés Székelyudvarhelyről, Erdély-szerte: mobilbarát, gyors, szerkeszthető. {from}-tól, az árat pár perc alatt kiszámolod.",
     h1: "Céges weboldal készítés Székelyudvarhelyen és Erdélyben",
     intro:
       "Bemutatkozó weboldal kis- és középvállalkozásoknak: gyors, mobilbarát és könnyen szerkeszthető. Az árat pár perc alatt, tételesen kiszámolod – regisztráció nélkül.",
@@ -55,7 +55,7 @@ export const services: ServiceContent[] = [
       },
       {
         title: "Oldaltérkép és tartalom",
-        text: "Megtervezzük, milyen oldalak legyenek (például Rólunk, Szolgáltatások, Árak, Kapcsolat), és mi kerüljön rájuk. Ha nincs kész szöveged, a kérdéseim alapján megírjuk együtt.",
+        text: "Együtt megtervezzük, milyen oldalak legyenek (például Rólunk, Szolgáltatások, Árak, Kapcsolat), és mi kerüljön rájuk. Ha nincs kész szöveged, a kérdéseim alapján megírjuk együtt.",
       },
       {
         title: "Design és fejlesztés",
@@ -70,13 +70,13 @@ export const services: ServiceContent[] = [
       title: "Mire figyelj, ha céges weboldalt csináltatsz?",
       paragraphs: [
         "Az első és legfontosabb kérdés nem a design, hanem az, hogy mit tegyen a látogató az oldalon. Egy fodrásznál ez az időpontfoglalás, egy asztalosnál az ajánlatkérés, egy könyvelőnél a telefonhívás. Ha ez világos, minden oldal és minden gomb ebbe az irányba terel, és az oldal megkereséseket hoz, nem csak szép.",
-        "A második a szerkeszthetőség. Ha minden apró változtatásért a fejlesztőt kell hívnod, az oldal hamar elavul. Kérdezd meg előre, mit tudsz majd te magad átírni: szövegeket, képeket, árakat, nyitvatartást. Nálunk ezek mind a te kezedben vannak.",
+        "A második a szerkeszthetőség. Ha minden apró változtatásért a fejlesztőt kell hívnod, az oldal hamar elavul. Kérdezd meg előre, mit tudsz majd te magad átírni: szövegeket, képeket, árakat, nyitvatartást. Nálam ezek mind a te kezedben vannak.",
         "A harmadik a tulajdonjog. Sok olcsó ajánlat úgy olcsó, hogy a domain és az oldal a fejlesztőé marad, és költözéskor mindent elölről kell kezdeni. Mindig a te nevedre regisztráld a domaint, és kérd, hogy a kód is a tiéd legyen. Végül: a Google a gyors, telefonon is jól használható oldalakat sorolja előrébb, ezért ezt ne extrának, hanem alapnak tekintsd.",
       ],
     },
     example: {
-      title: "Példa: egy székelyudvarhelyi fogászat bemutatkozó oldala",
-      text: "Egy tipikus megrendelés: 6 oldal, online időpontkérés, galéria a rendelőről és térkép. A páciensek főleg telefonon nézik az oldalt, ezért a hívás gomb mindig kéznél van. Hogy ez pontosan mennyi, a kérdőív pár perc alatt, tételesen kiszámolja.",
+      title: "Mintaprojekt: fogászati rendelő bemutatkozó oldala",
+      text: "Szemléltető példa, nem valós ügyfél. 6 oldal, online időpontkérés, galéria a rendelőről és térkép. A páciensek főleg telefonon nézik az oldalt, ezért a hívás gomb mindig kéznél van. Hogy ez pontosan mennyi, a kérdőív pár perc alatt, tételesen kiszámolja.",
       items: ["Főoldal, Rólunk, Szolgáltatások, Árak, Galéria, Kapcsolat", "Időpontkérő űrlap e-mail-értesítéssel", "Google Térkép és nyitvatartás", "Egy kattintásos hívás telefonon"],
     },
     faq: [
@@ -85,22 +85,22 @@ export const services: ServiceContent[] = [
         a: "Egy egyszerű, sablonalapú bemutatkozó oldal {from}-tól készül. A pontos ár az oldalak számától, a funkcióktól és a designtól függ – a kérdőív tételesen kiszámolja.",
       },
       { q: "Mennyi idő alatt készül el?", a: "Egy átlagos, 5–10 oldalas céges weboldal 2–4 hét alatt élesedik." },
-      { q: "Tudom majd én is szerkeszteni?", a: "Igen. Saját szerkesztőfelületet kapsz, és megmutatjuk, hogyan frissítsd a szövegeket és a képeket." },
+      { q: "Tudom majd én is szerkeszteni?", a: "Igen. Saját szerkesztőfelületet kapsz, és megmutatom, hogyan frissítsd a szövegeket és a képeket." },
       {
         q: "Éttermet, panziót vagy szálláshelyet üzemeltetek. Mi kell az oldalra?",
-        a: "Étlap vagy árlista, galéria, térkép, nyitvatartás és egy gyors foglalási vagy ajánlatkérő űrlap. Szálláshelynél külön figyelünk arra, hogy a vendég a Booking helyett közvetlenül nálad foglaljon.",
+        a: "Étlap vagy árlista, galéria, térkép, nyitvatartás és egy gyors foglalási vagy ajánlatkérő űrlap. Szálláshelynél külön figyelek arra, hogy a vendég a Booking helyett közvetlenül nálad foglaljon.",
       },
       {
-        q: "Orvosi rendelőnek, ügyvédi irodának vagy könyvelőnek is készítetek oldalt?",
+        q: "Orvosi rendelőnek, ügyvédi irodának vagy könyvelőnek is készítesz oldalt?",
         a: "Igen. Ezeknél a bizalom a legfontosabb: bemutatkozás fotóval, szakterületek, egyértelmű árak vagy árképzés, és GDPR-kompatibilis űrlap, mert érzékeny adatok is érkezhetnek rajta.",
       },
       {
         q: "Kié lesz a domain és az oldal?",
-        a: "A tiéd. A domaint a te nevedre regisztráljuk, a kódot és a tartalmat átadjuk, így bármikor továbbviheted máshová.",
+        a: "A tiéd. A domaint a te nevedre regisztrálom, a kódot és a tartalmat átadom, így bármikor továbbviheted máshová.",
       },
       {
         q: "Mennyi a havi költség az elkészülés után?",
-        a: "A domain és a tárhely évente néhány száz lej. Karbantartást nem kötelező kérni; ha szeretnéd, hogy frissítsük és figyeljük az oldalt, azt külön, havidíjért vállaljuk.",
+        a: "A domain és a tárhely évente néhány száz lej. Karbantartást nem kötelező kérni; ha szeretnéd, hogy frissítsem és figyeljem az oldalt, azt külön, havidíjért vállalom.",
       },
     ],
     related: [
@@ -115,7 +115,7 @@ export const services: ServiceContent[] = [
     name: "Webshop készítés",
     metaTitle: "Shopify webshop készítés Erdélyben {from}-tól",
     metaDescription:
-      "Shopify webshop készítés román futár-, kártyás fizetés- és számlázó-integrációval (Fan Courier, Sameday, SmartBill). {from}-tól, tételes árajánlattal pár perc alatt.",
+      "Shopify webshop készítés Fan Courier, Sameday és SmartBill integrációval. {from}-tól, tételes árajánlattal pár perc alatt.",
     h1: "Webshop készítés Shopify-jal, Székelyudvarhelyről Erdély-szerte",
     intro:
       "Shopify-alapú webáruház román futár-, fizetés- és számlázó-integrációval. Az árat a termékszám, a szállítás és a fizetési módok alapján, tételesen kapod meg.",
@@ -133,19 +133,19 @@ export const services: ServiceContent[] = [
     process: [
       {
         title: "Árajánlat és egyeztetés",
-        text: "A kérdőív megkérdezi, mit árulsz, hány terméked van, hogyan szállítasz és hogyan fizetnek a vevők. Ebből tételes árat kapsz, amit egy 30 perces hívásban pontosítunk.",
+        text: "A kérdőív megkérdezi, mit árulsz, hány terméked van, hogyan szállítasz és hogyan fizetnek a vevők. Ebből tételes árat kapsz, amit egy 30 perces hívásban együtt pontosítunk.",
       },
       {
         title: "Bolt beállítása",
-        text: "Létrehozzuk a Shopify-boltot a te nevedre, beállítjuk a kategóriákat, a szállítási zónákat és díjakat, a fizetési módokat és a rendelési értesítőket, magyar és román nyelven is, ha kell.",
+        text: "Létrehozom a Shopify-boltot a te nevedre, beállítom a kategóriákat, a szállítási zónákat és díjakat, a fizetési módokat és a rendelési értesítőket, magyar és román nyelven is, ha kell.",
       },
       {
         title: "Design, termékek, integrációk",
-        text: "Testreszabjuk a téma megjelenését a márkádhoz, feltöltjük a termékeket, és összekötjük a boltot a futárszolgálattal és a számlázóval, hogy a rendelésből automatikusan címke és számla legyen.",
+        text: "Testreszabom a téma megjelenését a márkádhoz, feltöltöm a termékeket, és összekötöm a boltot a futárszolgálattal és a számlázóval, hogy a rendelésből automatikusan címke és számla legyen.",
       },
       {
         title: "Próbavásárlás és élesítés",
-        text: "Teszt-rendelésekkel végigpróbáljuk a teljes vásárlást, a kártyás fizetéstől a számláig. Élesítés után megmutatom, hogyan kezeld a rendeléseket, a készletet és az új termékeket.",
+        text: "Teszt-rendelésekkel végigpróbálom a teljes vásárlást, a kártyás fizetéstől a számláig. Élesítés után megmutatom, hogyan kezeld a rendeléseket, a készletet és az új termékeket.",
       },
     ],
     guide: {
@@ -157,8 +157,8 @@ export const services: ServiceContent[] = [
       ],
     },
     example: {
-      title: "Példa: kézműves szappanok és kozmetikumok webshopja",
-      text: "Egy tipikus megrendelés: kb. 40 termék illat- és méretváltozatokkal, kártyás fizetés és utánvét, Sameday easybox és házhoz szállítás, SmartBill-számla minden rendeléshez. Hogy ez pontosan mennyi, a kérdőív pár perc alatt, tételesen kiszámolja.",
+      title: "Mintaprojekt: kézműves szappanok és kozmetikumok webshopja",
+      text: "Szemléltető példa, nem valós ügyfél. Kb. 40 termék illat- és méretváltozatokkal, kártyás fizetés és utánvét, Sameday easybox és házhoz szállítás, SmartBill-számla minden rendeléshez. Hogy ez pontosan mennyi, a kérdőív pár perc alatt, tételesen kiszámolja.",
       items: ["40 termék változatokkal (illat, méret)", "Bankkártya és utánvét", "easybox és futáros házhoz szállítás", "Automatikus SmartBill-számla", "Kedvezménykódok és akciós árak"],
     },
     faq: [
@@ -171,12 +171,12 @@ export const services: ServiceContent[] = [
         a: "Megbízható és biztonságos, a fizetést, a készletet és a rendeléseket egy helyen kezeli. A havidíja a Shopify felé fizetendő.",
       },
       {
-        q: "Át tudjátok költöztetni a régi webshopomat?",
+        q: "Át tudod költöztetni a régi webshopomat?",
         a: "Igen: a termékeket, a vásárlókat, a rendeléseket és az átirányításokat is, hogy a Google-helyezés megmaradjon.",
       },
       {
         q: "Élelmiszert, bort vagy helyi termékeket árulok. Mire figyeljek?",
-        a: "Romlandó árunál a szállítási zónákat és a futár típusát kell okosan beállítani, bornál pedig a korhatár-ellenőrzést. Az összetevőket és allergéneket termékenként, jól láthatóan tüntetjük fel.",
+        a: "Romlandó árunál a szállítási zónákat és a futár típusát kell okosan beállítani, bornál pedig a korhatár-ellenőrzést. Az összetevőket és allergéneket termékenként, jól láthatóan tüntetem fel.",
       },
       {
         q: "Ruhát vagy cipőt árulok sok méretben. Ez drágább?",
@@ -184,7 +184,7 @@ export const services: ServiceContent[] = [
       },
       {
         q: "Mi kell a román szabályok szerint egy webshopra?",
-        a: "Cégadatok, ÁSZF, adatkezelési tájékoztató, elállási tájékoztató, az ANPC és a SOL (online vitarendezés) logója és linkje. Ezeket a bolt beállításakor a helyükre tesszük.",
+        a: "Cégadatok, ÁSZF, adatkezelési tájékoztató, elállási tájékoztató, az ANPC és a SOL (online vitarendezés) logója és linkje. Ezeket a bolt beállításakor a helyükre teszem.",
       },
       {
         q: "Mennyi a Shopify havidíja?",
@@ -203,7 +203,7 @@ export const services: ServiceContent[] = [
     name: "Webalkalmazás fejlesztés",
     metaTitle: "Egyedi webalkalmazás fejlesztés {from}-tól",
     metaDescription:
-      "Egyedi webalkalmazás fejlesztés: ügyfélportál, foglalási vagy belső rendszer adminfelülettel és bejelentkezéssel. {from}-tól, tételes árajánlattal pár perc alatt.",
+      "Egyedi webalkalmazás fejlesztés: ügyfélportál, foglalási vagy belső rendszer. {from}-tól, tételes árajánlattal pár perc alatt.",
     h1: "Egyedi webalkalmazás fejlesztés kis- és középvállalkozásoknak",
     intro:
       "Ügyfélportál, foglalási vagy belső rendszer, adminfelülettel és bejelentkezéssel. A kérdőív alapján előre látod, mi mennyibe kerül.",
@@ -221,33 +221,33 @@ export const services: ServiceContent[] = [
     process: [
       {
         title: "Igényfelmérés",
-        text: "A kérdőív után egy hosszabb beszélgetésben végigmegyünk, ki mit csinál ma a folyamatban, hol vész el idő, és mi az, ami nélkül a rendszer nem ér semmit. Ebből lesz a rövid, írásos specifikáció.",
+        text: "A kérdőív után egy hosszabb beszélgetésben együtt végigmegyünk, ki mit csinál ma a folyamatban, hol vész el idő, és mi az, ami nélkül a rendszer nem ér semmit. Ebből lesz a rövid, írásos specifikáció.",
       },
       {
         title: "Képernyőtervek",
-        text: "Mielőtt egy sor kód születne, megtervezzük a fő képernyőket, és kattintható tervben kipróbálhatod őket. Így még olcsón lehet változtatni, és a kollégáid is elmondhatják a véleményüket.",
+        text: "Mielőtt egy sor kód születne, megtervezem a fő képernyőket, és kattintható tervben kipróbálhatod őket. Így még olcsón lehet változtatni, és a kollégáid is elmondhatják a véleményüket.",
       },
       {
         title: "Fejlesztés lépésenként",
-        text: "Menet közben rendszeresen kapsz egy működő, kipróbálható változatot egy teszt-címen. A legfontosabb funkció készül el először, így hamar látszik, jó irányba megyünk-e.",
+        text: "Menet közben rendszeresen kapsz egy működő, kipróbálható változatot egy teszt-címen. A legfontosabb funkció készül el először, így hamar látszik, jó irányba halad-e a munka.",
       },
       {
         title: "Átadás, betanítás, támogatás",
-        text: "Átköltöztetjük a meglévő adatokat (például Excelből), betanítjuk a csapatot, és átadjuk a kódot meg a dokumentációt. Az indulás utáni hetekben szorosan figyeljük a rendszert.",
+        text: "Átköltöztetem a meglévő adatokat (például Excelből), betanítom a kollégáidat, és átadom a kódot meg a dokumentációt. Az indulás utáni hetekben szorosan figyelem a rendszert.",
       },
     ],
     guide: {
       title: "Mire figyelj, ha egyedi webalkalmazást fejlesztetnél?",
       paragraphs: [
         "A legdrágább hiba az, ha túl sokat akarsz egyszerre. Egy webalkalmazás akkor sikeres, ha az első változata a legfontosabb munkafolyamatot oldja meg jól, és a kollégák tényleg használják. A többi funkció ráér a második körben, amikor már látszik, mire van valóban szükség.",
-        "Ugyanilyen fontos, hogy a mindennapi felhasználók is beleszólhassanak. Aki naponta harmincszor rögzít egy munkalapot, pontosan tudja, melyik kattintás felesleges. Ezért mutatjuk meg a képernyőterveket fejlesztés előtt, és ezért adunk ki menet közben kipróbálható változatokat.",
-        "Végül gondolj a hosszú távra: ki fogja üzemeltetni, hogyan készül mentés, és mi történik, ha bővíteni kell. Mi modern, széles körben használt technológiával dolgozunk, és a kódot dokumentációval együtt átadjuk, így nem leszel egyetlen fejlesztőhöz kötve.",
-        "Az árat is érdemes reálisan nézni. Egy egyedi rendszer elsőre többe kerül, mint egy havidíjas program, de nincs felhasználónkénti díj, és pontosan azt tudja, amire szükséged van. Ha tíz kolléga használja öt évig, a különbség gyakran a fejlesztés javára dől el. A kérdőív a fejlesztés mellett a havi üzemeltetési költséget is megmutatja, így a kettőt össze tudod vetni, mielőtt döntenél. Ha kiderül, hogy egy kész program jobban megéri, azt is őszintén megmondjuk.",
+        "Ugyanilyen fontos, hogy a mindennapi felhasználók is beleszólhassanak. Aki naponta harmincszor rögzít egy munkalapot, pontosan tudja, melyik kattintás felesleges. Ezért mutatom meg a képernyőterveket fejlesztés előtt, és ezért adok ki menet közben kipróbálható változatokat.",
+        "Végül gondolj a hosszú távra: ki fogja üzemeltetni, hogyan készül mentés, és mi történik, ha bővíteni kell. Modern, széles körben használt technológiával dolgozom, és a kódot dokumentációval együtt átadom, így nem leszel egyetlen fejlesztőhöz kötve.",
+        "Az árat is érdemes reálisan nézni. Egy egyedi rendszer elsőre többe kerül, mint egy havidíjas program, de nincs felhasználónkénti díj, és pontosan azt tudja, amire szükséged van. Ha tíz kolléga használja öt évig, a különbség gyakran a fejlesztés javára dől el. A kérdőív a fejlesztés mellett a havi üzemeltetési költséget is megmutatja, így a kettőt össze tudod vetni, mielőtt döntenél. Ha kiderül, hogy egy kész program jobban megéri, azt is őszintén megmondom.",
       ],
     },
     example: {
-      title: "Példa: munkalap- és ügyfélkezelő egy szerviznek",
-      text: "Egy tipikus megrendelés: egy autó- vagy gépszerviz Excelben és papíron vezeti a munkalapokat. A webalkalmazásban a szerelő telefonon rögzíti a munkát, az iroda látja az állapotot, az ügyfél pedig SMS-t vagy e-mailt kap, ha elkészült a javítás.",
+      title: "Mintaprojekt: munkalap- és ügyfélkezelő egy szerviznek",
+      text: "Szemléltető példa, nem valós ügyfél. Egy autó- vagy gépszerviz Excelben és papíron vezeti a munkalapokat. A webalkalmazásban a szerelő telefonon rögzíti a munkát, az iroda látja az állapotot, az ügyfél pedig SMS-t vagy e-mailt kap, ha elkészült a javítás.",
       items: ["Bejelentkezés szerepkörökkel (iroda, szerelő, admin)", "Munkalapok, ügyfelek, járművek nyilvántartása", "Értesítés az ügyfélnek elkészüléskor", "Havi kimutatás exportálással", "Adatimport a régi Excel-táblából"],
     },
     faq: [
@@ -259,10 +259,10 @@ export const services: ServiceContent[] = [
         q: "Mi a különbség egy weboldal és egy webalkalmazás között?",
         a: "A weboldal bemutat, a webalkalmazás dolgozik: bejelentkezés, adatok kezelése, folyamatok.",
       },
-      { q: "Később bővíthető?", a: "Igen, modern, bővíthető alapra építünk, így új funkciók bármikor jöhetnek." },
+      { q: "Később bővíthető?", a: "Igen, modern, bővíthető alapra építek, így új funkciók bármikor jöhetnek." },
       {
         q: "Miért nem jó egy kész, előfizetéses program?",
-        a: "Sokszor jó, és ha van ilyen, megmondjuk. Egyedi rendszer akkor éri meg, ha a kész programok a folyamatod felét nem tudják, vagy ha a felhasználónkénti havidíj hosszú távon többe kerül, mint a fejlesztés.",
+        a: "Sokszor jó, és ha van ilyen, megmondom. Egyedi rendszer akkor éri meg, ha a kész programok a folyamatod felét nem tudják, vagy ha a felhasználónkénti havidíj hosszú távon többe kerül, mint a fejlesztés.",
       },
       {
         q: "Telefonon is használható lesz?",
@@ -273,7 +273,7 @@ export const services: ServiceContent[] = [
         a: "Biztonságos tárhelyen, titkosított kapcsolaton. Mindenki csak azt látja, amihez a szerepköre jogot ad, és rendszeres mentés készül.",
       },
       {
-        q: "Össze tudjátok kötni a számlázóval vagy a könyvelőprogrammal?",
+        q: "Össze tudod kötni a számlázóval vagy a könyvelőprogrammal?",
         a: "Ha a programnak van nyilvános kapcsolódási felülete (API), igen, például a SmartBill vagy az Oblio esetében. A kérdőív integrációnként árazza be.",
       },
       {
@@ -293,7 +293,7 @@ export const services: ServiceContent[] = [
     name: "Landing page készítés",
     metaTitle: "Landing page készítés {from}-tól",
     metaDescription:
-      "Landing page készítés hirdetésekhez, rendezvényekhez és termékbevezetéshez: gyors, mérhető, egy céllal. {from}-tól, tételes árajánlattal pár perc alatt.",
+      "Landing page készítés hirdetésekhez, rendezvényekhez, termékbevezetéshez: gyors, mérhető, egy céllal. {from}-tól, árajánlattal pár perc alatt.",
     h1: "Landing page készítés kampányokhoz és termékbevezetéshez",
     intro: "Egyetlen gyors oldal egy céllal: jelentkezés, vásárlás vagy feliratkozás. Mérőkódokkal, hirdetésekhez előkészítve.",
     forWhom: ["Facebook- és Google-hirdetésekhez", "Rendezvényekhez, tanfolyamokhoz, akciókhoz", "Új termék vagy szolgáltatás bevezetéséhez"],
@@ -301,11 +301,11 @@ export const services: ServiceContent[] = [
     process: [
       {
         title: "Cél és célközönség",
-        text: "Egy landing page-nek egyetlen dolga van: rávenni a látogatót egy lépésre. Először ezt tisztázzuk: kinek szól, honnan érkezik (hirdetés, e-mail, plakát), és mi a siker, például jelentkezés vagy vásárlás.",
+        text: "Egy landing page-nek egyetlen dolga van: rávenni a látogatót egy lépésre. Először ezt tisztázzuk együtt: kinek szól, honnan érkezik (hirdetés, e-mail, plakát), és mi a siker, például jelentkezés vagy vásárlás.",
       },
       {
         title: "Üzenet és szerkezet",
-        text: "Megírjuk a főcímet, az előnyöket, a gyakori kifogásokra adott válaszokat és a cselekvésre ösztönző gombot. A szerkezet úgy épül fel, hogy a látogató görgetés közben se felejtse el, miért jött.",
+        text: "Megírom a főcímet, az előnyöket, a gyakori kifogásokra adott válaszokat és a cselekvésre ösztönző gombot. A szerkezet úgy épül fel, hogy a látogató görgetés közben se felejtse el, miért jött.",
       },
       {
         title: "Design és fejlesztés",
@@ -313,7 +313,7 @@ export const services: ServiceContent[] = [
       },
       {
         title: "Mérés és élesítés",
-        text: "Beállítjuk a Google Analyticset és a Meta-pixelt, hogy lásd, melyik hirdetés hoz jelentkezőt. Élesítés után az első adatok alapján javaslatot teszünk a finomításra.",
+        text: "Beállítom a Google Analyticset és a Meta-pixelt, hogy lásd, melyik hirdetés hoz jelentkezőt. Élesítés után az első adatok alapján javaslatot teszek a finomításra.",
       },
     ],
     guide: {
@@ -321,14 +321,14 @@ export const services: ServiceContent[] = [
       paragraphs: [
         "A landing page akkor jó, ha a hirdetés és az oldal ugyanazt ígéri. Ha a hirdetésben -20% kedvezmény szerepel, a látogatónak az oldal tetején is azonnal ezt kell látnia. Ha keresgélnie kell, visszalép, és a hirdetésre költött pénz elveszik.",
         "Kevés, de jól választott szöveg kell. Egy erős főcím, három-négy konkrét előny, egy rövid bizonyíték (vélemény, szám, fotó), a gyakori kérdések és egy egyértelmű gomb. A hosszú bekezdéseket telefonon senki nem olvassa el, a felsorolásokat és a rövid mondatokat igen.",
-        "A sebesség itt különösen számít: a hirdetésre kattintók türelmetlenek, és ha három másodpercnél tovább tölt az oldal, sokan be sem várják. Ezért nem építünk nehéz oldalépítős sablonra, hanem könnyű, gyors kódra.",
+        "A sebesség itt különösen számít: a hirdetésre kattintók türelmetlenek, és ha három másodpercnél tovább tölt az oldal, sokan be sem várják. Ezért nem építek nehéz oldalépítős sablonra, hanem könnyű, gyors kódra.",
         "Végül: mérés nélkül nem tudod, megéri-e. Állítsd be előre, mi számít eredménynek (jelentkezés, vásárlás, feliratkozás), és nézd meg az első hét adatait. Gyakran egyetlen főcím- vagy gombszöveg-csere is sokat javít.",
         "Gondolj arra is, mi történik a jelentkezés után. Egy automatikus visszaigazoló e-mail, egy naptárba mentés vagy egy köszönőoldal további lépéssel (például egy kedvezményes ajánlattal) sokat dob az élményen. Ezeket a kérdőív külön tételként kínálja, így te döntöd el, mi éri meg a kampányodhoz. És ha a kampány lejár, az oldal könnyen átírható a következő akcióra, nem kell mindent elölről kezdeni.",
       ],
     },
     example: {
-      title: "Példa: jelentkezési oldal egy hétvégi workshophoz",
-      text: "Egy tipikus megrendelés: egy tréner Facebook-hirdetéssel toborozza a résztvevőket. Az oldal elmondja, kinek szól a workshop, mit visz haza a résztvevő, mennyibe kerül és mikor lesz, a végén pedig egy rövid jelentkezési űrlap áll.",
+      title: "Mintaprojekt: jelentkezési oldal egy hétvégi workshophoz",
+      text: "Szemléltető példa, nem valós ügyfél. Egy tréner Facebook-hirdetéssel toborozza a résztvevőket. Az oldal elmondja, kinek szól a workshop, mit visz haza a résztvevő, mennyibe kerül és mikor lesz, a végén pedig egy rövid jelentkezési űrlap áll.",
       items: ["Főcím, előnyök, program, ár, GYIK", "Jelentkezési űrlap e-mail-értesítéssel", "Visszaszámláló a jelentkezési határidőig", "Meta-pixel és Google Analytics"],
     },
     faq: [
@@ -345,11 +345,11 @@ export const services: ServiceContent[] = [
       },
       {
         q: "Később át tudom írni a szöveget vagy az árat?",
-        a: "Igen. Az egyszerű módosításokat te is meg tudod csinálni, a nagyobb átalakításokat pedig külön árajánlat alapján vállaljuk.",
+        a: "Igen. Az egyszerű módosításokat te is meg tudod csinálni, a nagyobb átalakításokat pedig külön árajánlat alapján vállalom.",
       },
       {
         q: "Kell hozzá saját domain?",
-        a: "Nem kötelező. Ha van céges weboldalad, a landing page futhat egy aloldalán vagy egy aldomainen (például akcio.cegnev.ro). Ha még nincs semmid, regisztrálunk egy új domaint a te nevedre.",
+        a: "Nem kötelező. Ha van céges weboldalad, a landing page futhat egy aloldalán vagy egy aldomainen (például akcio.cegnev.ro). Ha még nincs semmid, regisztrálok egy új domaint a te nevedre.",
       },
       {
         q: "Mennyi idő alatt térül meg?",
@@ -385,19 +385,19 @@ export const services: ServiceContent[] = [
     process: [
       {
         title: "Átvilágítás",
-        text: "Megnézzük, mi működik és mi nem a mostani oldaladon: sebesség, mobilos megjelenés, Google-helyezések, melyik oldalt nézik a legtöbben. Ezt az ingyenes átvilágítással te magad is elindíthatod.",
+        text: "Megnézem, mi működik és mi nem a mostani oldaladon: sebesség, mobilos megjelenés, Google-helyezések, melyik oldalt nézik a legtöbben. Ezt az ingyenes átvilágítással te magad is elindíthatod.",
       },
       {
         title: "Mi marad, mi változik",
-        text: "Eldöntjük, mit viszünk át (szövegek, képek, logó, jól teljesítő oldalak), és mit írunk újra. A Google-ben jól szereplő oldalak címe vagy megmarad, vagy átirányítást kap.",
+        text: "Együtt eldöntjük, mit viszek át (szövegek, képek, logó, jól teljesítő oldalak), és mit írok újra. A Google-ben jól szereplő oldalak címe vagy megmarad, vagy átirányítást kap.",
       },
       {
         title: "Új design és fejlesztés",
-        text: "Az új oldal a régi mellett, egy teszt-címen készül, így a mostani oldalad addig zavartalanul működik. Akkor váltunk, amikor minden kész és ellenőrzött.",
+        text: "Az új oldal a régi mellett, egy teszt-címen készül, így a mostani oldalad addig zavartalanul működik. Csak akkor cserélem le a régit, amikor minden kész és ellenőrzött.",
       },
       {
         title: "Átállás és utókövetés",
-        text: "Az átálláskor beállítjuk az átirányításokat, beküldjük az új oldaltérképet a Google-nek, és néhány hétig figyeljük a helyezéseket, hogy semmi ne vesszen el.",
+        text: "Az átálláskor beállítom az átirányításokat, beküldöm az új oldaltérképet a Google-nek, és néhány hétig figyelem a helyezéseket, hogy semmi ne vesszen el.",
       },
     ],
     guide: {
@@ -410,13 +410,13 @@ export const services: ServiceContent[] = [
       ],
     },
     example: {
-      title: "Példa: egy 10 éves WordPress-oldal felújítása",
-      text: "Egy tipikus megrendelés: egy építőipari cég régi oldala telefonon szétesik, lassan tölt be, és a bővítményei évek óta nem frissültek. A tartalom nagy része jó, csak a megjelenés és a technika avult el. A felújítás után ugyanaz a tartalom gyorsan, mobilon is jól jelenik meg.",
+      title: "Mintaprojekt: egy 10 éves WordPress-oldal felújítása",
+      text: "Szemléltető példa, nem valós ügyfél. Egy építőipari cég régi oldala telefonon szétesik, lassan tölt be, és a bővítményei évek óta nem frissültek. A tartalom nagy része jó, csak a megjelenés és a technika avult el. A felújítás után ugyanaz a tartalom gyorsan, mobilon is jól jelenik meg.",
       items: ["8 oldal tartalmának átvitele és csiszolása", "Új, mobilra tervezett design", "Átirányítások a régi címekről", "Gyorsabb betöltés, kevesebb bővítmény", "Új ajánlatkérő űrlap"],
     },
     faq: [
-      { q: "Elveszítem a Google-helyezésemet?", a: "Nem: átirányítási tervvel és a fontos oldalak megőrzésével vigyázunk rá." },
-      { q: "Megmaradnak a régi szövegeim?", a: "Igen, a tartalmat átvisszük, és kérésre csiszoljuk is." },
+      { q: "Elveszítem a Google-helyezésemet?", a: "Nem: átirányítási tervvel és a fontos oldalak megőrzésével vigyázok rá." },
+      { q: "Megmaradnak a régi szövegeim?", a: "Igen, a tartalmat átviszem, és kérésre csiszolom is." },
       { q: "Mennyibe kerül a felújítás?", a: "{from}-tól; a pontos ár a régi oldal méretétől és az új funkcióktól függ." },
       {
         q: "Honnan tudom, hogy felújítás kell, vagy elég javítgatni?",
@@ -424,11 +424,11 @@ export const services: ServiceContent[] = [
       },
       {
         q: "Wixen vagy más oldalépítőn van az oldalam. Át lehet hozni?",
-        a: "Igen. A szövegeket és a képeket átvisszük, a domaint pedig átirányítjuk az új oldalra. Az oldalépítő havidíja ezután megszűnhet.",
+        a: "Igen. A szövegeket és a képeket átviszem, a domaint pedig átirányítom az új oldalra. Az oldalépítő havidíja ezután megszűnhet.",
       },
       {
         q: "Működik a régi oldal, amíg az új készül?",
-        a: "Igen, végig. Az új oldal külön helyen készül, és csak akkor cseréljük le a régit, amikor minden kész és ellenőrzött.",
+        a: "Igen, végig. Az új oldal külön helyen készül, és csak akkor cserélem le a régit, amikor minden kész és ellenőrzött.",
       },
       {
         q: "Kell új domain a felújításhoz?",

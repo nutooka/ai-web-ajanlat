@@ -388,6 +388,13 @@ export function PricingCards({
                       >
                         {formatRon(pkg.listPrice)}
                       </Typography>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: "block", visibility: pkg.savings > 0 ? "visible" : "hidden" }}
+                      >
+                        {pkg.savings > 0 ? pkg.discounts.map((discount) => `${discount.label} −${discount.percent}%`).join(" + ") : "–"}
+                      </Typography>
                       <Stack
                         direction="row"
                         sx={{
@@ -736,7 +743,7 @@ function RequestStatus({
       >
         {ok
           ? recommended
-            ? "Minden kérésed benne van – ezt ajánljuk."
+            ? "Minden kérésed benne van – ezt ajánlom."
             : "Minden kérésed benne van."
           : `Hiányzik ${missing.length} kérésed: ${missing.join(", ")}.`}
       </Typography>

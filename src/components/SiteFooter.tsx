@@ -67,6 +67,14 @@ export function SiteFooter({ reserveStickyBar = false }: { reserveStickyBar?: bo
           © {siteConfig.company.legalName}
         </Typography>
       </Container>
+      {/* Visible name, address and tax ID, matching the structured data (local SEO). */}
+      <Container maxWidth="lg" sx={{ pt: 1 }}>
+        <Typography variant="caption" color="text.secondary" component="address" sx={{ fontStyle: "normal", display: "block" }}>
+          {siteConfig.company.legalName} · {siteConfig.company.postalAddress.streetAddress}, {siteConfig.company.postalAddress.postalCode}{" "}
+          {siteConfig.company.postalAddress.addressLocality} (Székelyudvarhely), {siteConfig.company.postalAddress.addressRegion} · CUI{" "}
+          {siteConfig.company.taxId}
+        </Typography>
+      </Container>
     </Box>
   );
 }

@@ -27,7 +27,7 @@ export function ReviewNotice({ quote }: { quote: Quote }) {
             </Typography>
           </Stack>
           <Typography variant="body2" sx={{ mb: 1.5 }}>
-            Néhány kérésed egyedi megoldást igényel, ezért az ár <b>kiinduló becslés</b>. Az ingyenes egyeztetésen megnézzük a részleteket, és utána fix árat adunk.
+            Néhány kérésed egyedi megoldást igényel, ezért az ár <b>kiinduló becslés</b>. Az ingyenes egyeztetésen megnézzük a részleteket, és utána fix árat adok.
           </Typography>
           <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
             {review.reasons.map((reason) => (
