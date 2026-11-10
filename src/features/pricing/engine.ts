@@ -338,6 +338,8 @@ function coverage(packages: PackageQuote[], answers: Answers, config: PricingCon
 export interface QuoteOptions {
   /** Minutes since the visitor first opened the offer (server-verified). Unknown = first tier. */
   offerAgeMinutes?: number;
+  /** false = full price, without the quick-decision discount (public "from" prices, samples). */
+  quickDecision?: boolean;
 }
 
 export function calculateQuote(rawAnswers: Answers, config: PricingConfig = pricingConfig, options: QuoteOptions = {}): Quote | null {
@@ -349,7 +351,8 @@ export function calculateQuote(rawAnswers: Answers, config: PricingConfig = pric
   const extraLanguages = config.languages.extraByAnswer[String(answers.languages ?? "1")] ?? 0;
   const languageMultiplier = 1 + extraLanguages * config.languages.multiplierPerExtra;
   const urgencyLevel = resolveUrgency(answers);
-  const quickDecision = resolveQuickDecision(config.discounts.quickDecision, options.offerAgeMinutes);
+  const quickConfig = options.quickDecision === false ? { ...config.discounts.quickDecision, enabled: false } : config.discounts.quickDecision;
+  const quickDecision = resolveQuickDecision(quickConfig, options.offerAgeMinutes);
 
   const ordered = enforceTierOrder(
     PACKAGE_IDS.map((id) => buildPackage(id, projectType, answers, answerItems, languageMultiplier, config, quickDecision.percent)),

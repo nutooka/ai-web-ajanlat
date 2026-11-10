@@ -67,6 +67,12 @@ export function offerAgeMinutesFrom(clock: OfferClock | null, now: number | null
 
 export function formatCountdown(minutes: number): string {
   const totalSeconds = Math.max(0, Math.floor(minutes * 60));
+  // Long windows (48 h): hours and minutes; the last hour counts down in mm:ss.
+  if (totalSeconds >= 3600) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const rest = Math.floor((totalSeconds % 3600) / 60);
+    return `${hours} ó ${String(rest).padStart(2, "0")} p`;
+  }
   const mm = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
   const ss = String(totalSeconds % 60).padStart(2, "0");
   return `${mm}:${ss}`;

@@ -225,7 +225,22 @@ describe("premium extras", () => {
 });
 
 describe("quick-decision discount", () => {
-  const percentAt = (age?: number) => calculateQuote(fixtures.company, pricingConfig, { offerAgeMinutes: age })!.quickDecision.percent;
+  // The tier mechanics, tested on a fixed two-tier setup (independent of the live config).
+  const tiered: PricingConfig = {
+    ...pricingConfig,
+    discounts: {
+      ...pricingConfig.discounts,
+      quickDecision: { enabled: true, label: "Gyors döntés kedvezmény", tiers: [{ withinMinutes: 60, percent: 25 }, { withinMinutes: 120, percent: 15 }] },
+    },
+  };
+  const percentAt = (age?: number) => calculateQuote(fixtures.company, tiered, { offerAgeMinutes: age })!.quickDecision.percent;
+
+  it("live config: −25% for 48 hours, then full price", () => {
+    const live = (age: number) => calculateQuote(fixtures.company, pricingConfig, { offerAgeMinutes: age })!.quickDecision.percent;
+    expect(live(0)).toBe(25);
+    expect(live(47 * 60 + 59)).toBe(25);
+    expect(live(48 * 60)).toBe(0);
+  });
 
   it("shrinks over time and ends at full price", () => {
     expect(percentAt(undefined)).toBe(25);
@@ -238,18 +253,18 @@ describe("quick-decision discount", () => {
   });
 
   it("makes later prices higher, never lower", () => {
-    const price = (age: number) => calculateQuote(fixtures.company, pricingConfig, { offerAgeMinutes: age })!.packages.standard.finalPrice;
+    const price = (age: number) => calculateQuote(fixtures.company, tiered, { offerAgeMinutes: age })!.packages.standard.finalPrice;
     expect(price(10)).toBeLessThan(price(70));
     expect(price(70)).toBeLessThan(price(130));
   });
 
   it("drops the discount row once expired", () => {
-    const standard = calculateQuote(fixtures.company, pricingConfig, { offerAgeMinutes: 500 })!.packages.standard;
+    const standard = calculateQuote(fixtures.company, tiered, { offerAgeMinutes: 500 })!.packages.standard;
     expect(standard.discounts.map((discount) => discount.id)).toEqual(["package.standard"]);
   });
 
   it("reports minutes left in the current tier", () => {
-    const state = calculateQuote(fixtures.company, pricingConfig, { offerAgeMinutes: 45 })!.quickDecision;
+    const state = calculateQuote(fixtures.company, tiered, { offerAgeMinutes: 45 })!.quickDecision;
     expect(state).toMatchObject({ percent: 25, minutesLeft: 15, nextPercent: 15, expired: false });
   });
 });

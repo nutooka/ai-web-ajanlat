@@ -45,3 +45,14 @@ export function resolveQuickDecision(config: QuickDecisionConfig, offerAgeMinute
     expired: false,
   };
 }
+
+/** "48 óra" / "30 perc" – a tier boundary in words. */
+export function formatWindow(minutes: number): string {
+  return minutes < 60 ? `${minutes} perc` : `${Math.round(minutes / 60)} óra`;
+}
+
+/** "48 órán belül" / "30 percen belül" – how long the best discount lasts. */
+export function quickWindowText(config: QuickDecisionConfig): string {
+  const minutes = config.tiers[0]?.withinMinutes ?? 0;
+  return minutes < 60 ? `${minutes} percen belül` : `${Math.round(minutes / 60)} órán belül`;
+}

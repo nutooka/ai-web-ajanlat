@@ -51,8 +51,8 @@ describe("submitOffer", () => {
     expect(first.sent[0].text).toContain("Gyors döntés kedvezmény: −25% (rögzítve)");
     expect(first.sent[0].text).toContain("Ismételt kérés?: Nem");
 
-    // 3 hours later: new browser (fresh cookie), same number written differently → no discount, flagged.
-    const later = firstOpen + 3 * 60 * 60_000;
+    // 3 days later: new browser (fresh cookie), same number written differently → no discount, flagged.
+    const later = firstOpen + 3 * 24 * 60 * 60_000;
     const second = setup();
     await submitOffer(submission({ contact: { ...contact, phone: "0712 345 678" } }), { ...second.deps, ...lockDeps, offerOpenedAt: later, now: () => later + 60_000 });
     expect(second.sent[0].text).toContain("Gyors döntés kedvezmény: nem járt");
@@ -103,7 +103,7 @@ describe("submitOffer", () => {
     const early = setup();
     await submitOffer(submission(), { ...early.deps, offerAgeMinutes: 10 });
     const late = setup();
-    await submitOffer(submission(), { ...late.deps, offerAgeMinutes: 200 });
+    await submitOffer(submission(), { ...late.deps, offerAgeMinutes: 49 * 60 });
     expect(early.sent[0].text).toMatch(/Gyors döntés kedvezmény: −25% \(rögzítve\)/);
     expect(late.sent[0].text).toMatch(/Gyors döntés kedvezmény: nem járt/);
   });

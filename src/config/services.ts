@@ -2,7 +2,7 @@ import type { ResolvedProjectType } from "@/features/questionnaire/types";
 
 /**
  * One landing page per service, each aimed at its own search ("webshop készítés", "landing page készítés"…).
- * `{from}` is replaced with the live starting price from the pricing engine.
+ * `{from}` is replaced with the live starting price, `{weeks}` with the delivery range, both from the pricing engine.
  */
 export interface ServiceContent {
   type: ResolvedProjectType;
@@ -131,7 +131,7 @@ export const services: ServiceContent[] = [
     priceFactors: ["A szekciók száma", "Szövegírás és vizuális elemek", "Űrlapok, hírlevél, időpontfoglalás", "Mérés és hirdetési követőkódok"],
     faq: [
       { q: "Mennyibe kerül egy landing page?", a: "Egy egyszerű landing page {from}-tól készül; a szövegírás, az animációk és az integrációk felárral járnak." },
-      { q: "Mennyi idő alatt készül el?", a: "Általában 1–2 hét alatt." },
+      { q: "Mennyi idő alatt készül el?", a: "Általában {weeks} alatt, a csomagtól függően." },
       { q: "Mérhető lesz a hirdetések eredménye?", a: "Igen, Google Analytics és Meta-pixel beállítással." },
     ],
   },

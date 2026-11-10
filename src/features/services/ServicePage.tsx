@@ -14,13 +14,17 @@ import { WaveDivider } from "@/components/WaveDivider";
 import { pricingConfig } from "@/config/pricing";
 import { serviceByType, services } from "@/config/services";
 import { siteConfig, siteUrl, defaultOgImage } from "@/config/site";
-import { startingPrice } from "@/features/pricing/startingPrice";
+import { deliveryWeeks, minimalQuote, startingPrice } from "@/features/pricing/startingPrice";
 import type { ResolvedProjectType } from "@/features/questionnaire/types";
 import { formatRon } from "@/lib/format";
 import { gradients, packageThemes, palette } from "@/theme/tokens";
 import { StartPlannerButton } from "./StartPlannerButton";
 
-const withPrice = (text: string, from: string) => text.replaceAll("{from}", from);
+/** Fills `{from}` (starting price) and `{weeks}` (delivery range) from the live pricing engine. */
+const withPrice = (text: string, from: string, type?: ResolvedProjectType) => {
+  const quote = type && text.includes("{weeks}") ? minimalQuote(type) : null;
+  return text.replaceAll("{from}", from).replaceAll("{weeks}", quote ? deliveryWeeks(quote) : "");
+};
 
 export function serviceMetadata(type: ResolvedProjectType): Metadata {
   const service = serviceByType(type);
@@ -60,7 +64,7 @@ export function ServicePage({ type }: { type: ResolvedProjectType }) {
       },
       {
         "@type": "FAQPage",
-        mainEntity: service.faq.map((item) => ({ "@type": "Question", name: item.q, acceptedAnswer: { "@type": "Answer", text: withPrice(item.a, from) } })),
+        mainEntity: service.faq.map((item) => ({ "@type": "Question", name: item.q, acceptedAnswer: { "@type": "Answer", text: withPrice(item.a, from, type) } })),
       },
       {
         "@type": "BreadcrumbList",
@@ -143,7 +147,7 @@ export function ServicePage({ type }: { type: ResolvedProjectType }) {
                 <Typography variant="h3" sx={{ fontSize: "1.125rem", mb: 0.5 }}>
                   {item.q}
                 </Typography>
-                <Typography color="text.secondary">{withPrice(item.a, from)}</Typography>
+                <Typography color="text.secondary">{withPrice(item.a, from, type)}</Typography>
               </Box>
             ))}
           </Box>

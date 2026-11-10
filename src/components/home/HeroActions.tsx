@@ -20,7 +20,7 @@ import { startPlanner } from "./startPlanner";
  * Hero call to action. A first visit gets the planner's first question right here:
  * one tap on a project type starts the questionnaire. A returning visitor gets "continue".
  */
-export function HeroActions({ options, startingPrices, bestPercent }: { options: ProjectTypeOption[]; startingPrices: Record<string, number>; bestPercent: number }) {
+export function HeroActions({ options, startingPrices, bestPercent, quickWindow }: { options: ProjectTypeOption[]; startingPrices: Record<string, number>; bestPercent: number; quickWindow: string }) {
   const router = useRouter();
   const snapshot = useWizardSnapshot();
   const hasProgress = Boolean(snapshot?.answers.projectType);
@@ -107,7 +107,7 @@ export function HeroActions({ options, startingPrices, bestPercent }: { options:
         Kb. 3 perc · ingyenes · nem kell regisztrálni
         {bestPercent > 0 && (
           <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 1.5, background: gradients.discount, color: palette.ink, fontWeight: 650 }}>
-            −{bestPercent}% kedvezmény, ha az ajánlatod elkészülte után 1 órán belül egyeztetést kérsz.
+            −{bestPercent}% kedvezmény, ha az ajánlatod elkészülte után {quickWindow} egyeztetést kérsz.
           </Box>
         )}
       </Typography>

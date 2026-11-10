@@ -1406,13 +1406,12 @@ export const pricingConfig: PricingConfig = {
   discounts: {
     // Indulási kedvezmény: kapcsold ki (enabled: false), vagy csökkentsd, ha már nem kell.
     // Gyors döntés kedvezmény: az ajánlat első megnyitásától számítva.
-    // 2 óra után teljes ár. A szerver ellenőrzi (aláírt cookie), így nem lehet visszaállítani az órát.
+    // 48 óra után teljes ár. A szerver ellenőrzi (aláírt cookie), így nem lehet visszaállítani az órát.
     quickDecision: {
       enabled: true,
       label: "Gyors döntés kedvezmény",
       tiers: [
-        { withinMinutes: 60, percent: 25 },
-        { withinMinutes: 120, percent: 15 },
+        { withinMinutes: 48 * 60, percent: 25 },
       ],
     },
     perPackage: {

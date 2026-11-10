@@ -68,10 +68,9 @@ describe("offer code", () => {
     const opts = (ageMinutes: number | null) => ({ env: kv.env, fetchImpl: kv.fetchImpl, ageMinutes });
     const firstHour = await saveSharedOffer(complete, "standard", "s", opts(5));
     const sameTier = await saveSharedOffer(complete, "standard", "s", opts(40));
-    const secondHour = await saveSharedOffer(complete, "standard", "s", opts(70));
-    const expired = await saveSharedOffer(complete, "standard", "s", opts(200));
+    const expired = await saveSharedOffer(complete, "standard", "s", opts(49 * 60));
     expect(sameTier).toBe(firstHour);
-    expect(new Set([firstHour, secondHour, expired]).size).toBe(3);
+    expect(expired).not.toBe(firstHour);
     const slider = await saveSharedOffer({ ...complete, deadlineWeeks: "9" }, "standard", "s", opts(5));
     expect(slider).not.toBe(firstHour);
     // Within a tier the latest moment wins (the countdown keeps moving, the prices do not).

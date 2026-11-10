@@ -9,11 +9,11 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { WaveDivider } from "@/components/WaveDivider";
 import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { pricingConfig } from "@/config/pricing";
+import { quickWindowText } from "@/features/pricing/quickDecision";
 import { serviceByType } from "@/config/services";
 import { siteUrl, defaultOgImage } from "@/config/site";
-import { calculateQuote } from "@/features/pricing/engine";
-import { SAMPLE_COMPANY_ANSWERS } from "@/features/pricing/startingPrice";
-import { PACKAGE_IDS, type Quote } from "@/features/pricing/types";
+import { deliveryWeeks, publicQuote, quickStartingPrice, SAMPLE_COMPANY_ANSWERS } from "@/features/pricing/startingPrice";
+import { PACKAGE_IDS } from "@/features/pricing/types";
 import type { Answers, ResolvedProjectType } from "@/features/questionnaire/types";
 import { LinkButton } from "@/components/LinkButton";
 import { formatRon, formatWeeks } from "@/lib/format";
@@ -24,7 +24,7 @@ const MINIMAL = { languages: "1", domain: "has", branding: "full", design: "temp
 /** Every number on this page comes from the live pricing engine – when prices change, the article follows. */
 const scenarios: { name: string; type: ResolvedProjectType; answers: Answers; note: string }[] = [
   { name: "Egyszerű bemutatkozó oldal (1–5 oldal)", type: "company", answers: { projectType: "company", ...MINIMAL }, note: "Sablonalapú design, kapcsolati űrlap" },
-  { name: "Céges weboldal (6–10 oldal)", type: "company", answers: SAMPLE_COMPANY_ANSWERS, note: "Testreszabott design, időpontfoglalás, galéria" },
+  { name: "Céges weboldal (6–10 oldal)", type: "company", answers: SAMPLE_COMPANY_ANSWERS, note: "Kapcsolati űrlap; a nagyobb csomagokban testreszabott design, időpontfoglalás, galéria" },
   { name: "Landing page", type: "landing", answers: { projectType: "landing", ...MINIMAL }, note: "Egy oldal, egy cél, mérőkódok" },
   { name: "Webshop (Shopify)", type: "webshop", answers: { projectType: "webshop", ...MINIMAL }, note: "Legfeljebb 10 termék, egy fizetési mód" },
   { name: "Weboldal felújítás", type: "redesign", answers: { projectType: "redesign", ...MINIMAL }, note: "Új design, tartalom átvitele" },
@@ -43,9 +43,10 @@ export const metadata: Metadata = {
 };
 
 export default function PricingArticle() {
-  const rows = scenarios.map((scenario) => ({ ...scenario, quote: calculateQuote(scenario.answers)! }));
+  const rows = scenarios.map((scenario) => ({ ...scenario, quote: publicQuote(scenario.answers)! }));
   const companySimple = rows[0].quote;
   const quickPercent = pricingConfig.discounts.quickDecision.tiers[0]?.percent ?? 0;
+  const quickWindow = quickWindowText(pricingConfig.discounts.quickDecision);
   const { maintenance, flexibility } = pricingConfig;
   const flexibleDiscount = Math.round((1 - flexibility.minMultiplier) * 100);
   const short = rows.map((row) => `${row.name}: ${formatRon(row.quote.packages.basic.finalPrice)}-tól`).join("; ");
@@ -126,15 +127,15 @@ export default function PricingArticle() {
                       {formatRon(row.quote.packages[pid].finalPrice)}
                     </td>
                   ))}
-                  <td style={{ whiteSpace: "nowrap" }}>{weeks(row.quote)}</td>
+                  <td style={{ whiteSpace: "nowrap" }}>{deliveryWeeks(row.quote)}</td>
                 </tr>
               ))}
             </tbody>
           </Box>
         </Box>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Az árak a gyors döntés kedvezménnyel értendők (−{quickPercent}%, ha az ajánlat elkészülte után 1 órán belül egyeztetést kérsz). Kedvezmény nélkül például az
-          egyszerű bemutatkozó oldal {formatRon(companySimple.packages.basic.listPrice)}. Egyszeri díjak, végső árak.
+          Teljes, egyszeri árak, ÁFA nem kerül rájuk. Ha az ajánlatod elkészülte után {quickWindow} egyeztetést kérsz, ebből még −{quickPercent}%
+          kedvezmény jár: az egyszerű bemutatkozó oldal így {formatRon(quickStartingPrice("company"))}.
         </Typography>
 
         <Typography variant="h2" sx={h2}>
@@ -171,7 +172,7 @@ export default function PricingArticle() {
           <li>Adj rugalmas határidőt – akár −{flexibleDiscount}%.</li>
           <li>Hozd a saját szövegeidet és képeidet.</li>
           <li>Kezdj kisebb csomaggal, és bővíts később – modern alapra építünk, ez bármikor megy.</li>
-          <li>Ha gyorsan döntesz, az ajánlat után 1 órán belül −{quickPercent}% kedvezmény jár.</li>
+          <li>Ha gyorsan döntesz, az ajánlat után {quickWindow} −{quickPercent}% kedvezmény jár.</li>
         </Box>
 
         <Typography variant="h2" sx={h2}>
@@ -202,8 +203,3 @@ export default function PricingArticle() {
   );
 }
 
-function weeks(quote: Quote) {
-  const basic = quote.packages.basic.timeline;
-  const premium = quote.packages.premium.timeline;
-  return formatWeeks(basic.minWeeks, premium.maxWeeks);
-}

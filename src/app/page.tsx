@@ -26,8 +26,8 @@ import { services } from "@/config/services";
 import { siteConfig, siteUrl } from "@/config/site";
 import { PROJECT_TYPE_LABELS } from "@/features/offer/buildOffer";
 import { pricingConfig } from "@/config/pricing";
-import { SAMPLE_COMPANY_ANSWERS, startingPrice } from "@/features/pricing/startingPrice";
-import { calculateQuote } from "@/features/pricing/engine";
+import { quickWindowText } from "@/features/pricing/quickDecision";
+import { publicQuote, SAMPLE_COMPANY_ANSWERS, startingPrice } from "@/features/pricing/startingPrice";
 import { PricingCards } from "@/features/offer/components/PricingCards";
 import { projectTypeQuestion } from "@/features/questionnaire/config/branches";
 import { RESOLVED_PROJECT_TYPES } from "@/features/questionnaire/types";
@@ -109,7 +109,7 @@ export default function HomePage() {
   const bestPercent = quick.enabled ? (quick.tiers[0]?.percent ?? 0) : 0;
   const prices = Object.fromEntries(RESOLVED_PROJECT_TYPES.map((type) => [type, startingPrice(type)]));
   // Computed here (server) and passed down as plain data: the browser never downloads the pricing engine for the home page.
-  const sampleQuote = calculateQuote(SAMPLE_COMPANY_ANSWERS)!;
+  const sampleQuote = publicQuote(SAMPLE_COMPANY_ANSWERS)!;
   const projectTypes = projectTypeQuestion.options.map(({ id, label, description, icon }) => {
     const service = services.find((item) => item.type === id);
     return { id, label, description, icon, href: service ? `/${service.slug}` : undefined, hrefLabel: service?.name };
@@ -132,7 +132,7 @@ export default function HomePage() {
                 </Box>
                 .
               </Typography>
-              <HeroActions options={projectTypes} startingPrices={prices} bestPercent={bestPercent} />
+              <HeroActions options={projectTypes} startingPrices={prices} bestPercent={bestPercent} quickWindow={quickWindowText(quick)} />
             </Stack>
             {/* Phones: extra room above the preview, so its shapes never reach the text above. */}
             <Box sx={{ position: "relative", py: { xs: 2, md: 4 }, mt: { xs: 5, md: 0 } }}>
@@ -273,7 +273,7 @@ export default function HomePage() {
                   <>
                     {" "}
                     <Box component="span" sx={{ px: 0.75, borderRadius: 1, background: gradients.discount, color: palette.ink, fontWeight: 650 }}>
-                      −{bestPercent}% kedvezmény, ha az ajánlatod elkészülte után 1 órán belül egyeztetést kérsz.
+                      −{bestPercent}% kedvezmény, ha az ajánlatod elkészülte után {quickWindowText(quick)} egyeztetést kérsz.
                     </Box>
                   </>
                 )}

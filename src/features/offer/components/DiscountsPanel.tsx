@@ -9,7 +9,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { m } from "motion/react";
 import { pricingConfig } from "@/config/pricing";
-import { resolveQuickDecision } from "@/features/pricing/quickDecision";
+import { formatWindow, quickWindowText, resolveQuickDecision } from "@/features/pricing/quickDecision";
 import type { PackageId, PackageQuote } from "@/features/pricing/types";
 import { formatRon } from "@/lib/format";
 import { gradients, ease, palette } from "@/theme/tokens";
@@ -132,12 +132,12 @@ export function DiscountsPanel({
       label: `−${tier.percent}%`,
       detail:
         index === 0
-          ? `első ${tier.withinMinutes} perc`
-          : `${quickConfig.tiers[index - 1].withinMinutes / 60}–${tier.withinMinutes / 60} óra`,
+          ? `első ${formatWindow(tier.withinMinutes)}`
+          : `${formatWindow(quickConfig.tiers[index - 1].withinMinutes)}–${formatWindow(tier.withinMinutes)}`,
     })),
     {
       label: "Teljes ár",
-      detail: `${(quickConfig.tiers.at(-1)?.withinMinutes ?? 0) / 60} óra után`,
+      detail: `${formatWindow(quickConfig.tiers.at(-1)?.withinMinutes ?? 0)} után`,
     },
   ];
   const activeStep = quick.expired ? steps.length - 1 : quick.tierIndex;
@@ -262,7 +262,7 @@ export function DiscountsPanel({
                           alatt
                         </>
                       ) : (
-                        "1 órán belül"
+                        quickWindowText(quickConfig)
                       )}
                       , és rögzítjük.{" "}
                       {quick.nextPercent > 0
