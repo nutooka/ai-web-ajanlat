@@ -16,8 +16,13 @@ export function SiteHeader({ action, cta = true }: { action?: React.ReactNode; c
         <Logo tone="light" />
         {action ??
           (cta && (
-            <Button component={Link} href="/tervezo" endIcon={<ArrowForward />} sx={{ color: "#fff", display: { xs: "none", sm: "inline-flex" } }}>
-              Ajánlatkérés
+            <Button component={Link} href="/tervezo" endIcon={<ArrowForward />} sx={{ color: "#fff", minHeight: 44 }}>
+              <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+                Ajánlatkérés
+              </Box>
+              <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
+                Árajánlat
+              </Box>
             </Button>
           ))}
       </Container>

@@ -358,6 +358,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
                 answers={answers}
                 packageId={packageId}
                 packageName={pkg.name}
+                code={code ?? undefined}
                 onSubmitted={(copySent) => wizardStore.update({ submission: { at: Date.now(), copySent } })}
               />
               <SaveOffer answers={answers} packageId={packageId} packageName={pkg.name} price={pkg.finalPrice} code={code} />

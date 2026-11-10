@@ -31,13 +31,29 @@ export const siteConfig = {
     areaServed: ["Székelyudvarhely", "Hargita megye", "Erdély", "Románia", "Magyarország"],
     // Opcionális: ha kitöltöd, megjelenik az adatkezelési tájékoztatóban.
     email: "info@nutooka.tech",
-    phone: "",
+    /** Megjelenik a láblécben és az adatkezelési tájékoztatóban. Ugyanez a szám a WhatsApp (chat.whatsapp). */
+    phone: "+40 753 968 097",
   },
   /**
    * Üzenetküldős kapcsolat az ajánlat oldalán. Üresen hagyva a gomb nem jelenik meg.
    * messenger: a Facebook-oldal felhasználóneve (m.me/<ez>), whatsapp: telefonszám nemzetközi formában, szóközök nélkül (pl. 40712345678).
    */
   chat: { messenger: "", whatsapp: "40753968097" },
+  /**
+   * A cég arca: a főoldali „Kik vagyunk” blokk és az ajánlat-űrlap melletti névjegy.
+   * A fotó a public/team mappában van (LinkedIn-profilkép, 480×480).
+   */
+  person: {
+    name: "Zátyi (Fülöp) Beáta",
+    firstName: "Beáta",
+    role: "Alapító, webfejlesztő",
+    photo: "/team/beata.jpg",
+    linkedin: "https://www.linkedin.com/in/fulop-beata/",
+    bio: [
+      "Szia, Beáta vagyok, a Nutooka alapítója. Weboldalakat, webshopokat és webalkalmazásokat fejlesztek React és Next.js alapon, és mesterséges intelligenciával gyorsítom a munkát, ezért tudok kedvező árat adni.",
+      "Székelyudvarhelyen élek. Ha ajánlatot kérsz, én hívlak vissza, és magyarul vagy románul is egyeztethetünk.",
+    ],
+  },
   /** Ennyi napig érvényes az ajánlatban rögzített (kedvezményes) ár az egyeztetés kérése után. */
   offerValidityDays: 30,
   privacy: {

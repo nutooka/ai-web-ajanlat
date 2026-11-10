@@ -48,6 +48,22 @@ export function SiteFooter({ reserveStickyBar = false }: { reserveStickyBar?: bo
           Adatkezelési tájékoztató
         </MuiLink>
         <Typography variant="body2" color="text.secondary">
+          {siteConfig.company.phone && (
+            <>
+              <MuiLink href={`tel:${siteConfig.company.phone.replace(/\s/g, "")}`} color="inherit">
+                {siteConfig.company.phone}
+              </MuiLink>
+              {" · "}
+            </>
+          )}
+          {siteConfig.company.email && (
+            <>
+              <MuiLink href={`mailto:${siteConfig.company.email}`} color="inherit">
+                {siteConfig.company.email}
+              </MuiLink>
+              {" · "}
+            </>
+          )}
           © {siteConfig.company.legalName}
         </Typography>
       </Container>

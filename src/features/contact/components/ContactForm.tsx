@@ -26,12 +26,15 @@ import type { Answers } from "@/features/questionnaire/types";
 import { Blob } from "@/components/Blob";
 import { validityNote } from "@/lib/priceNotes";
 import { gradients, packageButtonSx, palette } from "@/theme/tokens";
+import { ContactPerson } from "./ContactPerson";
 import { CALLBACK_LABELS, CALLBACK_TIMES, isEmailLike, quickContactSchema, toContact, type QuickContactValues } from "../schema";
 
 interface ContactFormProps {
   answers: Answers;
   packageId: PackageId;
   packageName: string;
+  /** Offer code, prefilled into the WhatsApp message. */
+  code?: string;
   /** Called after the request went out; the page then shows a persistent confirmation. */
   onSubmitted: (copySent: boolean) => void;
 }
@@ -57,7 +60,7 @@ const SERVER_FIELD: Record<string, keyof QuickContactValues> = {
  * The quick request: one "phone or e-mail" field, when to call, consent.
  * Name, company and message are optional and folded away.
  */
-export function ContactForm({ answers, packageId, packageName, onSubmitted }: ContactFormProps) {
+export function ContactForm({ answers, packageId, packageName, code, onSubmitted }: ContactFormProps) {
   const shownAt = useRef(0);
   const honeypot = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -140,6 +143,7 @@ export function ContactForm({ answers, packageId, packageName, onSubmitted }: Co
           <Typography variant="body2" sx={{ mt: 2, p: 1.5, borderRadius: 2, background: palette.brandTint, color: palette.ink }}>
             <b>Minden válaszodat és az ajánlatot is megkapjuk</b> – nem kell képernyőképet küldened. Ha inkább üzenetben írnál, elég az ajánlat-kódot vagy a linket elküldened. {validityNote()}
           </Typography>
+          <ContactPerson code={code} packageName={packageName} />
         </Box>
 
         <Box component="form" noValidate onSubmit={(event) => void handleSubmit(onSubmit)(event)} aria-label="Egyeztetés kérése">

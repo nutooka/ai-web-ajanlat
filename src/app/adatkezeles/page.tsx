@@ -6,12 +6,18 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { WaveDivider } from "@/components/WaveDivider";
 import { palette } from "@/theme/tokens";
 import { SiteFooter } from "@/components/SiteFooter";
-import { siteConfig } from "@/config/site";
+import { defaultOgImage, siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Adatkezelési tájékoztató",
   description: `${siteConfig.company.legalName} adatkezelési tájékoztatója az ajánlatkérésekhez.`,
   alternates: { canonical: "/adatkezeles" },
+  openGraph: {
+    title: "Adatkezelési tájékoztató",
+    description: `${siteConfig.company.legalName} adatkezelési tájékoztatója az ajánlatkérésekhez.`,
+    url: "/adatkezeles",
+    images: [defaultOgImage],
+  },
 };
 
 const { company, privacy } = siteConfig;

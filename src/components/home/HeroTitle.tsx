@@ -12,10 +12,10 @@ export function HeroTitle() {
       {/* The searchable part of the heading: what we do and where. */}
       <Box component="span" sx={{ display: "block", mb: 1.5, fontFamily: "var(--font-body)", fontSize: { xs: 14, md: 16 }, fontWeight: 600, letterSpacing: "0.02em", lineHeight: 1.4, color: palette.inkMuted }}>
         Weboldal és webshop készítés · Székelyudvarhely, Erdély
-      </Box>
+      </Box>{" "}
       <span className="enter-rise" style={{ display: "block" }}>
         Tervezzük meg
-      </span>
+      </span>{" "}
       <span className="enter-rise" style={{ display: "block", animationDelay: ".08s" }}>
         együtt a{" "}
         <Box component="span" sx={{ position: "relative", display: "inline-block", px: "0.12em", mx: "-0.04em", color: palette.ink }}>

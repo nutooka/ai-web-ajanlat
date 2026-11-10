@@ -23,7 +23,7 @@ export const services: ServiceContent[] = [
     type: "company",
     slug: "weboldal-keszites",
     name: "Weboldal készítés",
-    metaTitle: "Weboldal készítés Székelyudvarhely – céges oldal {from}-tól",
+    metaTitle: "Weboldal készítés Székelyudvarhely, {from}-tól",
     metaDescription:
       "Céges, bemutatkozó weboldal készítés Székelyudvarhelyről, Erdély-szerte. Mobilbarát, gyors, könnyen szerkeszthető – {from}-tól. Az árat 3 perc alatt, tételesen kiszámolod.",
     h1: "Céges weboldal készítés Székelyudvarhelyen és Erdélyben",
@@ -46,14 +46,14 @@ export const services: ServiceContent[] = [
         a: "Egy egyszerű, sablonalapú bemutatkozó oldal {from}-tól készül. A pontos ár az oldalak számától, a funkcióktól és a designtól függ – a kérdőív tételesen kiszámolja.",
       },
       { q: "Mennyi idő alatt készül el?", a: "Egy átlagos, 5–10 oldalas céges weboldal 2–4 hét alatt élesedik." },
-      { q: "Tudom majd én is szerkeszteni?", a: "Igen. Tartalomkezelőt kapsz, és megmutatjuk, hogyan frissítsd a szövegeket és a képeket." },
+      { q: "Tudom majd én is szerkeszteni?", a: "Igen. Saját szerkesztőfelületet kapsz, és megmutatjuk, hogyan frissítsd a szövegeket és a képeket." },
     ],
   },
   {
     type: "webshop",
     slug: "webshop-keszites",
     name: "Webshop készítés",
-    metaTitle: "Webshop készítés Erdélyben – Shopify webáruház {from}-tól",
+    metaTitle: "Shopify webshop készítés Erdélyben {from}-tól",
     metaDescription:
       "Shopify webshop készítés román futár-, kártyás fizetés- és számlázó-integrációval (Fan Courier, Sameday, SmartBill). {from}-tól, tételes árajánlattal 3 perc alatt.",
     h1: "Webshop készítés Shopify-jal, Székelyudvarhelyről Erdély-szerte",
@@ -89,7 +89,7 @@ export const services: ServiceContent[] = [
     type: "webapp",
     slug: "webalkalmazas-fejlesztes",
     name: "Webalkalmazás fejlesztés",
-    metaTitle: "Egyedi webalkalmazás fejlesztés – portál, belső rendszer {from}-tól",
+    metaTitle: "Egyedi webalkalmazás fejlesztés {from}-tól",
     metaDescription:
       "Egyedi webalkalmazás fejlesztés: ügyfélportál, foglalási vagy belső rendszer adminfelülettel és bejelentkezéssel. {from}-tól, tételes árajánlattal 3 perc alatt.",
     h1: "Egyedi webalkalmazás fejlesztés kis- és középvállalkozásoknak",
@@ -122,7 +122,7 @@ export const services: ServiceContent[] = [
     type: "landing",
     slug: "landing-page-keszites",
     name: "Landing page készítés",
-    metaTitle: "Landing page készítés – konverzióra tervezve {from}-tól",
+    metaTitle: "Landing page készítés {from}-tól",
     metaDescription:
       "Landing page készítés hirdetésekhez, rendezvényekhez és termékbevezetéshez: gyors, mérhető, egy céllal. {from}-tól, tételes árajánlattal 3 perc alatt.",
     h1: "Landing page készítés kampányokhoz és termékbevezetéshez",

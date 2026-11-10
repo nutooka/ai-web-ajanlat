@@ -20,10 +20,26 @@ import { startPlanner } from "./startPlanner";
  * Hero call to action. A first visit gets the planner's first question right here:
  * one tap on a project type starts the questionnaire. A returning visitor gets "continue".
  */
-export function HeroActions({ options, startingPrices, bestPercent, quickWindow }: { options: ProjectTypeOption[]; startingPrices: Record<string, number>; bestPercent: number; quickWindow: string }) {
+export function HeroActions({
+  options,
+  startingPrices,
+  minutes,
+  bestPercent,
+  quickWindow,
+}: {
+  options: ProjectTypeOption[];
+  startingPrices: Record<string, number>;
+  /** Expected questionnaire length per project type, in minutes. */
+  minutes: Record<string, number>;
+  bestPercent: number;
+  quickWindow: string;
+}) {
   const router = useRouter();
   const snapshot = useWizardSnapshot();
   const hasProgress = Boolean(snapshot?.answers.projectType);
+  const durations = Object.values(minutes);
+  const minMinutes = Math.min(...durations);
+  const maxMinutes = Math.max(...durations);
 
   const restart = () => {
     wizardStore.reset();
@@ -88,7 +104,7 @@ export function HeroActions({ options, startingPrices, bestPercent, quickWindow 
                       {option.label}
                     </Box>
                     <Box component="span" className="pick-price" sx={{ display: "block", fontSize: 12, mt: 0.25, color: palette.inkMuted }}>
-                      {price ? `${formatRon(price)}-tól` : "Segítünk dönteni"}
+                      {price ? `${formatRon(price)}-tól · ${minutes[option.id]} perc` : "Segítünk dönteni"}
                     </Box>
                   </Box>
                 </ButtonBase>
@@ -104,7 +120,7 @@ export function HeroActions({ options, startingPrices, bestPercent, quickWindow 
         </Box>
       </Typography>
       <Typography variant="body2" sx={{ color: palette.inkMuted }}>
-        Kb. 3 perc · ingyenes · nem kell regisztrálni
+        Kb. {minMinutes === maxMinutes ? minMinutes : `${minMinutes}–${maxMinutes}`} perc · ingyenes · nem kell regisztrálni
         {bestPercent > 0 && (
           <Box component="span" sx={{ display: "inline-block", mt: 1, px: 1, py: 0.25, borderRadius: 1.5, background: gradients.discount, color: palette.ink, fontWeight: 650 }}>
             −{bestPercent}% kedvezmény, ha az ajánlatod elkészülte után {quickWindow} egyeztetést kérsz.

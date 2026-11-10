@@ -12,7 +12,7 @@ import { siteUrl, defaultOgImage } from "@/config/site";
 import { AuditTool } from "@/features/audit/AuditTool";
 import { palette } from "@/theme/tokens";
 
-const title = "Ingyenes weboldal-átvilágítás – sebesség, mobil, Google";
+const title = "Ingyenes weboldal-átvilágítás 30 másodperc alatt";
 const description =
   "Írd be a weboldalad címét, és 30 másodperc alatt megtudod, mennyire gyors telefonon, hogyan látszik a Google-ben, és mi a 3 legfontosabb javítanivaló. Ingyenes, regisztráció nélkül.";
 

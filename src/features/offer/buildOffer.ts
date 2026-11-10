@@ -38,9 +38,9 @@ export interface Offer {
 }
 
 const ALWAYS_INCLUDED = [
-  "Reszponzív, mobilra optimalizált megjelenés",
+  "Telefonon, tableten és gépen is jól mutat",
   "SSL-tanúsítvány és biztonságos beállítások",
-  "Technikai SEO-alapok (meta adatok, sitemap, gyors betöltés)",
+  "Google-alapbeállítások: keresőben megjelenés, oldaltérkép, gyors betöltés",
   "GDPR-kompatibilis süti-tájékoztató",
   "Betanítás a tartalom kezeléséhez",
   "30 nap garanciális hibajavítás az átadás után",

@@ -14,6 +14,7 @@ import { SectionBlob } from "@/components/SectionBlob";
 import { HeroActions } from "@/components/home/HeroActions";
 import { HeroTitle } from "@/components/home/HeroTitle";
 import { OfferPreview } from "@/components/home/OfferPreview";
+import { AboutBlock } from "@/components/home/AboutBlock";
 import { References } from "@/components/home/References";
 import { ProjectTypeGrid } from "@/components/home/ProjectTypeGrid";
 import { LinkButton } from "@/components/LinkButton";
@@ -23,13 +24,14 @@ import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { WaveDivider } from "@/components/WaveDivider";
 import { JsonLd } from "@/components/JsonLd";
 import { services } from "@/config/services";
-import { siteConfig, siteUrl } from "@/config/site";
+import { defaultOgImage, siteConfig, siteUrl } from "@/config/site";
 import { PROJECT_TYPE_LABELS } from "@/features/offer/buildOffer";
 import { pricingConfig } from "@/config/pricing";
 import { quickWindowText } from "@/features/pricing/quickDecision";
 import { publicQuote, SAMPLE_COMPANY_ANSWERS, startingPrice } from "@/features/pricing/startingPrice";
 import { PricingCards } from "@/features/offer/components/PricingCards";
 import { projectTypeQuestion } from "@/features/questionnaire/config/branches";
+import { estimatedMinutes } from "@/features/questionnaire/estimate";
 import { RESOLVED_PROJECT_TYPES } from "@/features/questionnaire/types";
 import { formatRon } from "@/lib/format";
 import { gradients, palette } from "@/theme/tokens";
@@ -39,7 +41,7 @@ const STEP_TONES: BlobTone[] = ["basic", "standard", "premium"];
 const steps = [
   { title: "Válaszolj pár kérdésre", text: "Egyszerre egy kérdés, szakszavak nélkül. Bármikor abbahagyhatod, a válaszaid megmaradnak." },
   { title: "Azonnal látod az árat", text: "Tételes kalkuláció három csomagban, átfutási idővel és fenntartási költséggel." },
-  { title: "Ingyenes egyeztetés", text: "Ha tetszik, egy kattintással elküldöd. 1 munkanapon belül jelentkezünk." },
+  { title: "Ingyenes egyeztetés", text: "Ha tetszik, egy kattintással elküldöd. 1 munkanapon belül jelentkezünk, magyarul vagy románul." },
 ];
 
 const promises = [
@@ -61,10 +63,14 @@ const faqs = [
 
 const companyFrom = formatRon(startingPrice("company"));
 
+const homeTitle = `Weboldal készítés ${companyFrom}-tól – azonnali ár | Nutooka`;
+const homeDescription = `Weboldal, webshop és landing page készítés Székelyudvarhelyről, Erdély-szerte. Töltsd ki a rövid kérdőívet, és azonnal tételes árajánlatot kapsz – céges weboldal ${companyFrom}-tól, akár −25% kedvezménnyel.`;
+
 export const metadata: Metadata = {
-  title: { absolute: `Weboldal készítés árajánlattal – céges weboldal ${companyFrom}-tól | Nutooka` },
-  description: `Weboldal, webshop és landing page készítés Székelyudvarhelyről, Erdély-szerte. Töltsd ki a 3 perces kérdőívet, és azonnal tételes árajánlatot kapsz – céges weboldal ${companyFrom}-tól, akár −25% kedvezménnyel.`,
+  title: { absolute: homeTitle },
+  description: homeDescription,
   alternates: { canonical: "/" },
+  openGraph: { title: homeTitle.replace(" | Nutooka", ""), description: homeDescription, url: "/", images: [defaultOgImage] },
 };
 
 /** Company, services with real starting prices, and the FAQ – for rich search results. */
@@ -88,6 +94,13 @@ function homeStructuredData(prices: Record<string, number>) {
         address: { "@type": "PostalAddress", ...company.postalAddress },
         areaServed: company.areaServed.map((name) => ({ "@type": "Place", name })),
         knowsLanguage: ["hu", "ro", "en"],
+        founder: {
+          "@type": "Person",
+          name: siteConfig.person.name,
+          jobTitle: siteConfig.person.role,
+          image: `${siteUrl}${siteConfig.person.photo}`,
+          sameAs: [siteConfig.person.linkedin],
+        },
         priceRange: `${formatRon(Math.min(...Object.values(prices)))}-tól`,
         makesOffer: Object.entries(prices).map(([type, price]) => ({
           "@type": "Offer",
@@ -108,6 +121,7 @@ export default function HomePage() {
   const quick = pricingConfig.discounts.quickDecision;
   const bestPercent = quick.enabled ? (quick.tiers[0]?.percent ?? 0) : 0;
   const prices = Object.fromEntries(RESOLVED_PROJECT_TYPES.map((type) => [type, startingPrice(type)]));
+  const minutes = Object.fromEntries(RESOLVED_PROJECT_TYPES.map((type) => [type, estimatedMinutes(type)]));
   // Computed here (server) and passed down as plain data: the browser never downloads the pricing engine for the home page.
   const sampleQuote = publicQuote(SAMPLE_COMPANY_ANSWERS)!;
   const projectTypes = projectTypeQuestion.options.map(({ id, label, description, icon }) => {
@@ -132,7 +146,7 @@ export default function HomePage() {
                 </Box>
                 .
               </Typography>
-              <HeroActions options={projectTypes} startingPrices={prices} bestPercent={bestPercent} quickWindow={quickWindowText(quick)} />
+              <HeroActions options={projectTypes} startingPrices={prices} minutes={minutes} bestPercent={bestPercent} quickWindow={quickWindowText(quick)} />
             </Stack>
             {/* Phones: extra room above the preview, so its shapes never reach the text above. */}
             <Box sx={{ position: "relative", py: { xs: 2, md: 4 }, mt: { xs: 5, md: 0 } }}>
@@ -233,6 +247,7 @@ export default function HomePage() {
         </Box>
 
         <WaveDivider from={palette.ink} to={palette.paper} />
+        <AboutBlock />
         <References />
 
         {/* FAQ */}
@@ -265,7 +280,7 @@ export default function HomePage() {
           >
             <Box>
               <Typography variant="h2" sx={{ maxWidth: 640 }}>
-                Három perc, és tudod, mennyibe kerül.
+                Pár perc, és tudod, mennyibe kerül.
               </Typography>
               <Typography sx={{ mt: 1.5, fontSize: "1.125rem", color: palette.inkMuted }}>
                 Ingyenes, kötelezettség nélkül.
