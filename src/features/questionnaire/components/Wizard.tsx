@@ -62,8 +62,13 @@ const slide = {
 function WizardSkeleton() {
   return (
     <Container maxWidth="md" sx={{ pt: 12 }} aria-busy="true">
-      <Skeleton variant="text" width="70%" height={56} />
-      <Skeleton variant="text" width="40%" />
+      {/* Server-rendered: the heading and intro search engines see before the questionnaire loads. */}
+      <Typography variant="h3" component="h1">
+        Weboldal árkalkulátor
+      </Typography>
+      <Typography color="text.secondary" sx={{ mt: 1 }}>
+        Válaszolj néhány egyszerű kérdésre, és azonnal tételes árajánlatot kapsz RON-ban, három csomagban.
+      </Typography>
       <Stack spacing={1.5} sx={{ mt: 4 }}>
         {[0, 1, 2].map((key) => (
           <Skeleton key={key} variant="rounded" height={72} />

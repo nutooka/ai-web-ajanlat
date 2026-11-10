@@ -6,7 +6,7 @@ import Image from "next/image";
 import { siteConfig } from "@/config/site";
 import { palette } from "@/theme/tokens";
 
-const FACTS = ["Székelyudvarhely", "Magyarul és románul", "Saját kód, a te nevedre"];
+const FACTS = ["Székelyudvarhely", "8 év tapasztalat", "Saját kód, a te nevedre"];
 
 /** "Kik vagyunk": the person behind the site, so visitors know who will call them back. */
 export function AboutBlock() {

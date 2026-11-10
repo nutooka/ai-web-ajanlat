@@ -44,14 +44,14 @@ export const siteConfig = {
    * A fotó a public/team mappában van (LinkedIn-profilkép, 480×480).
    */
   person: {
-    name: "Zátyi (Fülöp) Beáta",
+    name: "Zátyi Beáta",
     firstName: "Betti",
     role: "Alapító, webfejlesztő",
     photo: "/team/beata.jpg",
     linkedin: "https://www.linkedin.com/in/fulop-beata/",
     bio: [
       "Szia, Betti vagyok, a Nutooka alapítója. 8 év frontend-fejlesztői tapasztalattal építek weboldalakat, webshopokat és webalkalmazásokat React és Next.js alapon, budapesti cégeknél és nemzetközi projekteken is dolgoztam.",
-      "Székelyudvarhelyen élek. Ha ajánlatot kérsz, én hívlak vissza, és magyarul vagy románul is egyeztethetünk.",
+      "Székelyudvarhelyen élek. Ha ajánlatot kérsz, én hívlak vissza, és személyesen egyeztetünk.",
     ],
   },
   /** Ennyi napig érvényes az ajánlatban rögzített (kedvezményes) ár az egyeztetés kérése után. */

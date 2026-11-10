@@ -41,7 +41,7 @@ const STEP_TONES: BlobTone[] = ["basic", "standard", "premium"];
 const steps = [
   { title: "Válaszolj pár kérdésre", text: "Egyszerre egy kérdés, szakszavak nélkül. Bármikor abbahagyhatod, a válaszaid megmaradnak." },
   { title: "Azonnal látod az árat", text: "Tételes kalkuláció három csomagban, átfutási idővel és fenntartási költséggel." },
-  { title: "Ingyenes egyeztetés", text: "Ha tetszik, egy kattintással elküldöd. 1 munkanapon belül jelentkezünk, magyarul vagy románul." },
+  { title: "Ingyenes egyeztetés", text: "Ha tetszik, egy kattintással elküldöd. 1 munkanapon belül jelentkezünk." },
 ];
 
 const promises = [

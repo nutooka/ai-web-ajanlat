@@ -153,7 +153,78 @@ export function ServicePage({ type }: { type: ResolvedProjectType }) {
           </Box>
         </Container>
 
+        {/* How the project runs */}
+        <Box component="section" aria-labelledby="process-title" sx={{ background: palette.surface }}>
+          <Container maxWidth="lg" sx={{ py: { xs: 7, md: 10 } }}>
+            <Typography id="process-title" variant="h2" sx={h2}>
+              Így dolgozunk: {service.name.toLowerCase()} lépésről lépésre
+            </Typography>
+            <Box component="ol" sx={{ listStyle: "none", p: 0, m: 0, display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" }, gap: { xs: 3, md: 4 } }}>
+              {service.process.map((step, index) => (
+                <Box component="li" key={step.title} sx={{ pt: 2.5, borderTop: 1, borderColor: "divider" }}>
+                  <Typography variant="h3" sx={{ fontSize: "1.25rem", mb: 1 }}>
+                    {index + 1}. {step.title}
+                  </Typography>
+                  <Typography color="text.secondary">{step.text}</Typography>
+                </Box>
+              ))}
+            </Box>
+          </Container>
+        </Box>
+
+        {/* Practical advice */}
+        <Container maxWidth="md" component="section" aria-labelledby="guide-title" sx={{ pt: { xs: 7, md: 10 } }}>
+          <Typography id="guide-title" variant="h2" sx={h2}>
+            {service.guide.title}
+          </Typography>
+          {service.guide.paragraphs.map((paragraph) => (
+            <Typography key={paragraph} color="text.secondary" sx={{ mb: 2, fontSize: "1.0625rem" }}>
+              {paragraph}
+            </Typography>
+          ))}
+        </Container>
+
+        {/* A typical project */}
+        <Container maxWidth="lg" component="section" aria-labelledby="example-title" sx={{ py: { xs: 7, md: 10 }, display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: { xs: 3, md: 8 } }}>
+          <Box>
+            <Typography id="example-title" variant="h2" sx={h2}>
+              {service.example.title}
+            </Typography>
+            <Typography color="text.secondary">{service.example.text}</Typography>
+            <Typography color="text.secondary" sx={{ mt: 2 }}>
+              Kíváncsi vagy a többi projekttípus árára is? Nézd meg az{" "}
+              <Link href="/mennyibe-kerul-egy-weboldal" style={{ color: palette.ink, fontWeight: 600 }}>
+                árakat összefoglaló cikkünket
+              </Link>
+              .
+            </Typography>
+          </Box>
+          <Box sx={{ borderRadius: 4, border: 1, borderColor: "divider", p: { xs: 3, md: 4 }, alignSelf: "start" }}>
+            <Typography sx={{ fontWeight: 700, mb: 2 }}>Mi kerül bele?</Typography>
+            <CheckList items={service.example.items} color={packageThemes.standard.solid} />
+          </Box>
+        </Container>
+
         <Container maxWidth="lg" sx={{ pb: { xs: 7, md: 10 } }}>
+          {/* Related reading, linked in context */}
+          <Box component="section" aria-labelledby="related-title" sx={{ mb: { xs: 6, md: 8 } }}>
+            <Typography id="related-title" variant="h2" sx={h2}>
+              Ezek is érdekelhetnek
+            </Typography>
+            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, gap: 2 }}>
+              {service.related.map((item) => (
+                <Link key={item.href} href={item.href} style={{ color: "inherit", textDecoration: "none" }}>
+                  <Box sx={{ height: "100%", p: 3, borderRadius: 3, border: 1, borderColor: "divider", transition: "border-color .2s ease", "&:hover": { borderColor: palette.ink } }}>
+                    <Typography sx={{ fontWeight: 700, mb: 0.75 }}>{item.label} →</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {item.text}
+                    </Typography>
+                  </Box>
+                </Link>
+              ))}
+            </Box>
+          </Box>
+
           <Box
             sx={{
               borderRadius: 4,
@@ -169,7 +240,7 @@ export function ServicePage({ type }: { type: ResolvedProjectType }) {
           >
             <Box>
               <Typography variant="h2" sx={{ fontSize: { xs: "1.5rem", md: "2rem" } }}>
-                Három perc, és tudod, mennyibe kerül.
+                Pár perc, és tudod, mennyibe kerül.
               </Typography>
               <Typography sx={{ color: palette.inkMuted, mt: 1 }}>
                 Ingyenes, nem kell regisztrálni.{quickPercent > 0 ? ` Gyors döntésnél akár −${quickPercent}% kedvezmény.` : ""}

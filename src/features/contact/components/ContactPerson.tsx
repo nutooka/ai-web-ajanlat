@@ -28,7 +28,7 @@ export function ContactPerson({ code, packageName }: { code?: string; packageNam
         <Box>
           <Typography sx={{ fontWeight: 700, lineHeight: 1.3 }}>Én hívlak vissza: {person.firstName}</Typography>
           <Typography variant="body2" color="text.secondary">
-            {person.role} · magyarul vagy románul
+            {person.role}
           </Typography>
         </Box>
       </Stack>
