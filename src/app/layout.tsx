@@ -39,7 +39,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             name: "Nutooka",
             legalName: siteConfig.company.legalName,
             url: siteUrl,
-            telephone: siteConfig.chat.whatsapp ? `+${siteConfig.chat.whatsapp}` : undefined,
             address: { "@type": "PostalAddress", ...siteConfig.company.postalAddress },
             areaServed: siteConfig.company.areaServed.map((name) => ({ "@type": "Place", name })),
           }}

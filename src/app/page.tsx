@@ -88,7 +88,6 @@ function homeStructuredData(prices: Record<string, number>) {
         logo: `${siteUrl}/icon.svg`,
         image: `${siteUrl}/opengraph-image`,
         email: company.email || undefined,
-        telephone: siteConfig.chat.whatsapp ? `+${siteConfig.chat.whatsapp}` : undefined,
         description: "Weboldal-, webshop- és webalkalmazás-fejlesztés Székelyudvarhelyről, azonnali tételes árajánlattal.",
         taxID: company.taxId,
         address: { "@type": "PostalAddress", ...company.postalAddress },

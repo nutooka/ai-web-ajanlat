@@ -31,8 +31,11 @@ export const siteConfig = {
     areaServed: ["Székelyudvarhely", "Hargita megye", "Erdély", "Románia", "Magyarország"],
     // Opcionális: ha kitöltöd, megjelenik az adatkezelési tájékoztatóban.
     email: "info@nutooka.tech",
-    /** Megjelenik a láblécben és az adatkezelési tájékoztatóban. Ugyanez a szám a WhatsApp (chat.whatsapp). */
-    phone: "+40 753 968 097",
+    /**
+     * Látható telefonszám (lábléc, adatkezelés, e-mail-aláírás). A tulajdonos kérésére üres: a szám sehol nem jelenik meg.
+     * A WhatsApp-gombok (chat.whatsapp) működnek, de a számot nem írják ki.
+     */
+    phone: "" as string,
   },
   /**
    * Üzenetküldős kapcsolat az ajánlat oldalán. Üresen hagyva a gomb nem jelenik meg.

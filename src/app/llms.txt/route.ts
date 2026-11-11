@@ -20,7 +20,7 @@ export function GET() {
     "- Egy átlagos céges weboldal 2–4 hét alatt készül el.",
     "- A domain, a kód és a tartalom az ügyfél nevére szól.",
     `- Kiszolgált terület: ${company.areaServed.join(", ")}.`,
-    `- Kapcsolat: ${company.email}${siteConfig.chat.whatsapp ? `, WhatsApp: +${siteConfig.chat.whatsapp}` : ""}.`,
+    `- Kapcsolat: ${company.email}, vagy a nutooka.tech oldal WhatsApp-gombja.`,
     "",
     "## Szolgáltatások és induló árak",
     "",

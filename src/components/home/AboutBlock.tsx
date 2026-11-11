@@ -10,7 +10,7 @@ const FACTS = ["Székelyudvarhely", "8 év tapasztalat", "Saját kód, a te neve
 
 /** "Kik vagyunk?": the founder behind the site, so visitors know who will call them back. */
 export function AboutBlock() {
-  const { person, chat } = siteConfig;
+  const { person } = siteConfig;
   return (
     <Box component="section" aria-labelledby="about-title" sx={{ background: palette.paper }}>
       <Container maxWidth="lg" sx={{ py: { xs: 9, md: 13 } }}>
@@ -38,14 +38,6 @@ export function AboutBlock() {
               <Box component="a" href={person.linkedin} target="_blank" rel="noopener" sx={{ color: "inherit", textUnderlineOffset: 3 }}>
                 LinkedIn
               </Box>
-              {chat.whatsapp && (
-                <>
-                  {" · "}
-                  <Box component="a" href={`tel:+${chat.whatsapp}`} sx={{ color: "inherit", textUnderlineOffset: 3 }}>
-                    {siteConfig.company.phone}
-                  </Box>
-                </>
-              )}
             </Typography>
             <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
               {FACTS.map((fact) => (

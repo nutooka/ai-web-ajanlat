@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { siteConfig } from "@/config/site";
 import { emailLayout, escapeHtml, type EmailContent } from "@/lib/email/html";
 import type { EmailSender } from "./submitOffer";
 import { checkSpamSignals } from "./spam";
@@ -38,7 +37,7 @@ export async function submitQuestion(input: unknown, deps: { send: EmailSender |
   const { reach, message, website, elapsedMs } = parsed.data;
   if (!checkSpamSignals({ website, elapsedMs }).ok) return { status: 200, body: { ok: true } };
   if (!deps.send || !deps.ownerEmail) {
-    return { status: 503, body: { ok: false, error: `Az üzenetküldés most nem elérhető. Hívj a ${siteConfig.company.phone} számon.` } };
+    return { status: 503, body: { ok: false, error: "Az üzenetküldés most nem elérhető. Írj nekünk WhatsAppon az oldal jobb alsó sarkában lévő gombbal." } };
   }
   try {
     await deps.send({ ...ownerQuestionEmail(reach, message), to: deps.ownerEmail, ...(EMAIL.test(reach) ? { replyTo: reach } : {}) });
