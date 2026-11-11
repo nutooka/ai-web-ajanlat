@@ -220,7 +220,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
                         type="button"
                         onClick={() => scrollToId(REVIEW_ID)}
                         className="no-print"
-                        sx={{ display: "inline-flex", mt: 1.25, mr: 1, minHeight: 36, px: 1.5, py: 0.5, borderRadius: 1.5, border: "1.5px solid #fff", background: "transparent", color: "#fff", font: "inherit", fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+                        sx={{ display: "inline-flex", mt: 1.25, mr: 1, minHeight: 44, px: 1.5, py: 0.5, borderRadius: 1.5, border: "1.5px solid #fff", background: "transparent", color: "#fff", font: "inherit", fontSize: 14, fontWeight: 700, cursor: "pointer" }}
                       >
                         Technikai egyeztetés szükséges ↓
                       </Box>
@@ -231,7 +231,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
                         type="button"
                         onClick={() => scrollToId(DISCOUNTS_ID)}
                         className="no-print"
-                        sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, mt: 1.25, minHeight: 36, px: 1.5, py: 0.5, borderRadius: 1.5, border: 0, background: gradients.discount, color: palette.ink, font: "inherit", fontSize: 14, fontWeight: 800, cursor: "pointer", "&:hover": { filter: "brightness(1.05)" }, "&:focus-visible": { outline: "2px solid #fff", outlineOffset: 2 } }}
+                        sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, mt: 1.25, minHeight: 44, px: 1.5, py: 0.5, borderRadius: 1.5, border: 0, background: gradients.discount, color: palette.ink, font: "inherit", fontSize: 14, fontWeight: 800, cursor: "pointer", "&:hover": { filter: "brightness(1.05)" }, "&:focus-visible": { outline: "2px solid #fff", outlineOffset: 2 } }}
                       >
                         Kedvezményeid: −{formatRon(totalSavings(pkg))}
                         <ArrowDownward sx={{ fontSize: 16 }} />
@@ -310,21 +310,7 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
         {/* Custom / risky requests: the price is a starting estimate – say so before anything else. */}
         {pricesReady && <ReviewNotice quote={offer.quote} />}
 
-        {/* 2 – All discounts in one place (only while the request is still open). */}
-        {!submission && pricesReady && (
-          <Box className="no-print">
-            <DiscountsPanel
-              pkg={pkg}
-              clockState={clockState}
-              onDeadlineChange={(weeks) => wizardStore.update({ answers: { ...answers, deadlineWeeks: String(weeks) } })}
-              onSelectPackage={selectPackage}
-              onCta={() => scrollToId(CONTACT_ID)}
-              frozenAgeMinutes={frozen ? (frozen.ageMinutes ?? Number.MAX_SAFE_INTEGER) : undefined}
-            />
-          </Box>
-        )}
-
-        {/* 3 – Package choice. */}
+        {/* 2 – Package choice. */}
         <Box component="section" aria-labelledby="packages-title" sx={{ mt: { xs: 6, md: 8 } }} className="no-print">
           <Typography id="packages-title" variant="h3" component="h2" sx={{ mb: 1 }}>
             Válassz csomagot
@@ -338,7 +324,9 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
               mode="offer"
               selected={packageId}
               readOnly={Boolean(frozen)}
-              onSelect={(id) => {
+              // The mobile switch only changes the selection; only the card's own button moves on to the form.
+              onSelect={selectPackage}
+              onChoose={(id) => {
                 selectPackage(id);
                 if (!submission) window.setTimeout(() => scrollToId(CONTACT_ID), 150);
               }}
@@ -348,6 +336,21 @@ function OfferContent({ answers, packageId, submission, frozen }: { answers: Ans
             <Skeleton variant="rounded" height={520} sx={{ borderRadius: 4 }} aria-label="A csomagok betöltése" />
           )}
         </Box>
+
+        {/* 3 – Discounts, compact, right before the form (only while the request is still open). */}
+        {!submission && pricesReady && (
+          <Box className="no-print">
+            <DiscountsPanel
+              compact
+              pkg={pkg}
+              clockState={clockState}
+              onDeadlineChange={(weeks) => wizardStore.update({ answers: { ...answers, deadlineWeeks: String(weeks) } })}
+              onSelectPackage={selectPackage}
+              onCta={() => scrollToId(CONTACT_ID)}
+              frozenAgeMinutes={frozen ? (frozen.ageMinutes ?? Number.MAX_SAFE_INTEGER) : undefined}
+            />
+          </Box>
+        )}
 
         {/* 4 – The request (or its confirmation). */}
         <Box id={CONTACT_ID} component="section" className="no-print" sx={{ mt: { xs: 6, md: 8 }, scrollMarginTop: 24, display: frozen ? "none" : "block" }}>

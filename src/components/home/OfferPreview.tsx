@@ -285,7 +285,6 @@ export function OfferPreview({ quote }: { quote: Quote }) {
             }}
           >
             <span>
-              Kérem a{" "}
               <Box
                 component="span"
                 sx={{
@@ -296,9 +295,8 @@ export function OfferPreview({ quote }: { quote: Quote }) {
                   pb: "2px",
                 }}
               >
-                saját
-              </Box>{" "}
-              ajánlatom – kérdőív, kb. 3 perc
+                Megtervezem a projektem
+              </Box>
             </span>
             <ArrowForward sx={{ fontSize: 20, color: "#fff" }} />
           </ButtonBase>
@@ -365,7 +363,7 @@ function PreviewRow({
         <Box
           component="span"
           sx={{
-            fontSize: 12,
+            fontSize: 13,
             fontWeight: 600,
             color: palette.muted,
             border: `1px solid ${palette.line}`,

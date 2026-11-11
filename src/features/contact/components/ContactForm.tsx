@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm, useWatch, type UseFormRegisterReturn } from "react-hook-form";
 import { trackStep } from "@/features/funnel/track";
+import { srOnly, useRovingRadio } from "@/features/questionnaire/components/a11y";
 import type { PackageId } from "@/features/pricing/types";
 import type { Answers } from "@/features/questionnaire/types";
 import { Blob } from "@/components/Blob";
@@ -65,6 +66,7 @@ export function ContactForm({ answers, packageId, packageName, code, onSubmitted
   const honeypot = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [showMore, setShowMore] = useState(false);
+  const inFlight = useRef(false);
 
   useEffect(() => {
     shownAt.current = Date.now();
@@ -75,15 +77,22 @@ export function ContactForm({ answers, packageId, packageName, code, onSubmitted
     control,
     handleSubmit,
     setError,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<QuickContactValues>({
     resolver: zodResolver(quickContactSchema),
     defaultValues: { reach: "", callbackTime: "asap", name: "", company: "", message: "", wantsCopy: true, consent: false },
   });
   const reach = useWatch({ control, name: "reach" });
+  const callbackTime = useWatch({ control, name: "callbackTime" });
+  const callbackRadio = useRovingRadio(CALLBACK_TIMES.length, CALLBACK_TIMES.indexOf(callbackTime), (index) =>
+    setValue("callbackTime", CALLBACK_TIMES[index], { shouldDirty: true }),
+  );
   const emailEntered = isEmailLike(reach ?? "");
 
   const onSubmit = async (values: QuickContactValues) => {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setStatus({ kind: "idle" });
     try {
       const response = await fetch("/api/offer", {
@@ -121,6 +130,8 @@ export function ContactForm({ answers, packageId, packageName, code, onSubmitted
       setStatus({ kind: "error", message: body && !body.ok ? body.error : "Váratlan hiba történt. Kérjük, próbáld újra." });
     } catch {
       setStatus({ kind: "error", message: "Nem sikerült kapcsolódni a szerverhez. Ellenőrizd az internetkapcsolatot, és próbáld újra." });
+    } finally {
+      inFlight.current = false;
     }
   };
 
@@ -146,7 +157,19 @@ export function ContactForm({ answers, packageId, packageName, code, onSubmitted
           <ContactPerson code={code} packageName={packageName} />
         </Box>
 
-        <Box component="form" noValidate onSubmit={(event) => void handleSubmit(onSubmit)(event)} aria-label="Egyeztetés kérése">
+        <Box
+          component="form"
+          noValidate
+          onSubmit={(event) => {
+            // The button stays focusable while sending (aria-disabled): ignore a second submit.
+            if (isSubmitting || inFlight.current) {
+              event.preventDefault();
+              return;
+            }
+            void handleSubmit(onSubmit)(event);
+          }}
+          aria-label="Egyeztetés kérése"
+        >
           <Stack spacing={2.5}>
             <TextField
               label="Telefonszám vagy e-mail-cím"
@@ -167,13 +190,18 @@ export function ContactForm({ answers, packageId, packageName, code, onSubmitted
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <Box role="radiogroup" aria-labelledby="callback-label" sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", sm: "repeat(4, 1fr)" }, gap: 1 }}>
-                    {CALLBACK_TIMES.map((time) => {
+                    {CALLBACK_TIMES.map((time, index) => {
                       const active = value === time;
+                      // One Tab stop for the group, arrows move the choice (WAI-ARIA radio pattern).
+                      const roving = callbackRadio(index);
                       return (
                         <ButtonBase
                           key={time}
                           role="radio"
                           aria-checked={active}
+                          tabIndex={roving.tabIndex}
+                          ref={roving.ref}
+                          onKeyDown={roving.onKeyDown}
                           onClick={() => onChange(time)}
                           sx={{
                             minHeight: 44,
@@ -187,7 +215,6 @@ export function ContactForm({ answers, packageId, packageName, code, onSubmitted
                             color: palette.ink,
                             transition: "background .15s ease, border-color .15s ease",
                             "&:hover": { borderColor: palette.ink },
-                            "&.Mui-focusVisible": { outline: `2px solid ${palette.ink}`, outlineOffset: 2 },
                           }}
                         >
                           {CALLBACK_LABELS[time]}
@@ -249,7 +276,14 @@ export function ContactForm({ answers, packageId, packageName, code, onSubmitted
                       <Checkbox
                         checked={value}
                         onChange={(event) => onChange(event.target.checked)}
-                        slotProps={{ input: { ref, "aria-required": true, "aria-invalid": Boolean(errors.consent) } }}
+                        slotProps={{
+                          input: {
+                            ref,
+                            "aria-required": true,
+                            "aria-invalid": Boolean(errors.consent),
+                            "aria-describedby": errors.consent ? "contact-consent-error" : undefined,
+                          },
+                        }}
                         sx={{ mt: -0.75 }}
                       />
                     }
@@ -268,20 +302,28 @@ export function ContactForm({ answers, packageId, packageName, code, onSubmitted
                   />
                 )}
               />
-              {errors.consent && <FormHelperText error>{errors.consent.message}</FormHelperText>}
+              {errors.consent && (
+                <FormHelperText id="contact-consent-error" error>
+                  {errors.consent.message}
+                </FormHelperText>
+              )}
             </Box>
 
-            {status.kind === "error" && (
-              <Alert severity="error" role="alert">
-                {status.message}
-              </Alert>
-            )}
+            {/* Persistent status region: "Küldés…" while sending, then the error (success swaps in the page's confirmation). */}
+            <Box role="status">
+              {isSubmitting && <Box sx={srOnly}>Küldés…</Box>}
+              {status.kind === "error" && (
+                <Alert severity="error" role="none">
+                  {status.message}
+                </Alert>
+              )}
+            </Box>
 
             <Button
               type="submit"
               variant="contained"
               size="large"
-              disabled={isSubmitting}
+              aria-disabled={isSubmitting}
               endIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : <SendOutlined />}
               sx={{ alignSelf: { sm: "flex-start" }, ...packageButtonSx(packageId) }}
             >

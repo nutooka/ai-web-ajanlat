@@ -5,8 +5,10 @@ import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useState } from "react";
 import type { PackageQuote } from "@/features/pricing/types";
 import { formatRon } from "@/lib/format";
+import { srOnly } from "@/features/questionnaire/components/a11y";
 import { gradients, palette } from "@/theme/tokens";
 
 interface DeadlineSliderControlProps {
@@ -26,6 +28,8 @@ export function DeadlineSliderControl({ pkg, onChange, labelledBy, showAmount, d
   const value = Math.min(latestWeeks, Math.max(fastestWeeks, chosenWeeks ?? pkg.timeline.minWeeks));
   const percent = Math.round((multiplier - 1) * 100);
   const amount = Math.abs(pkg.urgencyAdjustment);
+  // Announced only once the drag/keypress is committed, not on every intermediate step.
+  const [committedWeeks, setCommittedWeeks] = useState<number | null>(null);
 
   const marks = [
     { value: fastestWeeks, label: fastestWeeks < normalWeeks ? "Sürgős" : "Normál" },
@@ -44,7 +48,10 @@ export function DeadlineSliderControl({ pkg, onChange, labelledBy, showAmount, d
 
   return (
     <Box>
-      <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "baseline", mb: 1, gap: 2 }} aria-live="polite">
+      <Box role="status" sx={srOnly}>
+        {committedWeeks === value ? `${value} hét: ${effect}` : ""}
+      </Box>
+      <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "baseline", mb: 1, gap: 2 }}>
         <Typography sx={{ fontWeight: 700, fontSize: 20 }}>{value} hét</Typography>
         <Typography
           sx={{
@@ -71,6 +78,7 @@ export function DeadlineSliderControl({ pkg, onChange, labelledBy, showAmount, d
         marks={marks}
         disabled={disabled}
         onChange={(_, next) => onChange(Array.isArray(next) ? next[0] : next)}
+        onChangeCommitted={(_, next) => setCommittedWeeks(Array.isArray(next) ? next[0] : next)}
         getAriaValueText={(weeks) => `${weeks} hét`}
         aria-labelledby={labelledBy}
         color="secondary"

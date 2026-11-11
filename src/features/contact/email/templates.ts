@@ -1,45 +1,10 @@
-import { siteConfig } from "@/config/site";
 import { supportNote } from "@/features/pricing/maintenance";
 import type { Offer } from "@/features/offer/buildOffer";
 import type { PackageId } from "@/features/pricing/types";
 import { formatHours, formatRon, formatWeeks } from "@/lib/format";
 import { CALLBACK_LABELS, type ContactData } from "../schema";
 import { validityNote } from "@/lib/priceNotes";
-
-export interface EmailContent {
-  subject: string;
-  html: string;
-  text: string;
-}
-
-export function escapeHtml(value: string): string {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-const cell = "padding:8px 12px;border-bottom:1px solid #ECEAE4;vertical-align:top;font-size:14px;";
-
-function layout(title: string, body: string): string {
-  return `<!doctype html><html lang="hu"><body style="margin:0;background:#F6F5F1;font-family:Arial,Helvetica,sans-serif;color:#14161A;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px;">
-<table role="presentation" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%;background:#FFFFFF;border-radius:16px;overflow:hidden;">
-<tr><td style="background:#14161A;color:#FFFFFF;padding:24px 28px;font-size:20px;font-weight:bold;">${escapeHtml(title)}</td></tr>
-<tr><td style="padding:24px 28px;">${body}</td></tr>
-<tr><td style="padding:16px 28px;background:#F6F5F1;font-size:12px;color:#5C616B;">${escapeHtml(siteConfig.company.legalName)} · ${escapeHtml(siteConfig.name)}</td></tr>
-</table></td></tr></table></body></html>`;
-}
-
-function rows(entries: [string, string][]): string {
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:8px 0 20px;">${entries
-    .map(([key, value]) => `<tr><td style="${cell}color:#5C616B;width:40%;">${escapeHtml(key)}</td><td style="${cell}">${escapeHtml(value)}</td></tr>`)
-    .join("")}</table>`;
-}
-
-const heading = (text: string) => `<h2 style="font-size:16px;margin:20px 0 4px;">${escapeHtml(text)}</h2>`;
+import { bulletList, emailLayout as layout, escapeHtml, heading, rows, type EmailContent } from "@/lib/email/html";
 
 /** `internal` adds effective hours – only for the owner's e-mail, never the customer's. */
 function quoteSection(offer: Offer, packageId: PackageId, internal: boolean): { html: string; text: string } {
@@ -121,10 +86,6 @@ function formatDuration(minutes: number): string {
   if (hours === 0) return `${rest} perc`;
   if (hours < 48) return rest ? `${hours} óra ${rest} perc` : `${hours} óra`;
   return `${Math.floor(hours / 24)} nap`;
-}
-
-function bulletList(items: string[]): string {
-  return `<ul style="margin:6px 0 18px;padding-left:20px;font-size:14px;line-height:1.7;">${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
 }
 
 /** The "what do I do now" box at the very top of the owner's e-mail. */

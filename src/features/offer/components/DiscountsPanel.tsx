@@ -34,6 +34,8 @@ interface DiscountsPanelProps {
   onCta: () => void;
   /** Shared snapshot: the offer age at that moment – no live countdown, no changes. */
   frozenAgeMinutes?: number | null;
+  /** Tighter strip (smaller summary, less padding) – used below the package cards on the offer page. */
+  compact?: boolean;
 }
 
 /** Everything the visitor can save, in one place: quick decision, flexible deadline, package bonus. */
@@ -46,23 +48,25 @@ function Section({
   title,
   value,
   active,
+  compact = false,
   children,
 }: {
   icon: React.ReactNode;
   title: string;
   value: string;
   active: boolean;
+  compact?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <Box
       sx={{
-        py: { xs: 2.5, md: 3 },
+        py: compact ? { xs: 2, md: 2.25 } : { xs: 2.5, md: 3 },
         borderTop: 1,
         borderColor: "divider",
         display: "grid",
-        gridTemplateColumns: { xs: "1fr", md: "260px 1fr" },
-        gap: { xs: 1.5, md: 4 },
+        gridTemplateColumns: { xs: "1fr", md: compact ? "240px 1fr" : "260px 1fr" },
+        gap: { xs: compact ? 1.25 : 1.5, md: 4 },
         alignItems: "center",
       }}
     >
@@ -70,8 +74,8 @@ function Section({
         <Box
           sx={{
             flexShrink: 0,
-            width: 40,
-            height: 40,
+            width: compact ? 36 : 40,
+            height: compact ? 36 : 40,
             borderRadius: 2.5,
             display: "grid",
             placeItems: "center",
@@ -86,7 +90,7 @@ function Section({
           <Typography
             sx={{
               fontWeight: 800,
-              fontSize: 18,
+              fontSize: compact ? 16 : 18,
               fontVariantNumeric: "tabular-nums",
               color: active ? palette.ink : "text.secondary",
             }}
@@ -107,6 +111,7 @@ export function DiscountsPanel({
   onSelectPackage,
   onCta,
   frozenAgeMinutes,
+  compact = false,
 }: DiscountsPanelProps) {
   const quickConfig = pricingConfig.discounts.quickDecision;
   const frozen = frozenAgeMinutes !== undefined;
@@ -161,7 +166,7 @@ export function DiscountsPanel({
         component="section"
         aria-labelledby="discounts-title"
         sx={{
-          mt: 3,
+          mt: compact ? { xs: 4, md: 5 } : 3,
           scrollMarginTop: 24,
           borderRadius: 4,
           border: "2px solid transparent",
@@ -176,7 +181,7 @@ export function DiscountsPanel({
             overflow: "hidden",
             background: AMBER_SOFT,
             px: { xs: 2.5, md: 4 },
-            py: { xs: 2.5, md: 3 },
+            py: compact ? { xs: 2, md: 2 } : { xs: 2.5, md: 3 },
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             justifyContent: "space-between",
@@ -186,14 +191,14 @@ export function DiscountsPanel({
         >
           <Blob
             tone="discount"
-            size={180}
+            size={compact ? 140 : 180}
             position={{ top: "-95px", right: "-75px" }}
             scale={0.4 + 0.8 * timeLeft}
             opacity={timeLeft > 0 ? 0.9 : 0.35}
             duration={18}
           />
           <Box sx={{ position: "relative", zIndex: 1 }}>
-            <Typography id="discounts-title" variant="h4" component="h2">
+            <Typography id="discounts-title" variant={compact ? "h5" : "h4"} component="h2">
               A kedvezményeid
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -212,7 +217,7 @@ export function DiscountsPanel({
               sx={{
                 fontFamily: "var(--font-display)",
                 fontWeight: 800,
-                fontSize: { xs: 36, md: 44 },
+                fontSize: compact ? { xs: 28, md: 32 } : { xs: 36, md: 44 },
                 lineHeight: 1.05,
                 letterSpacing: "-0.02em",
                 fontVariantNumeric: "tabular-nums",
@@ -235,6 +240,7 @@ export function DiscountsPanel({
                   : "lejárt"
               }
               active={Boolean(quickDiscount)}
+              compact={compact}
             >
               <Stack spacing={1.5}>
                 <Typography variant="body2">
@@ -314,7 +320,7 @@ export function DiscountsPanel({
                         key={step.label}
                         aria-current={isActive ? "step" : undefined}
                         sx={{
-                          py: 1,
+                          py: compact ? 0.75 : 1,
                           px: 1,
                           borderRadius: 2,
                           textAlign: "center",
@@ -335,7 +341,7 @@ export function DiscountsPanel({
                         >
                           {step.label}
                         </Typography>
-                        <Typography sx={{ fontSize: 12 }}>
+                        <Typography sx={{ fontSize: 13 }}>
                           {step.detail}
                         </Typography>
                       </Box>
@@ -352,6 +358,7 @@ export function DiscountsPanel({
             title="Rugalmas határidő"
             value={flexSaving > 0 ? `−${formatRon(flexSaving)}` : "húzd jobbra"}
             active={flexSaving > 0}
+            compact={compact}
           >
             <Typography id="discount-deadline" variant="body2" sx={{ mb: 1 }}>
               Mikorra kell elkészülnie? Minél több időt adsz, annál olcsóbb.
@@ -376,6 +383,7 @@ export function DiscountsPanel({
                   : `+${pricingConfig.discounts.perPackage[bonusPackage]?.percent ?? 0}% ha ezt választod`
               }
               active={Boolean(packageDiscount)}
+              compact={compact}
             >
               {packageDiscount ? (
                 <Typography variant="body2">

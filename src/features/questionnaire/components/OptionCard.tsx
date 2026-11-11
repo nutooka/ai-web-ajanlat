@@ -20,7 +20,12 @@ interface OptionCardProps {
   recommended?: boolean;
   /** What this choice does to the price (badges). */
   impacts?: OptionImpact[];
-  onSelect: () => void;
+  /** "keyboard": Space/Enter (click with detail 0) – callers skip auto-advance for it. */
+  onSelect: (source: "pointer" | "keyboard") => void;
+  /** Roving tabindex (radios); checkboxes keep the default Tab order. */
+  tabIndex?: number;
+  onKeyDown?: (event: React.KeyboardEvent) => void;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 const IMPACT_ICONS: Record<OptionImpact, typeof TrendingUp> = {
@@ -67,14 +72,18 @@ function ImpactBadges({ impacts }: { impacts: OptionImpact[] }) {
   );
 }
 
-export function OptionCard({ option, selected, multiple, shortcut, recommended, impacts = [], onSelect }: OptionCardProps) {
+export function OptionCard({ option, selected, multiple, shortcut, recommended, impacts = [], onSelect, tabIndex, onKeyDown, ref }: OptionCardProps) {
   const Icon = option.icon ? OPTION_ICONS[option.icon] : null;
 
   return (
     <ButtonBase
       role={multiple ? "checkbox" : "radio"}
       aria-checked={selected}
-      onClick={onSelect}
+      ref={ref}
+      tabIndex={tabIndex}
+      onKeyDown={onKeyDown}
+      // detail === 0: the click came from the keyboard (Space/Enter), not a pointer.
+      onClick={(event) => onSelect(event.detail === 0 ? "keyboard" : "pointer")}
       sx={{
         position: "relative",
         width: "100%",

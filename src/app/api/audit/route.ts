@@ -1,4 +1,5 @@
-import { createRateLimiter } from "@/features/contact/spam";
+import { routeLimiter } from "@/features/contact/spam";
+import { clientIp, readJsonBody } from "@/lib/http";
 import { AuditError, normalizeUrl, readCachedAudit, writeCachedAudit, type AuditResult } from "@/features/audit/audit";
 import { runFullAudit } from "@/features/audit/run";
 
@@ -6,11 +7,7 @@ import { runFullAudit } from "@/features/audit/run";
 // Google needs up to ~100 s for heavy pages.
 export const maxDuration = 120;
 
-const isAllowed = createRateLimiter({ limit: 5, windowMs: 10 * 60 * 1000 });
-
-function clientIp(request: Request): string {
-  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-}
+const isAllowed = routeLimiter("audit", 5);
 
 const MESSAGES: Record<AuditError["kind"], string> = {
   unreachable: "Nem sikerült megnyitni az oldalt. Ellenőrizd a címet, vagy hogy az oldal elérhető-e.",
@@ -30,21 +27,16 @@ async function auditOne(url: string): Promise<AuditResult> {
 
 /** POST { url, competitor? } → { result, competitor? } */
 export async function POST(request: Request) {
-  const raw = await request.text();
-  if (raw.length > 2000) return Response.json({ ok: false, error: "A kérés túl nagy." }, { status: 413 });
-  let input: { url?: unknown; competitor?: unknown };
-  try {
-    input = JSON.parse(raw) as typeof input;
-  } catch {
-    return Response.json({ ok: false, error: "Érvénytelen kérés." }, { status: 400 });
-  }
+  const body = await readJsonBody(request, 2000);
+  if (!body.ok) return Response.json({ ok: false, error: body.status === 413 ? "A kérés túl nagy." : "Érvénytelen kérés." }, { status: body.status });
+  const input = (body.value && typeof body.value === "object" ? body.value : {}) as { url?: unknown; competitor?: unknown };
   const url = typeof input.url === "string" ? normalizeUrl(input.url) : null;
   if (!url) return Response.json({ ok: false, error: "Ez nem tűnik weboldal-címnek. Példa: pelda.ro" }, { status: 422 });
   const hasCompetitor = typeof input.competitor === "string" && input.competitor.trim() !== "";
   const competitorUrl = hasCompetitor ? normalizeUrl(String(input.competitor)) : null;
   if (hasCompetitor && !competitorUrl) return Response.json({ ok: false, error: "A versenytárs címe nem tűnik weboldal-címnek." }, { status: 422 });
 
-  if (!isAllowed(clientIp(request), Date.now())) {
+  if (!(await isAllowed(clientIp(request.headers) ?? "unknown", Date.now()))) {
     return Response.json({ ok: false, error: "Túl sok mérés rövid idő alatt. Próbáld újra pár perc múlva." }, { status: 429 });
   }
 

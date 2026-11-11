@@ -3,7 +3,7 @@ import { runPageSpeed, type AuditResult } from "./audit";
 import { safeFetch } from "./safeFetch";
 
 /** Our own look at the page (contact, legal, Google basics). Never throws – a site may block us, the Google test still stands. */
-export async function inspectSite(url: string, deps: { fetchImpl?: typeof fetch } = {}): Promise<Inspection | null> {
+async function inspectSite(url: string, deps: { fetchImpl?: typeof fetch } = {}): Promise<Inspection | null> {
   try {
     const origin = new URL(url).origin;
     const insecure = `http://${new URL(url).host}/`;

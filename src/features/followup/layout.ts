@@ -1,5 +1,5 @@
 import { siteConfig, siteUrl } from "@/config/site";
-import { escapeHtml, type EmailContent } from "@/features/contact/email/templates";
+import { escapeHtml, type EmailContent } from "@/lib/email/html";
 
 /**
  * Branded layout for the follow-up e-mails, matching the website:
@@ -27,12 +27,12 @@ const BODY = "'Instrument Sans', 'Helvetica Neue', Arial, sans-serif";
 /** Placeholder replaced with the personal stop link once it exists. */
 export const STOP_URL_PLACEHOLDER = "{{STOP_URL}}";
 
-export interface QA {
+interface QA {
   q: string;
   a: string;
 }
 
-export interface BrandedEmail {
+interface BrandedEmail {
   subject: string;
   /** Short preview line shown next to the subject in the inbox. */
   preheader: string;

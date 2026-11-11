@@ -17,7 +17,7 @@ import { QuickQuestion } from "@/components/home/QuickQuestion";
 import { OfferPreview } from "@/components/home/OfferPreview";
 import { AboutBlock } from "@/components/home/AboutBlock";
 import { References } from "@/components/home/References";
-import { ProjectTypeGrid } from "@/components/home/ProjectTypeGrid";
+import { ServiceLinks } from "@/components/home/ServiceLinks";
 import { LinkButton } from "@/components/LinkButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -25,12 +25,11 @@ import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { WaveDivider } from "@/components/WaveDivider";
 import { JsonLd } from "@/components/JsonLd";
 import { services } from "@/config/services";
-import { defaultOgImage, siteConfig, siteUrl } from "@/config/site";
+import { baseOpenGraph, siteConfig, siteUrl } from "@/config/site";
 import { PROJECT_TYPE_LABELS } from "@/features/offer/buildOffer";
 import { pricingConfig } from "@/config/pricing";
 import { quickWindowText } from "@/features/pricing/quickDecision";
 import { publicQuote, SAMPLE_COMPANY_ANSWERS, startingPrice } from "@/features/pricing/startingPrice";
-import { PricingCards } from "@/features/offer/components/PricingCards";
 import { projectTypeQuestion } from "@/features/questionnaire/config/branches";
 import { estimatedMinutes } from "@/features/questionnaire/estimate";
 import { RESOLVED_PROJECT_TYPES } from "@/features/questionnaire/types";
@@ -64,14 +63,14 @@ const faqs = [
 
 const companyFrom = formatRon(startingPrice("company"));
 
-const homeTitle = "Weboldal, webshop, webapp – azonnali árajánlat | Nutooka";
+const homeTitle = "Nutooka – weboldal, webshop és webapp készítés Erdélyben";
 const homeDescription = `Weboldal, webshop és webapp Székelyudvarhelyről. Pár perces kérdőív, azonnali tételes árajánlat: céges weboldal ${companyFrom}-tól.`;
 
 export const metadata: Metadata = {
   title: { absolute: homeTitle },
   description: homeDescription,
   alternates: { canonical: "/" },
-  openGraph: { title: homeTitle.replace(" | Nutooka", ""), description: homeDescription, url: "/", images: [defaultOgImage] },
+  openGraph: { ...baseOpenGraph, title: homeTitle, description: homeDescription, url: "/" },
 };
 
 /** Company, services with real starting prices, and the FAQ – for rich search results. */
@@ -186,42 +185,17 @@ export default function HomePage() {
               </Box>
             ))}
           </Box>
+          {/* Service pages – the hero tiles already start the planner, this is just the way to read more. */}
+          <Box component="nav" aria-labelledby="services-title" className="reveal" sx={{ mt: { xs: 7, md: 9 } }}>
+            <Typography id="services-title" variant="h4" component="h2" sx={{ mb: 2 }}>
+              Szolgáltatásaink részletesen
+            </Typography>
+            <ServiceLinks options={projectTypes} startingPrices={prices} />
+          </Box>
         </Container>
         </Box>
 
         <WaveDivider from={palette.paper} to={palette.ink} flip line={false} />
-        {/* Packages */}
-        <Box component="section" sx={{ background: palette.ink, color: "#fff", overflow: "hidden" }}>
-          <Container maxWidth="lg" sx={{ py: { xs: 9, md: 13 } }}>
-            <Box className="reveal" sx={{ textAlign: "center", maxWidth: 680, mx: "auto", mb: { xs: 5, md: 8 } }}>
-              <Typography variant="h2">
-                Három csomag, egy átlátható ár.
-              </Typography>
-              <Typography sx={{ mt: 2, color: palette.inkMuted, fontSize: "1.125rem" }}>
-                Így néz ki egy 6–10 oldalas céges weboldal ajánlata. A te csomagjaid a válaszaidból épülnek fel.
-              </Typography>
-            </Box>
-            <PricingCards quote={sampleQuote} mode="home" />
-          </Container>
-        </Box>
-
-        <WaveDivider from={palette.ink} to={palette.surface} />
-        {/* Project types with real starting prices */}
-        <Box component="section" sx={{ background: palette.surface }}>
-          <Container maxWidth="lg" sx={{ py: { xs: 9, md: 13 } }}>
-            <Stack direction={{ xs: "column", md: "row" }} className="reveal" sx={{ justifyContent: "space-between", alignItems: { md: "flex-end" }, gap: 2, mb: { xs: 4, md: 6 } }}>
-              <Typography variant="h2" sx={{ maxWidth: 560 }}>
-                Milyen projektben gondolkodsz?
-              </Typography>
-              <Typography color="text.secondary" sx={{ maxWidth: 360 }}>
-                Válassz egyet, és onnan folytatjuk. Az árak a legegyszerűbb változatra vonatkoznak.
-              </Typography>
-            </Stack>
-            <ProjectTypeGrid options={projectTypes} startingPrices={prices} />
-          </Container>
-        </Box>
-
-        <WaveDivider from={palette.surface} to={palette.ink} flip line={false} />
         {/* Promises */}
         <Box component="section" sx={{ position: "relative", overflow: "hidden", background: palette.ink, color: "#fff" }}>
           <SectionBlob tone="premium" size={260} position={{ bottom: 56, left: -120 }} />
@@ -286,14 +260,6 @@ export default function HomePage() {
               </Typography>
               <Typography sx={{ mt: 1.5, fontSize: "1.125rem", color: palette.inkMuted }}>
                 Ingyenes, kötelezettség nélkül.
-                {bestPercent > 0 && (
-                  <>
-                    {" "}
-                    <Box component="span" sx={{ px: 0.75, borderRadius: 1, background: gradients.discount, color: palette.ink, fontWeight: 650 }}>
-                      −{bestPercent}% kedvezmény, ha az ajánlatod elkészülte után {quickWindowText(quick)} egyeztetést kérsz.
-                    </Box>
-                  </>
-                )}
               </Typography>
             </Box>
             <LinkButton href="/tervezo" variant="contained" color="primary" size="large" endIcon={<ArrowForward />} sx={{ alignSelf: { xs: "flex-start", md: "center" }, flexShrink: 0 }}>

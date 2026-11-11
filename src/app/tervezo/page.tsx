@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/JsonLd";
 import { SiteFooter } from "@/components/SiteFooter";
-import { defaultOgImage, siteUrl } from "@/config/site";
+import { siteUrl, baseOpenGraph } from "@/config/site";
 import { Wizard } from "@/features/questionnaire/components/Wizard";
 import { PlannerIntro } from "./PlannerIntro";
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "/tervezo" },
-  openGraph: { title, description, url: "/tervezo", images: [defaultOgImage] },
+  openGraph: { ...baseOpenGraph, title, description, url: "/tervezo" },
 };
 
 export default function PlannerPage() {

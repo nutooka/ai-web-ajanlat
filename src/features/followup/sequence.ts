@@ -1,6 +1,8 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { siteUrl } from "@/config/site";
-import type { EmailContent } from "@/features/contact/email/templates";
+import type { EmailContent } from "@/lib/email/html";
+import { kvCommand, kvFromEnv } from "@/lib/kv";
+import { purposeKey } from "@/lib/secrets";
 import { MAX_AHEAD, withStopUrl, type FollowUp } from "./plan";
 
 /**
@@ -30,10 +32,17 @@ export interface SequenceStore {
   take: (sequenceId: string) => Promise<string[] | null>;
 }
 
-const sign = (sequenceId: string, secret: string) => createHmac("sha256", secret).update(`followup:${sequenceId}`).digest("base64url").slice(0, 22);
+const mac = (sequenceId: string, key: string) => createHmac("sha256", key).update(`followup:${sequenceId}`).digest("base64url").slice(0, 22);
 
+/** New tokens are signed with the derived "followup-stop" key. */
 export function stopToken(sequenceId: string, secret: string): string {
-  return `${sequenceId}.${sign(sequenceId, secret)}`;
+  return `${sequenceId}.${mac(sequenceId, purposeKey(secret, "followup-stop"))}`;
+}
+
+function matches(expected: string, given: string): boolean {
+  const a = Buffer.from(expected);
+  const b = Buffer.from(given);
+  return a.length === b.length && timingSafeEqual(a, b);
 }
 
 /** Returns the sequence id when the token is genuine, otherwise null. */
@@ -41,12 +50,12 @@ export function verifyStopToken(token: string | null | undefined, secret: string
   if (!token) return null;
   const [sequenceId, signature] = token.split(".");
   if (!sequenceId || !signature || !/^[A-Za-z0-9_-]{16,64}$/.test(sequenceId)) return null;
-  const expected = Buffer.from(sign(sequenceId, secret));
-  const given = Buffer.from(signature);
-  return expected.length === given.length && timingSafeEqual(expected, given) ? sequenceId : null;
+  // Links sent before the per-purpose keys were signed with the raw secret; they stay valid until their e-mails are out.
+  const genuine = matches(mac(sequenceId, purposeKey(secret, "followup-stop")), signature) || matches(mac(sequenceId, secret), signature);
+  return genuine ? sequenceId : null;
 }
 
-export const stopPageUrl = (token: string) => `${siteUrl}/leiratkozas?t=${encodeURIComponent(token)}`;
+const stopPageUrl = (token: string) => `${siteUrl}/leiratkozas?t=${encodeURIComponent(token)}`;
 const oneClickUrl = (token: string) => `${siteUrl}/api/followup/stop?t=${encodeURIComponent(token)}`;
 
 export interface ScheduledSequence {
@@ -105,27 +114,15 @@ export async function stopSequence(token: string | null | undefined, deps: Pick<
 
 /** Upstash Redis over REST (same store as the contact lock). Null when not configured. */
 export function createUpstashSequenceStore(env: NodeJS.ProcessEnv = process.env, fetchImpl: typeof fetch = fetch): SequenceStore | null {
-  const url = env.KV_REST_API_URL ?? env.UPSTASH_REDIS_REST_URL;
-  const token = env.KV_REST_API_TOKEN ?? env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  const base = url.replace(/\/$/, "");
-  const run = async (command: string[]) => {
-    const response = await fetchImpl(base, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify(command),
-      cache: "no-store",
-    });
-    if (!response.ok) throw new Error(`Upstash ${response.status}`);
-    return ((await response.json()) as { result?: unknown }).result;
-  };
+  const kv = kvFromEnv(env, fetchImpl);
+  if (!kv) return null;
   const key = (sequenceId: string) => `followup:${sequenceId}`;
   return {
     save: async (sequenceId, emailIds, ttlSeconds) => {
-      await run(["SET", key(sequenceId), JSON.stringify(emailIds), "EX", String(ttlSeconds)]);
+      await kvCommand(kv, ["SET", key(sequenceId), JSON.stringify(emailIds), "EX", ttlSeconds]);
     },
     take: async (sequenceId) => {
-      const raw = await run(["GETDEL", key(sequenceId)]);
+      const raw = await kvCommand(kv, ["GETDEL", key(sequenceId)]);
       if (typeof raw !== "string") return null;
       try {
         const parsed: unknown = JSON.parse(raw);

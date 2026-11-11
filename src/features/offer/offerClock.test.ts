@@ -19,6 +19,14 @@ describe("offer clock", () => {
     expect(verifyOfferClock(undefined, secret, now)).toBeNull();
   });
 
+  it("still accepts cookies signed with the raw secret before the per-purpose keys", async () => {
+    const { createHmac } = await import("node:crypto");
+    const issuedAt = now - 60_000;
+    const legacy = `${issuedAt}.${createHmac("sha256", secret).update(`offer-clock:${issuedAt}`).digest("base64url")}`;
+    expect(legacy).not.toBe(signOfferClock(issuedAt, secret));
+    expect(verifyOfferClock(legacy, secret, now)).toBe(issuedAt);
+  });
+
   it("rejects clocks from the future or older than a week", () => {
     expect(verifyOfferClock(signOfferClock(now + 10 * 60_000, secret), secret, now)).toBeNull();
     expect(verifyOfferClock(signOfferClock(now - 8 * 24 * 3_600_000, secret), secret, now)).toBeNull();

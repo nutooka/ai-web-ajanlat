@@ -3,9 +3,10 @@ import { isComplete, pruneAnswers } from "@/features/questionnaire/engine";
 import type { PackageId } from "@/features/pricing/types";
 import type { Answers } from "@/features/questionnaire/types";
 import { contactKeys, type FirstSeenStore } from "./contactLock";
-import { customerEmail, ownerEmail, type EmailContent, type SubmissionMeta } from "./email/templates";
+import type { EmailContent } from "@/lib/email/html";
+import { customerEmail, ownerEmail, type SubmissionMeta } from "./email/templates";
 import { submissionSchema } from "./schema";
-import { checkSpamSignals } from "./spam";
+import { checkSpamSignals, type RecipientGuard } from "./spam";
 import { offerFollowUps } from "@/features/followup/plan";
 import { scheduleSequence, type FollowUpDeps, type ScheduledSequence } from "@/features/followup/sequence";
 
@@ -16,11 +17,11 @@ export interface OutgoingEmail extends EmailContent {
 
 export type EmailSender = (email: OutgoingEmail) => Promise<void>;
 
-export type SubmitResult =
+type SubmitResult =
   | { status: 200; body: { ok: true; copySent: boolean } }
   | { status: 400 | 422 | 500 | 503; body: { ok: false; error: string; fieldErrors?: Record<string, string> } };
 
-export interface SubmitDeps {
+interface SubmitDeps {
   send: EmailSender | null;
   ownerEmail: string | undefined;
   /** Server-verified minutes since the offer was first opened (see offerClock). */
@@ -37,6 +38,10 @@ export interface SubmitDeps {
   shareLink?: (answers: Answers, packageId: PackageId, offerAgeMinutes: number) => Promise<string | null>;
   /** Scheduled follow-up e-mails; null/undefined = none. */
   followUps?: FollowUpDeps | null;
+  /** Per-address caps for mail to the visitor's address (see spam.ts); null/undefined = no cap. */
+  recipients?: RecipientGuard | null;
+  /** Runs non-critical work after the response (the route passes Next's `after`); default: inline. */
+  defer?: (task: () => Promise<void>) => void;
 }
 
 /**
@@ -92,10 +97,25 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
   }
 
   const shareUrl = deps.shareLink ? await deps.shareLink(answers, packageId, offerAgeMinutes).catch(() => null) : null;
+  const ownerAddress = deps.ownerEmail;
+  const send = deps.send;
+  const runLater = async (task: () => Promise<void>) => {
+    if (deps.defer) deps.defer(task);
+    else await task();
+  };
+
+  // Mail to the visitor's address is capped per address, so the form cannot be used to flood someone else's inbox.
+  const visitorEmail = contact.email;
+  const wantsVisitorMail = Boolean(visitorEmail) && (saving || contact.wantsCopy);
+  const visitorMailAllowed = visitorEmail && wantsVisitorMail ? await (deps.recipients?.allowEmail(visitorEmail) ?? true) : false;
+  if (wantsVisitorMail && !visitorMailAllowed) console.warn("[offer] recipient limit reached, visitor e-mail skipped");
+  // Saving is only about that e-mail: answer like a success, send nothing.
+  if (saving && !visitorMailAllowed) return { status: 200, body: { ok: true, copySent: true } };
 
   // Follow-ups only to an e-mail address, and only once per contact (a repeat request already has a sequence).
   let followUp: ScheduledSequence | null = null;
-  if (deps.followUps && contact.email && lock.status !== "repeat") {
+  const followUpDeps = deps.followUps;
+  if (followUpDeps && visitorEmail && lock.status !== "repeat" && (await (deps.recipients?.allowSequence(visitorEmail) ?? true))) {
     const quick = offer.quote.quickDecision;
     const discountRunning = saving && quick.percent > 0 && quick.minutesLeft !== null;
     const plan = offerFollowUps({
@@ -106,35 +126,38 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
       shareUrl,
       firstName: contact.name?.trim().split(/\s+/)[0] || undefined,
     });
-    followUp = await scheduleSequence(plan, { to: contact.email, replyTo: deps.ownerEmail }, deps.followUps).catch((error) => {
+    followUp = await scheduleSequence(plan, { to: visitorEmail, replyTo: ownerAddress }, followUpDeps).catch((error) => {
       console.error("[offer] follow-up scheduling failed", error);
       return null;
     });
   }
   const cancelFollowUps = async () => {
-    if (followUp && deps.followUps) await Promise.allSettled(followUp.ids.map((id) => deps.followUps!.cancel(id)));
+    if (followUp && followUpDeps) await Promise.allSettled(followUp.ids.map((id) => followUpDeps.cancel(id)));
   };
   const meta: SubmissionMeta = { submittedAt: now, offerOpenedAt: effectiveOpenedAt, offerAgeMinutes, lock, shareUrl, intent, followUp };
 
-  // Saving: the visitor's own copy is the point, the owner only gets a heads-up.
-  if (saving && contact.email) {
+  // Saving: the visitor's own copy is the point, the owner only gets a heads-up (after the response).
+  if (saving && visitorEmail) {
     try {
-      await deps.send({ ...customerEmail(offer, packageId, contact, { saved: true, shareUrl }), to: contact.email, replyTo: deps.ownerEmail });
+      await send({ ...customerEmail(offer, packageId, contact, { saved: true, shareUrl }), to: visitorEmail, replyTo: ownerAddress });
     } catch (error) {
       console.error("[offer] saved copy failed", error);
       await cancelFollowUps();
       return { status: 500, body: { ok: false, error: "Nem sikerült elküldeni az e-mailt. Kérjük, próbáld újra néhány perc múlva." } };
     }
-    try {
-      await deps.send({ ...ownerEmail(offer, packageId, contact, meta), to: deps.ownerEmail, replyTo: contact.email });
-    } catch (error) {
-      console.error("[offer] owner heads-up failed", error);
-    }
+    await runLater(async () => {
+      try {
+        await send({ ...ownerEmail(offer, packageId, contact, meta), to: ownerAddress, replyTo: visitorEmail });
+      } catch (error) {
+        console.error("[offer] owner heads-up failed", error);
+      }
+    });
     return { status: 200, body: { ok: true, copySent: true } };
   }
 
+  // A consultation request: the owner e-mail is the request itself, so its failure is reported.
   try {
-    await deps.send({ ...ownerEmail(offer, packageId, contact, meta), to: deps.ownerEmail, replyTo: contact.email });
+    await send({ ...ownerEmail(offer, packageId, contact, meta), to: ownerAddress, replyTo: visitorEmail });
   } catch (error) {
     console.error("[offer] owner e-mail failed", error);
     await cancelFollowUps();
@@ -142,9 +165,9 @@ export async function submitOffer(input: unknown, deps: SubmitDeps): Promise<Sub
   }
 
   let copySent = false;
-  if (contact.wantsCopy && contact.email) {
+  if (visitorEmail && visitorMailAllowed) {
     try {
-      await deps.send({ ...customerEmail(offer, packageId, contact, { shareUrl }), to: contact.email, replyTo: deps.ownerEmail });
+      await send({ ...customerEmail(offer, packageId, contact, { shareUrl }), to: visitorEmail, replyTo: ownerAddress });
       copySent = true;
     } catch (error) {
       // The owner already has the request; a failed copy should not fail the whole submission.

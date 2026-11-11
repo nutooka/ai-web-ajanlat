@@ -10,7 +10,7 @@ const optionalText = (max: number) =>
     .transform((value) => (value ? value : undefined));
 
 export const CALLBACK_TIMES = ["asap", "morning", "afternoon", "evening"] as const;
-export type CallbackTime = (typeof CALLBACK_TIMES)[number];
+type CallbackTime = (typeof CALLBACK_TIMES)[number];
 export const CALLBACK_LABELS: Record<CallbackTime, string> = {
   asap: "Minél előbb",
   morning: "Délelőtt",
@@ -56,7 +56,7 @@ export const contactSchema = z
     }
   });
 
-export type ContactInput = z.input<typeof contactSchema>;
+type ContactInput = z.input<typeof contactSchema>;
 
 /**
  * The quick form: one "phone or e-mail" field instead of two.

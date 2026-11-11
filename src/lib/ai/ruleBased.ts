@@ -1,6 +1,6 @@
 import { getAnswerLabel, getQuestionById } from "@/features/questionnaire/engine";
 import type { Answers, ResolvedProjectType } from "@/features/questionnaire/types";
-import type { InsightProvider, TechRecommendation } from "./types";
+import type { TechRecommendation } from "./types";
 
 const TYPE_NAMES: Record<ResolvedProjectType, string> = {
   company: "bemutatkozó céges weboldal",
@@ -103,25 +103,3 @@ export function recommendTechnology(answers: Answers, projectType: ResolvedProje
       };
   }
 }
-
-/** Default provider: no network calls, no AI. */
-export const ruleBasedProvider: InsightProvider = {
-  async interpretFreeText() {
-    return [];
-  },
-  async findMissingInfo(answers) {
-    const missing: string[] = [];
-    if (answers.projectType === "company" && !answers.company_activity) missing.push("A vállalkozás tevékenysége");
-    if (answers.projectType === "webapp" && !answers.app_goal) missing.push("A webalkalmazás fő célja");
-    return missing;
-  },
-  async suggestFollowUps() {
-    return [];
-  },
-  async writeSummary(answers, projectType) {
-    return summarizeProject(answers, projectType);
-  },
-  async recommendTech(answers, projectType) {
-    return recommendTechnology(answers, projectType);
-  },
-};

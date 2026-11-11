@@ -87,6 +87,15 @@ describe("stop tokens", () => {
     expect(verifyStopToken(`${token}x`, SECRET)).toBeNull();
     expect(verifyStopToken("nonsense", SECRET)).toBeNull();
   });
+
+  it("still accepts links signed with the raw secret before the per-purpose keys", async () => {
+    const { createHmac } = await import("node:crypto");
+    const id = "abcdefghijklmnopqrstuv";
+    const legacy = `${id}.${createHmac("sha256", SECRET).update(`followup:${id}`).digest("base64url").slice(0, 22)}`;
+    expect(legacy).not.toBe(stopToken(id, SECRET));
+    expect(verifyStopToken(legacy, SECRET)).toBe(id);
+    expect(verifyStopToken(legacy, "another-secret-0123456")).toBeNull();
+  });
 });
 
 describe("scheduleSequence / stopSequence", () => {

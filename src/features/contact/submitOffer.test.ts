@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Answers } from "@/features/questionnaire/types";
-import { escapeHtml } from "./email/templates";
+import { escapeHtml } from "@/lib/email/html";
 import { memoryStore } from "./__fixtures__/memoryStore";
+import { createRecipientGuard } from "./spam";
 import { submitOffer, type OutgoingEmail } from "./submitOffer";
 
 const answers: Answers = {
@@ -256,5 +257,66 @@ describe("submitOffer – follow-up e-mails", () => {
     const result = await submitOffer(submission(), { send, ownerEmail: "owner@example.com", followUps: followUps.deps });
     expect(result.status).toBe(500);
     expect(followUps.cancelled).toEqual(["id-1", "id-2"]);
+  });
+
+  it("starts only one sequence per address within 30 days", async () => {
+    const recipients = createRecipientGuard({ secret: "test-secret-0123456789", kv: null });
+    const followUps = followUpDeps();
+    await submitOffer(submission({ contact: { email: "elek@example.com", wantsCopy: false, consent: true } }), { ...setup().deps, followUps: followUps.deps, recipients });
+    await submitOffer(submission({ contact: { email: "ELEK@example.com", wantsCopy: false, consent: true } }), { ...setup().deps, followUps: followUps.deps, recipients });
+    expect(followUps.scheduled).toHaveLength(2); // one sequence of two e-mails
+  });
+});
+
+describe("submitOffer – mail to someone else's address", () => {
+  it("sends at most 2 e-mails a day to one address, but still answers ok", async () => {
+    const recipients = createRecipientGuard({ secret: "test-secret-0123456789", kv: null });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const results = [];
+    const visitorMails: string[] = [];
+    for (let index = 0; index < 3; index += 1) {
+      const { sent, deps } = setup();
+      results.push(await submitOffer(submission({ intent: "save" }), { ...deps, recipients }));
+      visitorMails.push(...sent.filter((email) => email.to === "elek@example.com").map((email) => email.to));
+    }
+    expect(results.map((result) => result.status)).toEqual([200, 200, 200]);
+    expect(results[2].body).toEqual({ ok: true, copySent: true });
+    expect(visitorMails).toHaveLength(2);
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
+  it("a consultation request still reaches the owner when the copy is capped", async () => {
+    const recipients = createRecipientGuard({ secret: "test-secret-0123456789", kv: null });
+    await recipients.allowEmail("elek@example.com");
+    await recipients.allowEmail("elek@example.com");
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { sent, deps } = setup();
+    const result = await submitOffer(submission(), { ...deps, recipients });
+    expect(result.body).toEqual({ ok: true, copySent: false });
+    expect(sent.map((email) => email.to)).toEqual(["owner@example.com"]);
+    warn.mockRestore();
+  });
+});
+
+describe("submitOffer – deferred owner heads-up", () => {
+  it("hands the saved-offer heads-up to `defer`, so the visitor does not wait for it", async () => {
+    const { sent, deps } = setup();
+    const deferred: (() => Promise<void>)[] = [];
+    const result = await submitOffer(submission({ intent: "save" }), { ...deps, defer: (task) => void deferred.push(task) });
+    expect(result.status).toBe(200);
+    expect(sent.map((email) => email.to)).toEqual(["elek@example.com"]);
+    expect(deferred).toHaveLength(1);
+    await deferred[0]();
+    expect(sent.map((email) => email.to)).toEqual(["elek@example.com", "owner@example.com"]);
+  });
+
+  it("keeps the consultation e-mail to the owner awaited (its failure is reported)", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const deferred: (() => Promise<void>)[] = [];
+    const send = vi.fn(async () => Promise.reject(new Error("down")));
+    const result = await submitOffer(submission(), { send, ownerEmail: "owner@example.com", defer: (task) => void deferred.push(task) });
+    expect(result.status).toBe(500);
+    expect(deferred).toHaveLength(0);
   });
 });

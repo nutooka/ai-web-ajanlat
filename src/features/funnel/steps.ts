@@ -2,7 +2,7 @@
  * Funnel steps we count (once per visitor session each).
  * Questions are counted when shown, so the drop-off sits between two consecutive questions.
  */
-export const FUNNEL_EVENTS = [
+const FUNNEL_EVENTS = [
   "home_type_pick", // picked a project type on the home page
   "offer_view", // reached the offer page
   "offer_saved", // sent the offer to their own e-mail
@@ -12,7 +12,7 @@ export const FUNNEL_EVENTS = [
   "audit_lead", // asked for the full check report by e-mail
 ] as const;
 
-export type FunnelEvent = (typeof FUNNEL_EVENTS)[number];
+type FunnelEvent = (typeof FUNNEL_EVENTS)[number];
 
 /** `q:<questionId>` for a question view, or a named event. */
 export type FunnelStep = `q:${string}` | FunnelEvent;

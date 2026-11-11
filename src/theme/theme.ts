@@ -38,11 +38,17 @@ export const theme = createTheme({
       styleOverrides: {
         body: { WebkitFontSmoothing: "antialiased", textRendering: "optimizeLegibility" },
         "::selection": { background: "#FFD9CF", color: palette.ink },
-        "html": { caretColor: palette.ink, accentColor: "#FF7A6B" },
+        // Scroll padding keeps focused fields clear of the sticky header and the fixed bottom nav (WCAG 2.4.11).
+        "html": { caretColor: palette.ink, accentColor: "#FF7A6B", scrollPaddingTop: 72, scrollPaddingBottom: 104 },
         "h1, h2, h3": { textWrap: "balance" },
         // Harder to save images: no drag-out, no iOS long-press menu.
         img: { WebkitUserDrag: "none", userSelect: "none", WebkitTouchCallout: "none" },
-        ":focus-visible": { outline: `2px solid ${palette.ink}`, outlineOffset: 3 },
+        // Two-tone focus ring: ink outline + white halo in the offset gap, visible on paper and on ink alike.
+        ":focus-visible": { outline: `2px solid ${palette.ink}`, outlineOffset: 2, boxShadow: "0 0 0 2px #FFFFFF" },
+        // MUI buttons/cards/checkboxes: same ring, winning over component styles that drop the shadow on focus.
+        "html .MuiButtonBase-root.Mui-focusVisible": { outline: `2px solid ${palette.ink}`, outlineOffset: 2, boxShadow: "0 0 0 2px #FFFFFF" },
+        // MUI text inputs already show focus on their outlined border – no second ring inside it.
+        ".MuiInputBase-input:focus-visible": { outline: "none", boxShadow: "none" },
         // Scroll-linked reveal: progressive enhancement, content is never hidden without support.
         "@supports (animation-timeline: view())": {
           "@media (prefers-reduced-motion: no-preference)": {
@@ -144,7 +150,13 @@ export const theme = createTheme({
       styleOverrides: { outlined: { borderColor: palette.line } },
     },
     MuiChip: { styleOverrides: { root: { fontWeight: 600, borderRadius: 6 } } },
-    MuiCheckbox: { defaultProps: { color: "secondary" } },
+    MuiCheckbox: {
+      defaultProps: { color: "secondary" },
+      styleOverrides: {
+        // 44px touch target (the focus ring comes from the global .Mui-focusVisible rule).
+        root: { padding: 10 },
+      },
+    },
     MuiTextField: { defaultProps: { fullWidth: true, color: "secondary" } },
     MuiOutlinedInput: {
       styleOverrides: {

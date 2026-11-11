@@ -14,7 +14,7 @@ export interface Check {
   detail?: string;
 }
 
-export interface Preview {
+interface Preview {
   host: string;
   title: string;
   description: string;
@@ -24,7 +24,7 @@ export interface Preview {
   favicon: string | null;
 }
 
-export interface SiteFacts {
+interface SiteFacts {
   platform: string | null;
   isShop: boolean;
   imagesWithoutAlt: number;
@@ -118,7 +118,7 @@ const absolute = (href: string | undefined, base: string) => {
   }
 };
 
-export interface InspectInput {
+interface InspectInput {
   html: string;
   finalUrl: string;
   /** Did http:// end up on https://? null = unknown. */

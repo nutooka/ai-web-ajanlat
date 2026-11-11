@@ -1,21 +1,22 @@
 import { createFollowUpDeps } from "@/features/followup/deps";
 import { stopSequence } from "@/features/followup/sequence";
-import { createRateLimiter } from "@/features/contact/spam";
+import { routeLimiter } from "@/features/contact/spam";
+import { clientIp, readJsonBody } from "@/lib/http";
 
-const isAllowed = createRateLimiter({ limit: 20, windowMs: 10 * 60 * 1000 });
+const isAllowed = routeLimiter("followup-stop", 20);
 
 /**
  * POST ?t=<token> – stops a follow-up sequence. Used by the /leiratkozas button and by mail clients'
  * one-click unsubscribe (RFC 8058). GET never stops anything: link scanners prefetch GET URLs.
  */
 export async function POST(request: Request) {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  if (!isAllowed(ip, Date.now())) return Response.json({ ok: false, error: "Túl sok kérés." }, { status: 429 });
+  if (!(await isAllowed(clientIp(request.headers) ?? "unknown", Date.now()))) return Response.json({ ok: false, error: "Túl sok kérés." }, { status: 429 });
 
   let token = new URL(request.url).searchParams.get("t");
   if (!token && request.headers.get("content-type")?.includes("application/json")) {
-    const body = (await request.json().catch(() => null)) as { t?: unknown } | null;
-    token = typeof body?.t === "string" ? body.t : null;
+    const body = await readJsonBody(request, 2 * 1024);
+    const value = body.ok && body.value && typeof body.value === "object" ? (body.value as { t?: unknown }).t : null;
+    token = typeof value === "string" ? value : null;
   }
 
   const deps = createFollowUpDeps();

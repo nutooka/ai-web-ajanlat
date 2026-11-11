@@ -1,4 +1,5 @@
-import { clientIp, createUpstashFirstSeenStore, DEVICE_CLOCK_TTL_SECONDS, deviceKey } from "@/features/contact/contactLock";
+import { createUpstashFirstSeenStore, DEVICE_CLOCK_TTL_SECONDS, deviceKeys } from "@/features/contact/contactLock";
+import { clientIp } from "@/lib/http";
 import {
   OFFER_CLOCK_COOKIE,
   offerClockSecret,
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
   const store = createUpstashFirstSeenStore(process.env, fetch, DEVICE_CLOCK_TTL_SECONDS);
   if (store && ip) {
     try {
-      const seen = await store([deviceKey(ip, `${request.headers.get("user-agent") ?? ""}|${request.headers.get("accept-language") ?? ""}`, secret)], issuedAt);
+      const seen = await store(deviceKeys(ip, `${request.headers.get("user-agent") ?? ""}|${request.headers.get("accept-language") ?? ""}`, secret), issuedAt);
       issuedAt = Math.min(issuedAt, seen.firstSeenAt);
     } catch {
       // Store down: the cookie still works on its own.

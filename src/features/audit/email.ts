@@ -1,5 +1,5 @@
-import { siteConfig, siteUrl } from "@/config/site";
-import { escapeHtml } from "@/features/contact/email/templates";
+import { siteUrl } from "@/config/site";
+import { emailLayout, escapeHtml, type EmailContent } from "@/lib/email/html";
 import { CATEGORY_LABELS, slownessImpact, verdict, type AuditCategory, type AuditResult } from "./audit";
 import { GROUP_LABELS } from "./checks";
 
@@ -36,14 +36,6 @@ function checklistHtml(result: AuditResult): string {
 const checklistText = (result: AuditResult) =>
   (result.inspection?.checks.filter((check) => check.status !== "ok") ?? []).map((check) => `- ${check.title}${check.detail ? ` – ${check.detail}` : ""}`);
 
-const wrap = (title: string, body: string) => `<!doctype html><html lang="hu"><body style="margin:0;background:#F6F5F1;font-family:Arial,Helvetica,sans-serif;color:#14161A;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px;">
-<table role="presentation" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%;background:#FFFFFF;border-radius:16px;overflow:hidden;">
-<tr><td style="background:#14161A;color:#FFFFFF;padding:24px 28px;font-size:20px;font-weight:bold;">${escapeHtml(title)}</td></tr>
-<tr><td style="padding:24px 28px;font-size:14px;line-height:1.6;">${body}</td></tr>
-<tr><td style="padding:16px 28px;background:#F6F5F1;font-size:12px;color:#5C616B;">${escapeHtml(siteConfig.company.legalName)} · nutooka.tech</td></tr>
-</table></td></tr></table></body></html>`;
-
 const textReport = (result: AuditResult) =>
   [
     ...ORDER.map((key) => `- ${CATEGORY_LABELS[key]}: ${result.scores[key]}/100 (${verdict(result.scores[key]).label})`),
@@ -53,9 +45,9 @@ const textReport = (result: AuditResult) =>
     ...result.issues.map((issue, index) => `${index + 1}. ${issue.title} – ${issue.why}`),
   ].join("\n");
 
-export function auditCustomerEmail(result: AuditResult) {
+export function auditCustomerEmail(result: AuditResult): EmailContent {
   const plannerUrl = `${siteUrl}/weboldal-felujitas`;
-  const html = wrap(
+  const html = emailLayout(
     "A weboldalad átvilágítása",
     `<p>Szia!</p><p>Itt a(z) <b>${escapeHtml(result.url)}</b> átvilágítása (mobilos mérés, Google PageSpeed alapján).</p>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:8px 0 20px;">${scoreRows(result)}</table>
@@ -68,8 +60,8 @@ ${checklistHtml(result)}
   return { subject: `Weboldal-átvilágítás – ${new URL(result.url).hostname}`, html, text };
 }
 
-export function auditOwnerEmail(result: AuditResult, email: string, followUpStopUrl: string | null = null) {
-  const html = wrap(
+export function auditOwnerEmail(result: AuditResult, email: string, followUpStopUrl: string | null = null): EmailContent {
+  const html = emailLayout(
     "Új átvilágítás-kérés",
     `<p style="padding:12px 14px;border-radius:10px;background:#FFF1EC;"><b>${escapeHtml(email)}</b> kérte a teljes jelentést. Írj neki pár személyes sort 1–2 napon belül – innen jó eséllyel felújítás lesz.</p>
 <p>Oldal: <a href="${escapeHtml(result.url)}">${escapeHtml(result.url)}</a></p>

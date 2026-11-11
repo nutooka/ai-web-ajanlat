@@ -1,8 +1,9 @@
 import { ImageResponse } from "next/og";
+import { pricingConfig } from "@/config/pricing";
 import { startingPrice } from "@/features/pricing/startingPrice";
 import { formatRon } from "@/lib/format";
 
-export const alt = "Nutooka – weboldal-árajánlat 3 perc alatt";
+export const alt = "Nutooka – weboldal-árajánlat pár perc alatt";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -13,6 +14,8 @@ const DISCOUNT = "linear-gradient(135deg, #FFD27A 0%, #FFB547 55%, #FF9447 100%)
 /** Link preview for Facebook, Messenger, WhatsApp, LinkedIn. */
 export default function OpengraphImage() {
   const from = formatRon(startingPrice("company"));
+  const quick = pricingConfig.discounts.quickDecision;
+  const quickPercent = quick.enabled ? Math.max(0, ...quick.tiers.map((tier) => tier.percent)) : 0;
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 72, background: INK, color: "#fff", position: "relative" }}>
@@ -31,12 +34,14 @@ export default function OpengraphImage() {
 
         <div style={{ display: "flex", flexDirection: "column", maxWidth: 780 }}>
           <div style={{ fontSize: 76, fontWeight: 800, lineHeight: 1.05, letterSpacing: -2 }}>Mennyibe kerül a weboldalad?</div>
-          <div style={{ fontSize: 34, marginTop: 24, color: "#C9CBD1" }}>Töltsd ki a kérdőívet, és 3 perc alatt kapsz tételes árajánlatot.</div>
+          <div style={{ fontSize: 34, marginTop: 24, color: "#C9CBD1" }}>Töltsd ki a kérdőívet, és pár perc alatt kapsz tételes árajánlatot.</div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           <div style={{ display: "flex", padding: "16px 28px", borderRadius: 14, background: BRAND, color: INK, fontSize: 32, fontWeight: 800 }}>Céges weboldal {from}-tól</div>
-          <div style={{ display: "flex", padding: "16px 24px", borderRadius: 14, background: DISCOUNT, color: INK, fontSize: 30, fontWeight: 800 }}>−25% gyors döntéskor</div>
+          {quickPercent > 0 && (
+            <div style={{ display: "flex", padding: "16px 24px", borderRadius: 14, background: DISCOUNT, color: INK, fontSize: 30, fontWeight: 800 }}>−{quickPercent}% gyors döntéskor</div>
+          )}
         </div>
       </div>
     ),

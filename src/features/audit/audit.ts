@@ -1,3 +1,4 @@
+import { kvCommand, kvFromEnv } from "@/lib/kv";
 import type { Inspection } from "./checks";
 
 /**
@@ -7,7 +8,7 @@ import type { Inspection } from "./checks";
 
 export type AuditCategory = "performance" | "accessibility" | "bestPractices" | "seo";
 
-export interface AuditIssue {
+interface AuditIssue {
   id: string;
   title: string;
   why: string;
@@ -181,35 +182,43 @@ export class AuditError extends Error {
 /** Results are cached for a day, so a refresh or the e-mail step never re-runs the 20-second test. */
 const CACHE_TTL_SECONDS = 24 * 60 * 60;
 
-function kv(env: NodeJS.ProcessEnv) {
-  const url = (env.KV_REST_API_URL ?? env.UPSTASH_REDIS_REST_URL)?.replace(/\/$/, "");
-  const token = env.KV_REST_API_TOKEN ?? env.UPSTASH_REDIS_REST_TOKEN;
-  return url && token ? { url, token } : null;
+const cacheKey = (url: string) => `audit:v2:${url.toLowerCase()}`;
+
+const isScore = (value: unknown) => typeof value === "number" && Number.isFinite(value);
+
+/** Minimal shape check: the cache is trusted storage, but an old or broken entry must not reach the e-mail templates. */
+function isAuditResult(value: unknown): value is AuditResult {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Partial<AuditResult>;
+  const scores = candidate.scores as Partial<Record<AuditCategory, unknown>> | undefined;
+  const metrics = candidate.metrics as Partial<Record<keyof AuditResult["metrics"], unknown>> | undefined;
+  return (
+    typeof candidate.url === "string" &&
+    isScore(candidate.checkedAt) &&
+    !!scores &&
+    (["performance", "accessibility", "bestPractices", "seo"] as const).every((key) => isScore(scores[key])) &&
+    !!metrics &&
+    (["lcp", "cls", "tbt", "fcp"] as const).every((key) => typeof metrics[key] === "string") &&
+    Array.isArray(candidate.issues) &&
+    candidate.issues.every((issue) => !!issue && typeof issue.title === "string" && typeof issue.why === "string")
+  );
 }
 
-export const cacheKey = (url: string) => `audit:v2:${url.toLowerCase()}`;
-
 export async function readCachedAudit(url: string, { env = process.env, fetchImpl = fetch } = {}): Promise<AuditResult | null> {
-  const store = kv(env);
-  if (!store) return null;
-  const response = await fetchImpl(store.url, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${store.token}`, "Content-Type": "application/json" },
-    body: JSON.stringify(["GET", cacheKey(url)]),
-    cache: "no-store",
-  });
-  if (!response.ok) return null;
-  const result = ((await response.json()) as { result?: string | null }).result;
-  return result ? (JSON.parse(result) as AuditResult) : null;
+  const kv = kvFromEnv(env, fetchImpl);
+  if (!kv) return null;
+  const raw = await kvCommand(kv, ["GET", cacheKey(url)]);
+  if (typeof raw !== "string") return null;
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return isAuditResult(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function writeCachedAudit(result: AuditResult, { env = process.env, fetchImpl = fetch } = {}): Promise<void> {
-  const store = kv(env);
-  if (!store) return;
-  await fetchImpl(store.url, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${store.token}`, "Content-Type": "application/json" },
-    body: JSON.stringify(["SET", cacheKey(result.url), JSON.stringify(result), "EX", String(CACHE_TTL_SECONDS)]),
-    cache: "no-store",
-  });
+  const kv = kvFromEnv(env, fetchImpl);
+  if (!kv) return;
+  await kvCommand(kv, ["SET", cacheKey(result.url), JSON.stringify(result), "EX", CACHE_TTL_SECONDS]);
 }

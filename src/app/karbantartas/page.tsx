@@ -11,7 +11,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { WaveDivider } from "@/components/WaveDivider";
 import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { pricingConfig } from "@/config/pricing";
-import { defaultOgImage, siteUrl } from "@/config/site";
+import { siteUrl, baseOpenGraph } from "@/config/site";
 import { PACKAGE_IDS } from "@/features/pricing/types";
 import { formatRon } from "@/lib/format";
 import { packageThemes, palette } from "@/theme/tokens";
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   title: { absolute: `${title} – ${from}/hótól | Nutooka` },
   description,
   alternates: { canonical: "/karbantartas" },
-  openGraph: { title, description, url: "/karbantartas", images: [defaultOgImage] },
+  openGraph: { ...baseOpenGraph, title, description, url: "/karbantartas" },
 };
 
 const hostingRows: { label: string; type: keyof typeof maintenance.hostingMonthly }[] = [
@@ -117,6 +117,9 @@ export default function MaintenancePage() {
             Karbantartás · {from}/hótól
           </Typography>
           <Typography variant="h1" sx={{ fontSize: { xs: "2.1rem", md: "3.25rem" }, mt: 1, maxWidth: 820 }}>
+            Weboldal karbantartás havidíjjal
+          </Typography>
+          <Typography sx={{ mt: 2, fontSize: { xs: "1.25rem", md: "1.5rem" }, fontWeight: 600, maxWidth: 720 }}>
             Az oldalad akkor is rendben marad, amikor nem foglalkozol vele.
           </Typography>
           <Typography sx={{ mt: 2, fontSize: "1.125rem", color: palette.inkMuted, maxWidth: 680 }}>
@@ -142,7 +145,7 @@ export default function MaintenancePage() {
               >
                 <Box sx={{ background: packageThemes[id].gradient, color: palette.ink, px: 3, py: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <Typography component="h3" sx={{ fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", fontSize: 15 }}>
-                    {tier.name}
+                    {tier.name} karbantartás
                   </Typography>
                   {recommended && (
                     <Box component="span" sx={{ px: 1.25, py: 0.25, borderRadius: 999, background: palette.ink, color: "#fff", fontSize: 12, fontWeight: 700 }}>

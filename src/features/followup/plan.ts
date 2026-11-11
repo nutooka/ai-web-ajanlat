@@ -1,5 +1,5 @@
 import { siteUrl } from "@/config/site";
-import { escapeHtml, type EmailContent } from "@/features/contact/email/templates";
+import { escapeHtml, type EmailContent } from "@/lib/email/html";
 import { brandedEmail, STOP_URL_PLACEHOLDER } from "./layout";
 
 export { STOP_URL_PLACEHOLDER };
@@ -19,7 +19,7 @@ export interface FollowUp {
   email: EmailContent;
 }
 
-export interface OfferFollowUpInput {
+interface OfferFollowUpInput {
   now: number;
   /** When the quick-decision discount ends, or null when there is none (any more). */
   discountEndsAt: number | null;
@@ -29,7 +29,7 @@ export interface OfferFollowUpInput {
   firstName?: string;
 }
 
-export interface AuditFollowUpInput {
+interface AuditFollowUpInput {
   now: number;
   url: string;
 }

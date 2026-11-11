@@ -23,8 +23,11 @@ function fakeKv() {
     const [command, key, value, ...rest] = JSON.parse(String(init?.body)) as string[];
     let result: unknown = null;
     if (command === "SET") {
-      if (!(rest.includes("NX") && data.has(key))) data.set(key, value);
-      result = "OK";
+      if (rest.includes("NX") && data.has(key)) result = null;
+      else {
+        data.set(key, value);
+        result = "OK";
+      }
     } else if (command === "GET") result = data.get(key) ?? null;
     else if (command === "EXPIRE") result = 1;
     return new Response(JSON.stringify({ result }), { status: 200 });
@@ -35,14 +38,36 @@ function fakeKv() {
 describe("offer code", () => {
   it("is short, readable and stable for the same answers + package", () => {
     const code = offerCode(complete, "standard", "s");
-    expect(code).toMatch(/^[A-HJ-NP-Z2-9]{6}$/);
+    expect(code).toMatch(/^[A-HJ-NP-Z2-9]{8}$/);
     expect(offerCode({ ...complete }, "standard", "s")).toBe(code);
     expect(offerCode(complete, "premium", "s")).not.toBe(code);
   });
 
-  it("accepts typed variants of a code", () => {
+  it("accepts typed variants of a code, old 6-character codes included", () => {
     expect(normalizeCode(" k7m-3qx ")).toBe("K7M3QX");
+    expect(normalizeCode("k7m3-qx2a")).toBe("K7M3QX2A");
     expect(normalizeCode("K7M3Q0")).toBeNull();
+    expect(normalizeCode("K7M3QX2")).toBeNull();
+  });
+
+  it("never overwrites another offer: on a collision it moves on to the next code", async () => {
+    const kv = fakeKv();
+    const taken = await saveSharedOffer(complete, "basic", "s", { env: fakeKv().env, fetchImpl: fakeKv().fetchImpl });
+    const other = JSON.stringify({ answers: complete, packageId: "premium", createdAt: 1, ageMinutes: null });
+    kv.data.set(`offer-share:${taken}`, other);
+    const code = await saveSharedOffer(complete, "basic", "s", { env: kv.env, fetchImpl: kv.fetchImpl });
+    expect(code).toMatch(/^[A-HJ-NP-Z2-9]{8}$/);
+    expect(code).not.toBe(taken);
+    expect(kv.data.get(`offer-share:${taken}`)).toBe(other);
+    // Saving the same snapshot again finds its own code and refreshes it.
+    expect(await saveSharedOffer(complete, "basic", "s", { env: kv.env, fetchImpl: kv.fetchImpl, now: 99 })).toBe(code);
+    expect((await loadSharedOffer(code!, { env: kv.env, fetchImpl: kv.fetchImpl }))?.createdAt).toBe(99);
+  });
+
+  it("still opens links with old 6-character codes", async () => {
+    const kv = fakeKv();
+    kv.data.set("offer-share:K7M3QX", JSON.stringify({ answers: complete, packageId: "basic", createdAt: 5, ageMinutes: 3 }));
+    expect(await loadSharedOffer("k7m3qx", { env: kv.env, fetchImpl: kv.fetchImpl })).toMatchObject({ packageId: "basic", ageMinutes: 3 });
   });
 
   it("only shares complete questionnaires with a known package", () => {

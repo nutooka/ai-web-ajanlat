@@ -4,10 +4,12 @@ import CheckCircleOutlineOutlined from "@mui/icons-material/CheckCircleOutlineOu
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useState } from "react";
 import { PROJECT_TYPE_LABELS } from "@/features/offer/buildOffer";
 import type { Quote } from "@/features/pricing/types";
 import { FluidBlobs } from "@/components/home/FluidBlobs";
 import { palette } from "@/theme/tokens";
+import { srOnly } from "./a11y";
 
 const MAX_FEATURES = 6;
 
@@ -15,9 +17,21 @@ const MAX_FEATURES = 6;
 /** Rough length of a questionnaire, for the progress shape (exact count is shown in the wizard). */
 const TYPICAL_QUESTIONS = 15;
 
-export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; answeredCount: number }) {
+/** What the polite status says about the project (no prices – those come at the end). */
+function summaryText(quote: Quote | null, featureCount: number): string {
+  if (!quote) return "";
+  const type = PROJECT_TYPE_LABELS[quote.projectType];
+  return featureCount > 0 ? `A projekted: ${type}, ${featureCount} kiválasztott funkcióval.` : `A projekted: ${type}.`;
+}
+
+export function WizardSidebar({ quote, answeredCount, stepKey }: { quote: Quote | null; answeredCount: number; stepKey: string }) {
   const progress = Math.min(1, answeredCount / TYPICAL_QUESTIONS);
   const features = quote?.packages.standard.items.filter((item) => item.source === "answer").map((item) => item.label) ?? [];
+
+  // Throttled to one announcement per step: the text only changes when the step changes
+  // (never on the first render, so the page load stays quiet).
+  const [announcement, setAnnouncement] = useState({ stepKey, text: "" });
+  if (announcement.stepKey !== stepKey) setAnnouncement({ stepKey, text: summaryText(quote, features.length) });
 
   return (
     <Stack spacing={2} component="aside" aria-label="A projekted összefoglalója" sx={{ position: "sticky", top: 112 }}>
@@ -60,6 +74,9 @@ export function WizardSidebar({ quote, answeredCount }: { quote: Quote | null; a
         <Typography variant="body2" color="text.secondary">
           Bármikor visszaléphetsz vagy később folytathatod – a böngésződ megjegyzi, hol tartasz.
         </Typography>
+      </Box>
+      <Box role="status" sx={srOnly}>
+        {announcement.text}
       </Box>
     </Stack>
   );

@@ -12,7 +12,7 @@ import Typography from "@mui/material/Typography";
 import { track } from "@vercel/analytics";
 import { AnimatePresence, m } from "motion/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { trackStep } from "@/features/funnel/track";
 import { calculateQuote } from "@/features/pricing/engine";
@@ -86,9 +86,11 @@ export function Wizard() {
 
 function WizardContent({ answers, currentId }: { answers: Answers; currentId: string | null }) {
   const router = useRouter();
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const advanceTimer = useRef<number | undefined>(undefined);
   const [direction, setDirection] = useState(1);
+  // Focus moves to the new step only after the visitor navigated – never on the first page load.
+  const [hasNavigated, setHasNavigated] = useState(false);
+  // A pointer pick waits a moment, then continues. A fresh object restarts the timer on every pick.
+  const [pendingAdvance, setPendingAdvance] = useState<{ questionId: string; value: AnswerValue | undefined } | null>(null);
   const [error, setError] = useState<{ questionId: string; message: string } | null>(null);
 
   const visible = getVisibleQuestions(answers);
@@ -106,16 +108,14 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
   const answeredCount = visible.filter((item) => isQuestionAnswered(item, answers[item.id])).length;
 
   useEffect(() => {
-    headingRef.current?.focus({ preventScroll: true });
-    window.scrollTo({ top: 0 });
     // Funnel: which questions people reach (the drop-off is between two consecutive ones).
     trackStep(`q:${question.id}`);
   }, [question.id]);
 
-  useEffect(() => () => window.clearTimeout(advanceTimer.current), []);
-
   const goTo = (questionId: string, nextDirection: number) => {
     setDirection(nextDirection);
+    setHasNavigated(true);
+    setPendingAdvance(null);
     setError(null);
     wizardStore.update({ currentId: questionId });
   };
@@ -149,7 +149,7 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
   };
 
   const goBack = () => {
-    window.clearTimeout(advanceTimer.current);
+    setPendingAdvance(null);
     if (index === 0) {
       router.push("/");
       return;
@@ -167,37 +167,33 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
   const handleChange = (nextValue: AnswerValue | undefined, options?: { advance?: boolean }) => {
     setError(null);
     wizardStore.update({ answers: withAnswer(answers, question.id, nextValue), currentId: question.id });
-    if (options?.advance) {
-      window.clearTimeout(advanceTimer.current);
-      advanceTimer.current = window.setTimeout(() => goNext(nextValue), AUTO_ADVANCE_MS);
-    }
+    setPendingAdvance(options?.advance ? { questionId: question.id, value: nextValue } : null);
   };
 
-  // Keyboard: 1–9 picks an option, Enter continues (Ctrl/Cmd+Enter inside a textarea).
-  const keyHandler = useRef<(event: KeyboardEvent) => void>(() => {});
-  useEffect(() => {
-    keyHandler.current = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement;
-      const inTextarea = target.tagName === "TEXTAREA";
-      const inInput = target.tagName === "INPUT";
-      if (event.key === "Enter" && (!inTextarea || event.metaKey || event.ctrlKey)) {
-        if (target.getAttribute("role") === "radio" || target.getAttribute("role") === "checkbox") return;
-        if (target.tagName === "BUTTON" || target.tagName === "A") return;
-        event.preventDefault();
-        goNext();
-        return;
-      }
-      if (question.kind === "text" || inInput || inTextarea || event.metaKey || event.ctrlKey || event.altKey) return;
-      const number = Number(event.key);
-      const option = Number.isInteger(number) && number >= 1 ? question.options[number - 1] : undefined;
-      if (option) {
-        event.preventDefault();
-        (document.querySelectorAll<HTMLElement>("[role=radio],[role=checkbox]")[number - 1])?.click();
-      }
-    };
+  // Effect events always see the latest answers/question, so the delayed advance never runs a stale goNext.
+  const advance = useEffectEvent((pending: { questionId: string; value: AnswerValue | undefined }) => {
+    setPendingAdvance(null);
+    if (pending.questionId === question.id) goNext(pending.value);
   });
   useEffect(() => {
-    const listener = (event: KeyboardEvent) => keyHandler.current(event);
+    if (!pendingAdvance) return;
+    const timer = window.setTimeout(() => advance(pendingAdvance), AUTO_ADVANCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [pendingAdvance]);
+
+  // Keyboard: Enter continues (Ctrl/Cmd+Enter inside a textarea). Number keys live in QuestionStep (scoped to the option group).
+  const onWindowKeyDown = useEffectEvent((event: KeyboardEvent) => {
+    if (event.key !== "Enter" || event.defaultPrevented || event.isComposing) return;
+    const target = event.target as HTMLElement;
+    if (target.tagName === "TEXTAREA" && !event.metaKey && !event.ctrlKey) return;
+    if (target.getAttribute("role") === "radio" || target.getAttribute("role") === "checkbox") return;
+    if (target.tagName === "BUTTON" || target.tagName === "A") return;
+    event.preventDefault();
+    setPendingAdvance(null);
+    goNext();
+  });
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => onWindowKeyDown(event);
     window.addEventListener("keydown", listener);
     return () => window.removeEventListener("keydown", listener);
   }, []);
@@ -215,8 +211,8 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
         <Container maxWidth="lg" sx={{ py: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
           <Logo tone="light" />
           <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-            <Stack direction="row" spacing={0.75} sx={{ alignItems: "center", color: palette.inkMuted }} aria-live="polite">
-              <CloudDoneOutlined sx={{ fontSize: 18 }} />
+            <Stack direction="row" spacing={0.75} sx={{ alignItems: "center", color: palette.inkMuted }}>
+              <CloudDoneOutlined aria-hidden sx={{ fontSize: 18 }} />
               <Typography
                 variant="body2"
                 sx={{
@@ -252,7 +248,7 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
             <QuestionStep
-              ref={headingRef}
+              focusOnMount={hasNavigated}
               question={question}
               value={value}
               recommended={recommended}
@@ -270,7 +266,7 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
         </AnimatePresence>
         </Box>
         <Box sx={{ display: { xs: "none", lg: "block" } }}>
-          <WizardSidebar quote={quote} answeredCount={answeredCount} />
+          <WizardSidebar quote={quote} answeredCount={answeredCount} stepKey={question.id} />
         </Box>
       </Container>
 
@@ -288,7 +284,10 @@ function WizardContent({ answers, currentId }: { answers: Answers; currentId: st
               vagy nyomj <b>Enter</b>-t
             </Typography>
             <Button
-              onClick={() => goNext()}
+              onClick={() => {
+                setPendingAdvance(null);
+                goNext();
+              }}
               variant="contained"
               color="primary"
               size="large"

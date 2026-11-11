@@ -11,7 +11,7 @@ export interface Submission {
   copySent: boolean;
 }
 
-export interface WizardSnapshot {
+interface WizardSnapshot {
   answers: Answers;
   currentId: string | null;
   packageId: PackageId;
@@ -25,6 +25,8 @@ const EMPTY: WizardSnapshot = { answers: {}, currentId: null, packageId: "standa
 const listeners = new Set<() => void>();
 let cachedRaw: string | null | undefined;
 let cachedSnapshot: WizardSnapshot = EMPTY;
+/** Set once writing failed (private mode, full storage): from then on memory is the source of truth for this page view. */
+let memoryFallback = false;
 
 function readRaw(): string | null {
   try {
@@ -45,7 +47,10 @@ function parse(raw: string | null): WizardSnapshot {
   }
 }
 
-function getSnapshot(): WizardSnapshot {
+/** Exported for tests. */
+export function getSnapshot(): WizardSnapshot {
+  // Storage still holds the old value (or nothing): re-reading it would throw away the in-memory one.
+  if (memoryFallback) return cachedSnapshot;
   const raw = readRaw();
   if (raw !== cachedRaw) {
     cachedRaw = raw;
@@ -70,8 +75,10 @@ function write(next: WizardSnapshot | null) {
   try {
     if (next) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     else window.localStorage.removeItem(STORAGE_KEY);
+    memoryFallback = false;
   } catch {
     // Private mode / full storage: keep working in memory for this page view.
+    memoryFallback = true;
     cachedRaw = next ? JSON.stringify(next) : null;
     cachedSnapshot = next ?? EMPTY;
   }

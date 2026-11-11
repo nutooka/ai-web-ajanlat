@@ -1,20 +1,15 @@
-import { createRateLimiter } from "@/features/contact/spam";
+import { routeLimiter } from "@/features/contact/spam";
 import { recordFunnelStep } from "@/features/funnel/store";
+import { clientIp, readJsonBody } from "@/lib/http";
 
-const isAllowed = createRateLimiter({ limit: 120, windowMs: 10 * 60 * 1000 });
+const isAllowed = routeLimiter("funnel", 120);
 
 /** Anonymous funnel counter: only whitelisted step names, no personal data. */
 export async function POST(request: Request) {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  if (!isAllowed(ip, Date.now())) return new Response(null, { status: 429 });
-  const raw = await request.text();
-  if (raw.length > 200) return new Response(null, { status: 413 });
-  let step: unknown;
-  try {
-    step = (JSON.parse(raw) as { step?: unknown }).step;
-  } catch {
-    return new Response(null, { status: 400 });
-  }
+  if (!(await isAllowed(clientIp(request.headers) ?? "unknown", Date.now()))) return new Response(null, { status: 429 });
+  const body = await readJsonBody(request, 200);
+  if (!body.ok) return new Response(null, { status: body.status });
+  const step = body.value && typeof body.value === "object" ? (body.value as { step?: unknown }).step : undefined;
   try {
     await recordFunnelStep(step);
   } catch (error) {

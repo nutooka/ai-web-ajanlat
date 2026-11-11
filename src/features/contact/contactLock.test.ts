@@ -12,10 +12,20 @@ describe("contact keys", () => {
   });
 
   it("is case-insensitive for e-mails and never contains the raw contact", () => {
-    const [key] = contactKeys({ email: "Anna@Example.com" }, secret);
-    expect(contactKeys({ email: "anna@example.com " }, secret)).toEqual([key]);
-    expect(key).not.toContain("anna");
-    expect(key).toMatch(/^offer-first-seen:[0-9a-f]{64}$/);
+    const keys = contactKeys({ email: "Anna@Example.com" }, secret);
+    expect(contactKeys({ email: "anna@example.com " }, secret)).toEqual(keys);
+    for (const key of keys) {
+      expect(key).not.toContain("anna");
+      expect(key).toMatch(/^offer-first-seen:[0-9a-f]{64}$/);
+    }
+  });
+
+  it("checks the derived-key hash and the legacy raw-secret hash, so contacts seen before the switch still count", async () => {
+    const { createHmac } = await import("node:crypto");
+    const keys = contactKeys({ email: "anna@example.com" }, secret);
+    expect(keys).toHaveLength(2);
+    expect(keys[1]).toBe(`offer-first-seen:${createHmac("sha256", secret).update("email:anna@example.com").digest("hex")}`);
+    expect(keys[0]).not.toBe(keys[1]);
   });
 
   it("depends on the secret", () => {
@@ -41,13 +51,12 @@ describe("Upstash store", () => {
 
 describe("device clock key", () => {
   it("is stable per IP + browser, differs otherwise, and never contains the IP", async () => {
-    const { deviceKey, clientIp } = await import("./contactLock");
-    const a = deviceKey("203.0.113.7", "Safari/17", "secret");
-    expect(a).toBe(deviceKey("203.0.113.7", "Safari/17", "secret"));
-    expect(a).not.toBe(deviceKey("203.0.113.8", "Safari/17", "secret"));
-    expect(a).not.toBe(deviceKey("203.0.113.7", "Chrome/120", "secret"));
-    expect(a).not.toContain("203.0.113.7");
-    expect(clientIp(new Headers({ "x-forwarded-for": "203.0.113.7, 10.0.0.1" }))).toBe("203.0.113.7");
-    expect(clientIp(new Headers())).toBeNull();
+    const { deviceKeys } = await import("./contactLock");
+    const a = deviceKeys("203.0.113.7", "Safari/17", "secret");
+    expect(a).toHaveLength(2);
+    expect(a).toEqual(deviceKeys("203.0.113.7", "Safari/17", "secret"));
+    expect(a[0]).not.toBe(deviceKeys("203.0.113.8", "Safari/17", "secret")[0]);
+    expect(a[0]).not.toBe(deviceKeys("203.0.113.7", "Chrome/120", "secret")[0]);
+    expect(a.join()).not.toContain("203.0.113.7");
   });
 });

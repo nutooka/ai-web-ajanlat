@@ -1,4 +1,5 @@
-import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
+import { purposeKey, serverSecret } from "@/lib/secrets";
 
 /**
  * Server-verified "offer clock": when the visitor first opened their offer.
@@ -6,35 +7,37 @@ import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
  * by scripts nor moved by editing it. Deleting it just starts a new clock.
  */
 export const OFFER_CLOCK_COOKIE = "nutooka_offer_clock";
-export const OFFER_CLOCK_MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
+const OFFER_CLOCK_MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
 
-let fallbackSecret: string | undefined;
-
-/** OFFER_CLOCK_SECRET in production; a per-process random secret otherwise (clocks reset on restart). */
+/** OFFER_CLOCK_SECRET; throws in production when it is missing or short, per-process random in development. */
 export function offerClockSecret(): string {
-  const configured = process.env.OFFER_CLOCK_SECRET;
-  if (configured && configured.length >= 16) return configured;
-  fallbackSecret ??= randomBytes(32).toString("hex");
-  return fallbackSecret;
+  return serverSecret();
 }
 
-function signature(issuedAt: number, secret: string): string {
-  return createHmac("sha256", secret).update(`offer-clock:${issuedAt}`).digest("base64url");
+function mac(issuedAt: number, key: string): string {
+  return createHmac("sha256", key).update(`offer-clock:${issuedAt}`).digest("base64url");
 }
 
+/** New cookies are signed with the derived "clock" key. */
 export function signOfferClock(issuedAt: number, secret: string): string {
-  return `${issuedAt}.${signature(issuedAt, secret)}`;
+  return `${issuedAt}.${mac(issuedAt, purposeKey(secret, "clock"))}`;
+}
+
+function matches(expected: string, given: string): boolean {
+  const a = Buffer.from(expected);
+  const b = Buffer.from(given);
+  return a.length === b.length && timingSafeEqual(a, b);
 }
 
 /** Returns the issue time when the cookie is genuine and not from the future, otherwise null. */
 export function verifyOfferClock(value: string | undefined, secret: string, now: number): number | null {
   if (!value) return null;
-  const [rawIssuedAt, mac] = value.split(".");
+  const [rawIssuedAt, given] = value.split(".");
   const issuedAt = Number(rawIssuedAt);
-  if (!Number.isSafeInteger(issuedAt) || !mac) return null;
-  const expected = Buffer.from(signature(issuedAt, secret));
-  const actual = Buffer.from(mac);
-  if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return null;
+  if (!Number.isSafeInteger(issuedAt) || !given) return null;
+  // Cookies issued before the per-purpose keys were signed with the raw secret; they expire within a week.
+  const genuine = matches(mac(issuedAt, purposeKey(secret, "clock")), given) || matches(mac(issuedAt, secret), given);
+  if (!genuine) return null;
   if (issuedAt > now + 60_000) return null;
   if (now - issuedAt > OFFER_CLOCK_MAX_AGE_SECONDS * 1000) return null;
   return issuedAt;

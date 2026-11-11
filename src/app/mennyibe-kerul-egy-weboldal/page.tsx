@@ -11,7 +11,7 @@ import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { pricingConfig } from "@/config/pricing";
 import { quickWindowText } from "@/features/pricing/quickDecision";
 import { serviceByType } from "@/config/services";
-import { siteUrl, defaultOgImage } from "@/config/site";
+import { siteUrl, baseOpenGraph, siteConfig } from "@/config/site";
 import { deliveryWeeks, publicQuote, quickStartingPrice, SAMPLE_COMPANY_ANSWERS } from "@/features/pricing/startingPrice";
 import { PACKAGE_IDS } from "@/features/pricing/types";
 import type { Answers, ResolvedProjectType } from "@/features/questionnaire/types";
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   title: { absolute: `${title} | Nutooka` },
   description,
   alternates: { canonical: "/mennyibe-kerul-egy-weboldal" },
-  openGraph: { title, description, url: "/mennyibe-kerul-egy-weboldal", type: "article", images: [defaultOgImage] },
+  openGraph: { ...baseOpenGraph, title, description, url: "/mennyibe-kerul-egy-weboldal", type: "article" },
 };
 
 export default function PricingArticle() {
@@ -66,7 +66,14 @@ export default function PricingArticle() {
         data={{
           "@context": "https://schema.org",
           "@graph": [
-            { "@type": "Article", headline: title, description, inLanguage: "hu", datePublished: "2026-10-29", dateModified: "2026-10-29", url: `${siteUrl}/mennyibe-kerul-egy-weboldal`, author: { "@id": `${siteUrl}/#business` }, publisher: { "@id": `${siteUrl}/#business` } },
+            { "@type": "Article", headline: title, description, inLanguage: "hu", datePublished: "2026-10-29", dateModified: "2026-11-10", url: `${siteUrl}/mennyibe-kerul-egy-weboldal`, image: `${siteUrl}/opengraph-image`, author: { "@type": "Person", name: siteConfig.person.name, jobTitle: siteConfig.person.role, url: siteConfig.person.linkedin }, publisher: { "@id": `${siteUrl}/#business` } },
+            {
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Főoldal", item: siteUrl },
+                { "@type": "ListItem", position: 2, name: title, item: `${siteUrl}/mennyibe-kerul-egy-weboldal` },
+              ],
+            },
             { "@type": "FAQPage", mainEntity: faq.map((item) => ({ "@type": "Question", name: item.q, acceptedAnswer: { "@type": "Answer", text: item.a } })) },
           ],
         }}
@@ -75,7 +82,7 @@ export default function PricingArticle() {
         <SiteHeader />
         <Container maxWidth="md" component="header" sx={{ pt: { xs: 5, md: 8 }, pb: { xs: 7, md: 9 } }}>
           <Typography variant="overline" sx={{ color: palette.inkMuted }}>
-            Frissítve: 2026. október · élő árakkal
+            Írta: {siteConfig.person.name}, alapító · Frissítve: 2026. november · élő árakkal
           </Typography>
           <Typography variant="h1" sx={{ fontSize: { xs: "2.1rem", md: "3.25rem" }, mt: 1 }}>
             {title}

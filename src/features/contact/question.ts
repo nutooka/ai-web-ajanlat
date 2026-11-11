@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { siteConfig } from "@/config/site";
-import { escapeHtml, type EmailContent } from "./email/templates";
+import { emailLayout, escapeHtml, type EmailContent } from "@/lib/email/html";
 import type { EmailSender } from "./submitOffer";
 import { checkSpamSignals } from "./spam";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE = /^[+\d][\d\s()./-]{6,}$/;
 
-export const questionSchema = z.object({
+const questionSchema = z.object({
   reach: z
     .string()
     .trim()
@@ -20,14 +20,14 @@ export const questionSchema = z.object({
   elapsedMs: z.number().int().nonnegative(),
 });
 
-export type QuestionResult = { status: 200; body: { ok: true } } | { status: 422 | 500 | 503; body: { ok: false; error: string } };
+type QuestionResult = { status: 200; body: { ok: true } } | { status: 422 | 500 | 503; body: { ok: false; error: string } };
 
 function ownerQuestionEmail(reach: string, message: string): EmailContent {
-  const html = `<!doctype html><html lang="hu"><body style="font-family:Arial,Helvetica,sans-serif;color:#0E0F12;">
-<h2 style="margin:0 0 12px;">Új kérdés a főoldalról</h2>
-<p><b>Elérhetőség:</b> ${escapeHtml(reach)}</p>
-<p style="white-space:pre-wrap;padding:12px 14px;border-radius:10px;background:#F5F5F0;">${escapeHtml(message)}</p>
-</body></html>`;
+  const html = emailLayout(
+    "Új kérdés a főoldalról",
+    `<p><b>Elérhetőség:</b> ${escapeHtml(reach)}</p>
+<p style="white-space:pre-wrap;padding:12px 14px;border-radius:10px;background:#F5F5F0;">${escapeHtml(message)}</p>`,
+  );
   return { subject: `Kérdés a főoldalról – ${reach}`, html, text: `Új kérdés a főoldalról\n\nElérhetőség: ${reach}\n\n${message}` };
 }
 

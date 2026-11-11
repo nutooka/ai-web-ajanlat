@@ -8,7 +8,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WaveDivider } from "@/components/WaveDivider";
 import { WhatsAppFab } from "@/components/WhatsAppFab";
-import { siteUrl, defaultOgImage } from "@/config/site";
+import { siteUrl, baseOpenGraph } from "@/config/site";
 import { AuditTool } from "@/features/audit/AuditTool";
 import { palette } from "@/theme/tokens";
 
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   title: { absolute: `${title} | Nutooka` },
   description,
   alternates: { canonical: "/atvilagitas" },
-  openGraph: { title, description, url: "/atvilagitas", images: [defaultOgImage] },
+  openGraph: { ...baseOpenGraph, title, description, url: "/atvilagitas" },
 };
 
 const faq = [
@@ -36,7 +36,7 @@ export default function AuditPage() {
         data={{
           "@context": "https://schema.org",
           "@graph": [
-            { "@type": "WebApplication", name: "Ingyenes weboldal-átvilágítás", url: `${siteUrl}/atvilagitas`, applicationCategory: "BusinessApplication", operatingSystem: "Web", offers: { "@type": "Offer", price: 0, priceCurrency: "RON" }, provider: { "@id": `${siteUrl}/#business` } },
+            { "@type": "WebApplication", name: "Ingyenes weboldal-átvilágítás", description, inLanguage: "hu", url: `${siteUrl}/atvilagitas`, applicationCategory: "BusinessApplication", operatingSystem: "Web", offers: { "@type": "Offer", price: 0, priceCurrency: "RON" }, provider: { "@id": `${siteUrl}/#business` } },
             { "@type": "FAQPage", mainEntity: faq.map((item) => ({ "@type": "Question", name: item.q, acceptedAnswer: { "@type": "Answer", text: item.a } })) },
           ],
         }}
